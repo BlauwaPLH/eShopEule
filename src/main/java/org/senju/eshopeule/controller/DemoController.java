@@ -1,23 +1,37 @@
 package org.senju.eshopeule.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.senju.eshopeule.dto.request.LoginRequest;
+import org.senju.eshopeule.repository.TokenRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/demo")
 public class DemoController {
 
-    @GetMapping("")
-    public String demo() {
-        return "Hello World!";
+    private final TokenRepository tokenRepository;
+
+    @PostMapping
+    public ResponseEntity<Map<?, ?>> demo(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(
+                Map.of("message", "OKKKKKKKKKKKKK!")
+        );
     }
 
     @GetMapping("/csrf")
     public CsrfToken csrf(CsrfToken csrfToken) {
         return csrfToken;
     }
+
+    @GetMapping("/admin")
+    public String adminPage() {
+        return "this is Admin page!";
+    }
+
 }

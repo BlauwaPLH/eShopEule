@@ -1,7 +1,6 @@
 package org.senju.eshopeule.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.senju.eshopeule.constant.enums.AuthUsernamePasswordType;
 import org.senju.eshopeule.constant.enums.BootstrapRole;
 import org.senju.eshopeule.constant.enums.JwtClaims;
 import org.senju.eshopeule.dto.request.ChangePasswordRequest;
@@ -16,10 +15,11 @@ import org.senju.eshopeule.model.token.Token;
 import org.senju.eshopeule.constant.enums.TokenType;
 import org.senju.eshopeule.model.user.Role;
 import org.senju.eshopeule.model.user.User;
-import org.senju.eshopeule.repository.jpa.RoleRepository;
-import org.senju.eshopeule.repository.jpa.UserRepository;
-import org.senju.eshopeule.repository.redis.TokenRepository;
+import org.senju.eshopeule.repository.RoleRepository;
+import org.senju.eshopeule.repository.UserRepository;
+import org.senju.eshopeule.repository.TokenRepository;
 import org.senju.eshopeule.service.AuthService;
+import org.senju.eshopeule.service.InMemoryTokenService;
 import org.senju.eshopeule.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +33,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-import static org.senju.eshopeule.constant.enums.AuthUsernamePasswordType.*;
-import static org.senju.eshopeule.constant.pattern.RegexPattern.*;
 import static org.senju.eshopeule.constant.exceptionMessage.UserExceptionMsg.*;
 import static org.senju.eshopeule.constant.exceptionMessage.AuthExceptionMsg.*;
 
@@ -48,41 +46,48 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final TokenRepository tokenRepository;
     private final JwtUtil jwtUtil;
+    private final InMemoryTokenService inMemoryTokenService;
 
     private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
+
+
     @Override
     public LoginResponse authenticate(final LoginRequest request) throws UserNotExistsException, LoginException {
-        final User user;
-        switch (checkLoginType(request)) {
-            case EMAIL -> user = userRepository.findByEmail(request.getUsername()).orElse(null);
-            case PHONE_NUMBER -> user = userRepository.findByPhoneNumber(request.getUsername()).orElse(null);
-            default -> user = userRepository.findByUsername(request.getUsername()).orElse(null);
-        }
-        if (user == null) throw new UserNotExistsException(USER_NOT_EXISTS_MSG);
+        final String username = userRepository.findUsernameByIde(request.getIdentifier())
+                .orElseThrow(() -> new UserNotExistsException(USER_NOT_EXISTS_MSG));
+
         try {
             SecurityContextHolder.getContext().setAuthentication(
                     authenticationManager.authenticate(
-                            new UsernamePasswordAuthenticationToken(user.getUsername(), request.getPassword())
-                    )
-            );
-        } catch (AuthenticationException e) {
+                            new UsernamePasswordAuthenticationToken(username, request.getPassword())));
+        } catch (AuthenticationException ex) {
             throw new LoginException(LOGIN_ERROR_MSG);
         }
+
+
+
         final String accessToken = jwtUtil.generateAccessToken(
                 Map.of(JwtClaims.TYPE.getClaimName(), TokenType.ACCESS_TOKEN.getTypeName()),
-                user.getUsername()
+                username
         );
+        inMemoryTokenService.save(username, Token.builder()
+                .revoked(false)
+                .token(accessToken)
+                .identifier(username)
+                .build());
+
         final String refreshToken = jwtUtil.generateRefreshToken(
                 Map.of(JwtClaims.TYPE.getClaimName(), TokenType.REFRESH_TOKEN.getTypeName()),
-                user.getUsername()
+                username
         );
-        this.revokeAllRefreshTokenByIdentifier(user.getUsername());
+        this.revokeRefreshTokenByIdentifier(username);
         tokenRepository.save(
                 Token.builder()
                         .type(TokenType.REFRESH_TOKEN)
                         .token(refreshToken)
-                        .identifier(user.getUsername())
+                        .identifier(username)
+                        .revoked(false)
                         .build()
         );
         return LoginResponse.builder()
@@ -93,13 +98,14 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public RefreshTokenResponse refreshToken(final RefreshTokenRequest request, final UserDetails currUser) throws RefreshTokenException {
+        inMemoryTokenService.delete(currUser.getUsername());
         String token = request.getRefreshToken();
         String tokenType = jwtUtil.extractClaims(token, c -> c.get(JwtClaims.TYPE.getClaimName(), String.class));
         boolean isTokenValid = tokenRepository.findByToken(token)
-                .map(t -> t.getIdentifier().equals(jwtUtil.extractUsername(token)))
+                .map(t -> t.getIdentifier().equals(jwtUtil.extractUsername(token)) && !t.isRevoked())
                 .orElse(false);
         if (jwtUtil.validateToken(token, currUser) && isTokenValid && tokenType.equals(TokenType.REFRESH_TOKEN.getTypeName())) {
-            this.revokeAllRefreshTokenByIdentifier(currUser.getUsername());
+            this.revokeRefreshTokenByIdentifier(currUser.getUsername());
             String refreshToken = jwtUtil.generateRefreshToken(
                     Map.of(JwtClaims.TYPE.getClaimName(), TokenType.REFRESH_TOKEN.getTypeName()),
                     currUser.getUsername()
@@ -149,6 +155,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    public void logout(String identifier) {
+        logger.debug("LOGOUT.... {}", identifier);
+        inMemoryTokenService.delete(identifier);
+        tokenRepository.revokeRefreshTokenByIdentifier(identifier);
+    }
+
+
+    @Override
     public void changePassword(final ChangePasswordRequest request, final UserDetails userDetails) throws ChangePasswordException, UserNotExistsException {
         if (!passwordEncoder.matches(request.getOldPassword(), userDetails.getPassword()))
             throw new ChangePasswordException(CHANGE_PASSWORD_ERROR_MSG);
@@ -157,21 +171,8 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(connectedUser);
     }
 
-    private void revokeAllRefreshTokenByIdentifier(String identifier) {
-        tokenRepository.deleteAllByIdentifier(identifier);
-    }
-
-    private AuthUsernamePasswordType checkLoginType(LoginRequest loginRequest) {
-        if (isLoginWithEmail(loginRequest)) return EMAIL;
-        else if (isLoginWithPhoneNumber(loginRequest)) return PHONE_NUMBER;
-        else return USERNAME;
-    }
-
-    private boolean isLoginWithPhoneNumber(LoginRequest loginRequest) {
-        return loginRequest.getUsername().matches(PHONE_PATTERN);
-    }
-
-    private boolean isLoginWithEmail(LoginRequest loginRequest) {
-        return loginRequest.getUsername().matches(EMAIL_PATTERN);
+    private void revokeRefreshTokenByIdentifier(String identifier) {
+        logger.debug("REVOKING REFRESH TOKEN BY IDENTIFIER");
+        tokenRepository.revokeRefreshTokenByIdentifier(identifier);
     }
 }

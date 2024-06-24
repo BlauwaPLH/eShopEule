@@ -1,5 +1,7 @@
 package org.senju.eshopeule.dto;
 
+import jakarta.persistence.NamedNativeQueries;
+import jakarta.persistence.NamedNativeQuery;
 import lombok.*;
 
 import java.io.Serial;

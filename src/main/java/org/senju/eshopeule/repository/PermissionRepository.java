@@ -1,4 +1,4 @@
-package org.senju.eshopeule.repository.jpa;
+package org.senju.eshopeule.repository;
 
 import org.senju.eshopeule.model.user.Permission;
 import org.springframework.data.jpa.repository.JpaRepository;

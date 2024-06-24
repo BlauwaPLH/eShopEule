@@ -7,7 +7,7 @@ import org.senju.eshopeule.exceptions.RoleNotExistsException;
 import org.senju.eshopeule.mappers.RoleMapper;
 import org.senju.eshopeule.model.user.Permission;
 import org.senju.eshopeule.model.user.Role;
-import org.senju.eshopeule.repository.jpa.RoleRepository;
+import org.senju.eshopeule.repository.RoleRepository;
 import org.senju.eshopeule.service.RoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -4,10 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.model.user.Permission;
 import org.senju.eshopeule.model.user.Role;
 import org.senju.eshopeule.model.user.User;
-import org.senju.eshopeule.repository.jpa.UserRepository;
+import org.senju.eshopeule.repository.UserRepository;
 import org.senju.eshopeule.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,7 +30,9 @@ public class UserServiceImpl implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Override
+    @Cacheable()
     public UserDetails loadUserDetailsByUsername(String username) {
+        logger.debug("loadUserDetailsByUsername in {}", UserServiceImpl.class.getName());
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(
                         String.format(USER_NOT_EXISTS_WITH_USERNAME_MSG, username)

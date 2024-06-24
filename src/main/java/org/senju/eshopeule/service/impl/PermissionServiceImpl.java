@@ -6,7 +6,7 @@ import org.senju.eshopeule.dto.PermissionDTO;
 import org.senju.eshopeule.exceptions.PermissionNotExistsException;
 import org.senju.eshopeule.mappers.PermissionMapper;
 import org.senju.eshopeule.model.user.Permission;
-import org.senju.eshopeule.repository.jpa.PermissionRepository;
+import org.senju.eshopeule.repository.PermissionRepository;
 import org.senju.eshopeule.service.PermissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -20,16 +20,16 @@ public final class RegistrationRequest implements BaseRequest {
     @Serial
     private static final long serialVersionUID = -7248245700460613926L;
 
-    @Pattern(regexp = USERNAME_PATTERN)
+    @Pattern(regexp = USERNAME_PATTERN, message = "Username is not valid")
     private String username;
 
-    @Pattern(regexp = EMAIL_PATTERN)
+    @Pattern(regexp = EMAIL_PATTERN, message = "Email is not valid")
     private String email;
 
-    @Pattern(regexp = PHONE_PATTERN)
+    @Pattern(regexp = PHONE_PATTERN, message = "Phone number is not valid")
     private String phoneNumber;
 
     @NotBlank(message = "Password is mandatory")
-    @Pattern(regexp = PASSWORD_PATTERN)
+    @Pattern(regexp = PASSWORD_PATTERN, message = "Password is not valid")
     private String password;
 }

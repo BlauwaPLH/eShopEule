@@ -15,7 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Arrays;
 
-@Component
+//@Component
 public class CsrfTokenLoggingFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(CsrfTokenLoggingFilter.class);
 

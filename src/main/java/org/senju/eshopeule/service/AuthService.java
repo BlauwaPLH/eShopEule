@@ -18,5 +18,7 @@ public interface AuthService {
 
     RegistrationResponse register(RegistrationRequest request) throws SignUpException, UserAlreadyExistsException;
 
+    void logout(String identifier);
+
     void changePassword(ChangePasswordRequest request, UserDetails userDetails) throws ChangePasswordException, UserNotExistsException;
 }

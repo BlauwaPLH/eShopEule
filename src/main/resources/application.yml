@@ -28,8 +28,10 @@ logging:
 bootstrap:
   account:
     super-admin:
-      username: superadmin@eule.com
-      password: 123456789
+      email : superadmin@eule.com
+      username: superadmin
+      phone: 0123456789
+      password: Abc123456@
 
 security:
   jwt:
@@ -38,8 +40,18 @@ security:
       expiration: 86400000
     refresh-token:
       expiration: 604800000
+  oauth2:
+    client:
+      registration:
+        google:
+          client-id: 353684858508-di8dg1ilh3ee6h1vmbo7gmb1hou22l52.apps.googleusercontent.com
+          client-secret: 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
+        github:
+          client-id: Ov23liAImsFOfFwbp9X8
+          client-secret: bdf2665263f92d96a2b88923ed08d772e68915e2
+
 
 redis:
-  hostName: localhost
-  port: 6379
+
+
 

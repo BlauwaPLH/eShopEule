@@ -1,6 +1,7 @@
 package org.senju.eshopeule.config;
 
 import lombok.RequiredArgsConstructor;
+import org.senju.eshopeule.constant.enums.BootstrapPerm;
 import org.senju.eshopeule.security.filter.CsrfTokenLoggingFilter;
 import org.senju.eshopeule.security.filter.JwtAuthenticationFilter;
 import org.senju.eshopeule.service.UserService;
@@ -15,11 +16,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -33,7 +35,6 @@ public class SecurityConfig {
 
     private final UserService userService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final CsrfTokenLoggingFilter csrfTokenLoggingFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -51,10 +52,12 @@ public class SecurityConfig {
                     c.configurationSource(source);
                 })
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterAfter(csrfTokenLoggingFilter, CsrfFilter.class)
+//                .addFilterAfter(csrfTokenLoggingFilter, CsrfFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(c -> c
-                        .anyRequest().permitAll()
+                        .requestMatchers("/api/v1/demo/admin").hasAnyAuthority(BootstrapPerm.ADMIN_READ.getPermName(), BootstrapPerm.ADMIN_WRITE.getPermName())
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/demo").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .build();
     }
@@ -71,10 +74,14 @@ public class SecurityConfig {
     private AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(this.passwordEncoder());
-        provider.setUserDetailsService(userService::loadUserDetailsByUsername);
+        provider.setUserDetailsService(userDetailsService());
         return provider;
     }
 
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return userService::loadUserDetailsByUsername;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

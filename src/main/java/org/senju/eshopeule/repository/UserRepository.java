@@ -1,4 +1,4 @@
-package org.senju.eshopeule.repository.jpa;
+package org.senju.eshopeule.repository;
 
 import org.senju.eshopeule.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,4 +19,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query(value = "SELECT id FROM users WHERE username = :un OR email = :em OR phone_number = :pn", nativeQuery = true)
     List<String> findAllByUsernameOrEmailOrPhoneNumber(@Param("un") String username, @Param("em") String email, @Param("pn") String phoneNumber);
+
+    @Query(value = "SELECT username FROM users WHERE username = :ide OR email = :ide OR phone_number = :ide", nativeQuery = true)
+    Optional<String> findUsernameByIde(@Param("ide") String ide);
 }

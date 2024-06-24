@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.exceptions.UsernameAlreadyExistsException;
 import org.senju.eshopeule.model.user.Role;
 import org.senju.eshopeule.model.user.User;
-import org.senju.eshopeule.repository.jpa.UserRepository;
+import org.senju.eshopeule.repository.UserRepository;
 import org.senju.eshopeule.service.StaffService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

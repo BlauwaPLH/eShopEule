@@ -26,6 +26,12 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Value("${bootstrap.account.super-admin.username}")
     private String superAdminUsername;
 
+    @Value("${bootstrap.account.super-admin.email}")
+    private String superAdminEmail;
+
+    @Value("${bootstrap.account.super-admin.phone}")
+    private String superAdminPhone;
+
     @Value("${bootstrap.account.super-admin.password}")
     private String superAdminPassword;
 

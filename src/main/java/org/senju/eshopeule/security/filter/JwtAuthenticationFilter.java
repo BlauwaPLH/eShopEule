@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.senju.eshopeule.service.InMemoryTokenService;
 import org.senju.eshopeule.service.UserService;
 import org.senju.eshopeule.utils.JwtUtil;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private final InMemoryTokenService inMemoryTokenService;
     private final UserService userService;
     private final JwtUtil jwtUtil;
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
@@ -33,6 +35,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @Nonnull HttpServletRequest request,
             @Nonnull HttpServletResponse response,
             @Nonnull FilterChain filterChain) throws ServletException, IOException {
+
+        if (request.getServletPath().contains("/api/v1/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String accessToken;
         final String username;
@@ -45,11 +53,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         accessToken = authHeader.substring(7);
         username = jwtUtil.extractUsername(accessToken);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            final UserDetails userDetails = userService.loadUserDetailsByUsername(username);
-            if (jwtUtil.validateToken(accessToken, userDetails)) {
-                var auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(auth);
+            String accessTokenStored = inMemoryTokenService.get(username);
+            if (accessTokenStored != null && accessTokenStored.equals(accessToken)) {
+                final UserDetails userDetails = userService.loadUserDetailsByUsername(username);
+                if (jwtUtil.validateToken(accessToken, userDetails)) {
+                    var auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
             }
         }
 
