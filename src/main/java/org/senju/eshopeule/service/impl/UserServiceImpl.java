@@ -25,40 +25,5 @@ import static org.senju.eshopeule.constant.exceptionMessage.UserExceptionMsg.USE
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
 
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-
-    @Override
-    @Cacheable()
-    public UserDetails loadUserDetailsByUsername(String username) {
-        logger.debug("loadUserDetailsByUsername in {}", UserServiceImpl.class.getName());
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(
-                        String.format(USER_NOT_EXISTS_WITH_USERNAME_MSG, username)
-                ));
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(), user.getPassword(), user.isEnabled(),
-                user.isAccountNonExpired(), user.isCredentialsNonExpired(),
-                user.isAccountNonLocked(), this.getAuthorities(user.getRole())
-        );
-    }
-
-    private Collection<? extends GrantedAuthority> getAuthorities(Role role) {
-        return this.getGrantedAuthorities(this.getPermission(role));
-    }
-
-    private List<String> getPermission(Role role) {
-        List<String> strPerms = new ArrayList<>();
-        List<Permission> permissions = new ArrayList<>(role.getPermissions());
-        for (Permission perm: permissions) strPerms.add(perm.getName());
-        strPerms.add("ROLE_" + role.getName());
-        return strPerms;
-    }
-
-    private List<GrantedAuthority> getGrantedAuthorities(List<String> permissions) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        for (String perm : permissions) authorities.add(new SimpleGrantedAuthority(perm));
-        return authorities;
-    }
 }

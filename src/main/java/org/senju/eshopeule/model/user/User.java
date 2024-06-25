@@ -25,7 +25,6 @@ public class User extends BaseEntity {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false, name = "acc_non_expired")

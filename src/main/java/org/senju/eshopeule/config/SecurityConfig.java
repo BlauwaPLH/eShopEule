@@ -2,9 +2,9 @@ package org.senju.eshopeule.config;
 
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.constant.enums.BootstrapPerm;
-import org.senju.eshopeule.security.filter.CsrfTokenLoggingFilter;
+import org.senju.eshopeule.security.SimpleUserDetailsService;
 import org.senju.eshopeule.security.filter.JwtAuthenticationFilter;
-import org.senju.eshopeule.service.UserService;
+import org.senju.eshopeule.security.oauth2.OAuth2AuthenticationSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,11 +16,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -33,8 +34,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final UserService userService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
+    private final SimpleUserDetailsService userDetailsService;
+    private final AuthenticationEntryPoint restAuthenticationEntryPoint;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -54,11 +58,16 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 //                .addFilterAfter(csrfTokenLoggingFilter, CsrfFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(c -> c
+                        .successHandler(oauth2AuthenticationSuccessHandler)
+//                        .failureHandler(authenticationFailureHandler)
+                )
                 .authorizeHttpRequests(c -> c
                         .requestMatchers("/api/v1/demo/admin").hasAnyAuthority(BootstrapPerm.ADMIN_READ.getPermName(), BootstrapPerm.ADMIN_WRITE.getPermName())
                         .requestMatchers("/api/v1/auth/**", "/api/v1/demo").permitAll()
                         .anyRequest().authenticated()
                 )
+                .exceptionHandling(c -> c.authenticationEntryPoint(restAuthenticationEntryPoint))
                 .build();
     }
 
@@ -66,25 +75,26 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(HttpSecurity httpSecurity) throws Exception {
         AuthenticationManagerBuilder builder =
                 httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
-        builder.authenticationProvider(authenticationProvider());
+        builder.authenticationProvider(daoAuthenticationProvider());
         return builder.build();
     }
 
-
-    private AuthenticationProvider authenticationProvider() {
+    @Bean
+    public AuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(this.passwordEncoder());
+        provider.setPasswordEncoder(passwordEncoder());
         provider.setUserDetailsService(userDetailsService());
         return provider;
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return userService::loadUserDetailsByUsername;
+
+    private UserDetailsService userDetailsService() {
+        return userDetailsService::loadUserDetailsByUsername;
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }

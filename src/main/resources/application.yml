@@ -16,6 +16,18 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: eshop27test@gmail.com
+    password: mborsyryruuaogqj
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 server:
   port: 8080
 
@@ -49,9 +61,6 @@ security:
         github:
           client-id: Ov23liAImsFOfFwbp9X8
           client-secret: bdf2665263f92d96a2b88923ed08d772e68915e2
-
-
-redis:
-
-
-
+        discord:
+          client-id: 1220756198157189151
+          client-secret: PNhWDeeFTSmqm0dfSS0O_-qV4UP5JJ08

@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.senju.eshopeule.security.SimpleUserDetailsService;
 import org.senju.eshopeule.service.InMemoryTokenService;
 import org.senju.eshopeule.service.UserService;
 import org.senju.eshopeule.utils.JwtUtil;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -26,8 +28,9 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final InMemoryTokenService inMemoryTokenService;
-    private final UserService userService;
+    private final SimpleUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
+    private final AuthenticationEntryPoint simpleAuthenticationEntryPoint;
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     @Override
@@ -55,7 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             String accessTokenStored = inMemoryTokenService.get(username);
             if (accessTokenStored != null && accessTokenStored.equals(accessToken)) {
-                final UserDetails userDetails = userService.loadUserDetailsByUsername(username);
+                final UserDetails userDetails = userDetailsService.loadUserDetailsByUsername(username);
                 if (jwtUtil.validateToken(accessToken, userDetails)) {
                     var auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

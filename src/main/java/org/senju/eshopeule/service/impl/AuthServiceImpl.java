@@ -28,6 +28,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -65,8 +66,6 @@ public class AuthServiceImpl implements AuthService {
             throw new LoginException(LOGIN_ERROR_MSG);
         }
 
-
-
         final String accessToken = jwtUtil.generateAccessToken(
                 Map.of(JwtClaims.TYPE.getClaimName(), TokenType.ACCESS_TOKEN.getTypeName()),
                 username
@@ -94,7 +93,9 @@ public class AuthServiceImpl implements AuthService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
+
     }
+
 
     @Override
     public RefreshTokenResponse refreshToken(final RefreshTokenRequest request, final UserDetails currUser) throws RefreshTokenException {

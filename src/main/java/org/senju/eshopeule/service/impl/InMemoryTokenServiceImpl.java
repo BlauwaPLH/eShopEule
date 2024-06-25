@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +16,7 @@ public class InMemoryTokenServiceImpl implements InMemoryTokenService {
 
     private static final Logger logger = LoggerFactory.getLogger(InMemoryTokenService.class);
 
-    private final Map<String, Token> tokenStored = new HashMap<>();
+    private final Map<String, Token> tokenStored = new ConcurrentHashMap<>();
 
     @Override
     public void delete(String identifier) {

@@ -1,6 +1,5 @@
 package org.senju.eshopeule.service;
 
-
-public interface UserService {
+public interface NotificationService {
 
 }

@@ -1,4 +1,4 @@
-package org.senju.eshopeule.events.bootstrap;
+package org.senju.eshopeule.listener;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
