@@ -14,7 +14,6 @@ import org.senju.eshopeule.service.InMemoryTokenService;
 import org.senju.eshopeule.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -43,7 +42,6 @@ public final class OAuth2AuthenticationSuccessHandler implements AuthenticationS
         if (authentication instanceof OAuth2AuthenticationToken) {
             logger.debug("Received OAuth2AuthenticationToken");
             final String authorizedClientRegistrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
-            final String principalName = authentication.getName();
             final String username = oAuth2UserHandler.apply(
                     authorizedClientRegistrationId,
                     (OAuth2User) authentication.getPrincipal()

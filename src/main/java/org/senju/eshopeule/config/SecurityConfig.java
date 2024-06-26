@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.constant.enums.BootstrapPerm;
 import org.senju.eshopeule.security.SimpleUserDetailsService;
 import org.senju.eshopeule.security.filter.JwtAuthenticationFilter;
-import org.senju.eshopeule.security.oauth2.OAuth2AuthenticationSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -29,15 +29,16 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import java.util.List;
 
 @Configuration
-@EnableMethodSecurity
-@EnableWebSecurity
 @RequiredArgsConstructor
+@EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
-    private final SimpleUserDetailsService userDetailsService;
     private final AuthenticationEntryPoint restAuthenticationEntryPoint;
+    private final AccessDeniedHandler restAccessDeniedHandler;
+    private final AuthenticationProvider jwtAuthenticationProvider;
+    private final SimpleUserDetailsService userDetailsService;
 
 
     @Bean
@@ -57,30 +58,35 @@ public class SecurityConfig {
                 })
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 //                .addFilterAfter(csrfTokenLoggingFilter, CsrfFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(
+                        new JwtAuthenticationFilter(authenticationManager(http), restAuthenticationEntryPoint),
+                        UsernamePasswordAuthenticationFilter.class
+                )
                 .oauth2Login(c -> c
                         .successHandler(oauth2AuthenticationSuccessHandler)
 //                        .failureHandler(authenticationFailureHandler)
                 )
                 .authorizeHttpRequests(c -> c
                         .requestMatchers("/api/v1/demo/admin").hasAnyAuthority(BootstrapPerm.ADMIN_READ.getPermName(), BootstrapPerm.ADMIN_WRITE.getPermName())
-                        .requestMatchers("/api/v1/auth/**", "/api/v1/demo").permitAll()
+                        .requestMatchers("/api/p/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .exceptionHandling(c -> c.authenticationEntryPoint(restAuthenticationEntryPoint))
+                .exceptionHandling(c -> c
+                        .authenticationEntryPoint(restAuthenticationEntryPoint)
+                        .accessDeniedHandler(restAccessDeniedHandler)
+                )
                 .build();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity httpSecurity) throws Exception {
-        AuthenticationManagerBuilder builder =
-                httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
+        AuthenticationManagerBuilder builder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
         builder.authenticationProvider(daoAuthenticationProvider());
+        builder.authenticationProvider(jwtAuthenticationProvider);
         return builder.build();
     }
 
-    @Bean
-    public AuthenticationProvider daoAuthenticationProvider() {
+    private AuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder());
         provider.setUserDetailsService(userDetailsService());
@@ -96,5 +102,4 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

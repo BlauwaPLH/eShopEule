@@ -12,13 +12,20 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/demo")
+
 public class DemoController {
 
     private final TokenRepository tokenRepository;
 
-    @PostMapping
+    @PostMapping(path = "/api/r/v1/demo")
     public ResponseEntity<Map<?, ?>> demo(@Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(
+                Map.of("message", "OKKKKKKKKKKKKK!")
+        );
+    }
+
+    @GetMapping(path = "/api/r/v1/demo")
+    public ResponseEntity<Map<?, ?>> demo() {
         return ResponseEntity.ok(
                 Map.of("message", "OKKKKKKKKKKKKK!")
         );

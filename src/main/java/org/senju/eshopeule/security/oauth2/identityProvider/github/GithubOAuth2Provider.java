@@ -53,7 +53,6 @@ public final class GithubOAuth2Provider implements OAuth2Provider {
             }
         }
 
-
         return null;
     }
 

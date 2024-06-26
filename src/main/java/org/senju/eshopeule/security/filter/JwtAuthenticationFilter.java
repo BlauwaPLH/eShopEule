@@ -1,72 +1,71 @@
 package org.senju.eshopeule.security.filter;
 
-import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.senju.eshopeule.security.SimpleUserDetailsService;
-import org.senju.eshopeule.service.InMemoryTokenService;
-import org.senju.eshopeule.service.UserService;
-import org.senju.eshopeule.utils.JwtUtil;
+import org.senju.eshopeule.exceptions.JwtAuthenticationException;
+import org.senju.eshopeule.security.JwtAuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 
 import java.io.IOException;
 
-@Component
-@RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+import static org.senju.eshopeule.constant.exceptionMessage.AuthExceptionMsg.JWT_MISSING_ERROR_MSG;
 
-    private final InMemoryTokenService inMemoryTokenService;
-    private final SimpleUserDetailsService userDetailsService;
-    private final JwtUtil jwtUtil;
-    private final AuthenticationEntryPoint simpleAuthenticationEntryPoint;
+public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+
+    private static final String DEFAULT_PROCESSES_URL = "/api/r/**";
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+    private final SecurityContextRepository securityContextRepository = new RequestAttributeSecurityContextRepository();
+    private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
+    private final AuthenticationFailureHandler failureHandler;
+
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, AuthenticationEntryPoint restAuthenticationEntryPoint) {
+        super(DEFAULT_PROCESSES_URL, authenticationManager);
+        this.failureHandler = new AuthenticationEntryPointFailureHandler(restAuthenticationEntryPoint);
+    }
 
     @Override
-    protected void doFilterInternal(
-            @Nonnull HttpServletRequest request,
-            @Nonnull HttpServletResponse response,
-            @Nonnull FilterChain filterChain) throws ServletException, IOException {
-
-        if (request.getServletPath().contains("/api/v1/auth")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String accessToken;
-        final String username;
-
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
+            logger.error("{} {}", JwtAuthenticationException.class.getSimpleName(), JWT_MISSING_ERROR_MSG);
+            throw new JwtAuthenticationException(JWT_MISSING_ERROR_MSG);
         }
+        final String authToken = authHeader.substring(7);
+        JwtAuthenticationToken authRequest = new JwtAuthenticationToken(authToken);
+        return getAuthenticationManager().authenticate(authRequest);
+    }
 
-        accessToken = authHeader.substring(7);
-        username = jwtUtil.extractUsername(accessToken);
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            String accessTokenStored = inMemoryTokenService.get(username);
-            if (accessTokenStored != null && accessTokenStored.equals(accessToken)) {
-                final UserDetails userDetails = userDetailsService.loadUserDetailsByUsername(username);
-                if (jwtUtil.validateToken(accessToken, userDetails)) {
-                    var auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(auth);
-                }
-            }
-        }
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+        SecurityContext context = this.securityContextHolderStrategy.createEmptyContext();
+        context.setAuthentication(authResult);
+        this.securityContextHolderStrategy.setContext(context);
+        this.securityContextRepository.saveContext(context, request, response);
+        logger.debug("Set SecurityContextHolder to {}", authResult);
+        chain.doFilter(request, response);
+    }
 
-        filterChain.doFilter(request, response);
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        this.securityContextHolderStrategy.clearContext();
+        failureHandler.onAuthenticationFailure(request, response, failed);
     }
 }
