@@ -5,8 +5,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.request.LoginRequest;
+import org.senju.eshopeule.dto.request.RefreshTokenRequest;
 import org.senju.eshopeule.dto.request.RegistrationRequest;
 import org.senju.eshopeule.dto.response.LoginResponse;
+import org.senju.eshopeule.dto.response.RefreshTokenResponse;
 import org.senju.eshopeule.dto.response.RegistrationResponse;
 import org.senju.eshopeule.exceptions.LoginException;
 import org.senju.eshopeule.exceptions.SignUpException;
@@ -29,7 +31,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
-    private final SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping(path = "/signIn")
@@ -64,14 +65,9 @@ public class AuthController {
         }
     }
 
-    @PostMapping(path = "/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null) {
-            authService.logout(auth.getName());
-            logoutHandler.logout(request, response, auth);
-        }
-        return ResponseEntity.ok().body("Logout successfully!");
-    }
 
+    @PostMapping(path = "/refreshToken")
+    public ResponseEntity<RefreshTokenResponse> refreshToken(@Valid @RequestBody final RefreshTokenRequest request) {
+        return null;
+    }
 }

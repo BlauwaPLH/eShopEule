@@ -98,35 +98,36 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
-    public RefreshTokenResponse refreshToken(final RefreshTokenRequest request, final UserDetails currUser) throws RefreshTokenException {
-        inMemoryTokenService.delete(currUser.getUsername());
-        String token = request.getRefreshToken();
-        String tokenType = jwtUtil.extractClaims(token, c -> c.get(JwtClaims.TYPE.getClaimName(), String.class));
-        boolean isTokenValid = tokenRepository.findByToken(token)
-                .map(t -> t.getIdentifier().equals(jwtUtil.extractUsername(token)) && !t.isRevoked())
-                .orElse(false);
-        if (jwtUtil.validateToken(token, currUser) && isTokenValid && tokenType.equals(TokenType.REFRESH_TOKEN.getTypeName())) {
-            this.revokeRefreshTokenByIdentifier(currUser.getUsername());
-            String refreshToken = jwtUtil.generateRefreshToken(
-                    Map.of(JwtClaims.TYPE.getClaimName(), TokenType.REFRESH_TOKEN.getTypeName()),
-                    currUser.getUsername()
-            );
-            String accessToken = jwtUtil.generateAccessToken(
-                    Map.of(JwtClaims.TYPE.getClaimName(), TokenType.REFRESH_TOKEN.getTypeName()),
-                    currUser.getUsername()
-            );
-            tokenRepository.save(
-                    Token.builder()
-                            .type(TokenType.REFRESH_TOKEN)
-                            .token(refreshToken)
-                            .identifier(currUser.getUsername())
-                            .build()
-            );
-            return RefreshTokenResponse.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .build();
-        } else throw new RefreshTokenException(REFRESH_TOKEN_ERROR_MSG);
+    public RefreshTokenResponse refreshToken(final RefreshTokenRequest request) throws RefreshTokenException {
+        return null;
+//        inMemoryTokenService.delete(currUser.getUsername());
+//        String token = request.getRefreshToken();
+//        String tokenType = jwtUtil.extractClaims(token, c -> c.get(JwtClaims.TYPE.getClaimName(), String.class));
+//        boolean isTokenValid = tokenRepository.findByToken(token)
+//                .map(t -> t.getIdentifier().equals(jwtUtil.extractUsername(token)) && !t.isRevoked())
+//                .orElse(false);
+//        if (jwtUtil.validateToken(token, currUser) && isTokenValid && tokenType.equals(TokenType.REFRESH_TOKEN.getTypeName())) {
+//            this.revokeRefreshTokenByIdentifier(currUser.getUsername());
+//            String refreshToken = jwtUtil.generateRefreshToken(
+//                    Map.of(JwtClaims.TYPE.getClaimName(), TokenType.REFRESH_TOKEN.getTypeName()),
+//                    currUser.getUsername()
+//            );
+//            String accessToken = jwtUtil.generateAccessToken(
+//                    Map.of(JwtClaims.TYPE.getClaimName(), TokenType.REFRESH_TOKEN.getTypeName()),
+//                    currUser.getUsername()
+//            );
+//            tokenRepository.save(
+//                    Token.builder()
+//                            .type(TokenType.REFRESH_TOKEN)
+//                            .token(refreshToken)
+//                            .identifier(currUser.getUsername())
+//                            .build()
+//            );
+//            return RefreshTokenResponse.builder()
+//                    .accessToken(accessToken)
+//                    .refreshToken(refreshToken)
+//                    .build();
+//        } else throw new RefreshTokenException(REFRESH_TOKEN_ERROR_MSG);
     }
 
     @Override
@@ -165,9 +166,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void changePassword(final ChangePasswordRequest request, final UserDetails userDetails) throws ChangePasswordException, UserNotExistsException {
-        if (!passwordEncoder.matches(request.getOldPassword(), userDetails.getPassword()))
-            throw new ChangePasswordException(CHANGE_PASSWORD_ERROR_MSG);
         var connectedUser = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new UserNotExistsException(USER_NOT_EXISTS_MSG));
+        if (!passwordEncoder.matches(request.getOldPassword(), connectedUser.getPassword())) {
+            throw new ChangePasswordException(CHANGE_PASSWORD_ERROR_MSG);
+        }
         connectedUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(connectedUser);
     }

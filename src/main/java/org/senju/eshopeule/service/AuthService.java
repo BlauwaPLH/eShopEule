@@ -14,7 +14,7 @@ public interface AuthService {
 
     LoginResponse authenticate(LoginRequest request) throws UserNotExistsException, LoginException;
 
-    RefreshTokenResponse refreshToken(RefreshTokenRequest request,UserDetails currUser) throws RefreshTokenException;
+    RefreshTokenResponse refreshToken(RefreshTokenRequest request) throws RefreshTokenException;
 
     RegistrationResponse register(RegistrationRequest request) throws SignUpException, UserAlreadyExistsException;
 
