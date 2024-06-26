@@ -23,11 +23,13 @@ import org.springframework.security.web.authentication.AuthenticationEntryPointF
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 import static org.senju.eshopeule.constant.exceptionMessage.AuthExceptionMsg.JWT_MISSING_ERROR_MSG;
 
+@Component
 public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     private static final String DEFAULT_PROCESSES_URL = "/api/r/**";
@@ -35,6 +37,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
     private final SecurityContextRepository securityContextRepository = new RequestAttributeSecurityContextRepository();
     private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
     private final AuthenticationFailureHandler failureHandler;
+
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, AuthenticationEntryPoint restAuthenticationEntryPoint) {
         super(DEFAULT_PROCESSES_URL, authenticationManager);
