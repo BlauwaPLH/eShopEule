@@ -67,8 +67,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
                 logger.debug("User account is expired");
                 throw new AccountExpiredException(JwtAuthenticationProvider.class.getSimpleName() + " : User account is expired");
             } else if (!user.isCredentialsNonExpired()) {
-                logger.debug("User credentials non expired");
-                throw new CredentialsExpiredException(JwtAuthenticationProvider.class.getSimpleName());
+                logger.debug("User credentials is expired");
+                throw new CredentialsExpiredException(JwtAuthenticationProvider.class.getSimpleName() + " : User credentials is expired");
             }
         }
     }
