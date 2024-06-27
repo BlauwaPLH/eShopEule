@@ -30,8 +30,7 @@ import java.io.IOException;
 
 import static org.senju.eshopeule.constant.exceptionMessage.AuthExceptionMsg.JWT_MISSING_ERROR_MSG;
 
-//@Component
-public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter  {
+public final class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter  {
 
     private static final String DEFAULT_PROCESSES_URL = "/api/r/**";
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);

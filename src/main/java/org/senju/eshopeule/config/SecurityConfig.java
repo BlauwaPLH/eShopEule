@@ -1,6 +1,5 @@
 package org.senju.eshopeule.config;
 
-import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.constant.enums.BootstrapPerm;
 import org.senju.eshopeule.security.SimpleUserDetailsService;
@@ -58,7 +57,6 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtAuthenticationFilter(authenticationManager(http), restAuthenticationEntryPoint), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(c -> c
                         .successHandler(oauth2AuthenticationSuccessHandler)
-//                        .failureHandler(authenticationFailureHandler)
                 )
                 .authorizeHttpRequests(c -> c
                         .requestMatchers("/api/v1/demo/admin").hasAnyAuthority(BootstrapPerm.ADMIN_READ.getPermName(), BootstrapPerm.ADMIN_WRITE.getPermName())

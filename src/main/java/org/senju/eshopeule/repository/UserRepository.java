@@ -1,7 +1,9 @@
 package org.senju.eshopeule.repository;
 
+import jakarta.transaction.Transactional;
 import org.senju.eshopeule.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -21,4 +23,12 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query(value = "SELECT username FROM users WHERE email = :email", nativeQuery = true)
     Optional<String> findUsernameByEmail(@Param("email") String email);
+
+    @Query(value = "SELECT password FROM users WHERE username = :un", nativeQuery = true)
+    Optional<String> getEncodedPasswordByUsername(@Param("un") String username);
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE users SET password = :newPassword WHERE username = :un", nativeQuery = true)
+    void updatePasswordByUsername(@Param("un") String username, @Param("newPassword") String newPassword);
 }

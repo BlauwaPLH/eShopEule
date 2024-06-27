@@ -1,5 +1,6 @@
 package org.senju.eshopeule.service.impl;
 
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.constant.enums.BootstrapRole;
 import org.senju.eshopeule.constant.enums.JwtClaims;
@@ -32,6 +33,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Map;
 
 import static org.senju.eshopeule.constant.exceptionMessage.UserExceptionMsg.*;
@@ -99,35 +101,52 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public RefreshTokenResponse refreshToken(final RefreshTokenRequest request) throws RefreshTokenException {
-        return null;
-//        inMemoryTokenService.delete(currUser.getUsername());
-//        String token = request.getRefreshToken();
-//        String tokenType = jwtUtil.extractClaims(token, c -> c.get(JwtClaims.TYPE.getClaimName(), String.class));
-//        boolean isTokenValid = tokenRepository.findByToken(token)
-//                .map(t -> t.getIdentifier().equals(jwtUtil.extractUsername(token)) && !t.isRevoked())
-//                .orElse(false);
-//        if (jwtUtil.validateToken(token, currUser) && isTokenValid && tokenType.equals(TokenType.REFRESH_TOKEN.getTypeName())) {
-//            this.revokeRefreshTokenByIdentifier(currUser.getUsername());
-//            String refreshToken = jwtUtil.generateRefreshToken(
-//                    Map.of(JwtClaims.TYPE.getClaimName(), TokenType.REFRESH_TOKEN.getTypeName()),
-//                    currUser.getUsername()
-//            );
-//            String accessToken = jwtUtil.generateAccessToken(
-//                    Map.of(JwtClaims.TYPE.getClaimName(), TokenType.REFRESH_TOKEN.getTypeName()),
-//                    currUser.getUsername()
-//            );
-//            tokenRepository.save(
-//                    Token.builder()
-//                            .type(TokenType.REFRESH_TOKEN)
-//                            .token(refreshToken)
-//                            .identifier(currUser.getUsername())
-//                            .build()
-//            );
-//            return RefreshTokenResponse.builder()
-//                    .accessToken(accessToken)
-//                    .refreshToken(refreshToken)
-//                    .build();
-//        } else throw new RefreshTokenException(REFRESH_TOKEN_ERROR_MSG);
+        final String oldRefreshToken = request.getRefreshToken();
+        try {
+            final String username = jwtUtil.extractUsername(oldRefreshToken);
+            String tokenType = jwtUtil.extractClaims(oldRefreshToken, c -> c.get(JwtClaims.TYPE.getClaimName(), String.class));
+            boolean isTokenValid = tokenRepository.findByToken(oldRefreshToken)
+                    .map(t -> t.getIdentifier().equals(username) && !t.isRevoked())
+                    .orElse(false);
+            if (isTokenValid && tokenType.equals(TokenType.REFRESH_TOKEN.getTypeName())) {
+                inMemoryTokenService.delete(username);
+                this.revokeRefreshTokenByIdentifier(username);
+
+                final String newRefreshToken = jwtUtil.generateRefreshToken(
+                        Collections.singletonMap(JwtClaims.TYPE.getClaimName(), TokenType.REFRESH_TOKEN.getTypeName()),
+                        username
+                );
+                final String newAccessToken = jwtUtil.generateAccessToken(
+                        Collections.singletonMap(JwtClaims.TYPE.getClaimName(), TokenType.ACCESS_TOKEN.getTypeName()),
+                        username
+                );
+
+                inMemoryTokenService.save(username,
+                        Token.builder()
+                                .type(TokenType.ACCESS_TOKEN)
+                                .token(newAccessToken)
+                                .identifier(username)
+                                .revoked(false)
+                                .build()
+                );
+                tokenRepository.save(
+                        Token.builder()
+                                .type(TokenType.REFRESH_TOKEN)
+                                .token(newRefreshToken)
+                                .identifier(username)
+                                .revoked(false)
+                                .build()
+                );
+
+                return RefreshTokenResponse.builder()
+                        .message("Refresh token successfully")
+                        .accessToken(newAccessToken)
+                        .refreshToken(newRefreshToken)
+                        .build();
+            } else throw new RefreshTokenException(REFRESH_TOKEN_ERROR_MSG);
+        } catch (JwtException ex) {
+            throw new RefreshTokenException(ex.getMessage());
+        }
     }
 
     @Override
@@ -166,12 +185,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void changePassword(final ChangePasswordRequest request, final UserDetails userDetails) throws ChangePasswordException, UserNotExistsException {
-        var connectedUser = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new UserNotExistsException(USER_NOT_EXISTS_MSG));
-        if (!passwordEncoder.matches(request.getOldPassword(), connectedUser.getPassword())) {
+        final String principal = userDetails.getUsername();
+        var encodedPassword = userRepository.getEncodedPasswordByUsername(principal).orElseThrow(() -> new UserNotExistsException(USER_NOT_EXISTS_MSG));
+        if (!passwordEncoder.matches(request.getOldPassword(), encodedPassword)) {
             throw new ChangePasswordException(CHANGE_PASSWORD_ERROR_MSG);
         }
-        connectedUser.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        userRepository.save(connectedUser);
+        userRepository.updatePasswordByUsername(principal, passwordEncoder.encode(request.getNewPassword()));
     }
 
     private void revokeRefreshTokenByIdentifier(String identifier) {
