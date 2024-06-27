@@ -3,6 +3,7 @@ package org.senju.eshopeule.model.token;
 import jakarta.persistence.*;
 import lombok.*;
 import org.senju.eshopeule.constant.enums.TokenType;
+import org.senju.eshopeule.model.BaseEntity;
 
 @Getter
 @Setter
@@ -11,7 +12,7 @@ import org.senju.eshopeule.constant.enums.TokenType;
 @NoArgsConstructor
 @Entity
 @Table(name = "tokens")
-public class Token {
+public class Token extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

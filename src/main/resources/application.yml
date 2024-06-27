@@ -12,15 +12,12 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
 
   mail:
     host: smtp.gmail.com
     port: 587
     username: eshop27test@gmail.com
-    password: mborsyryruuaogqj
+    password: xtluepqerlwmthco
     properties:
       mail:
         smtp:
@@ -64,3 +61,8 @@ security:
         discord:
           client-id: 1220756198157189151
           client-secret: PNhWDeeFTSmqm0dfSS0O_-qV4UP5JJ08
+
+twilio:
+  account-sid: AC6c18541e060f12cb646a2a50fd49f984
+  auth-token: 5b6e5412d576e151b8e2f12627b8d347
+  phone-number: +16502678582

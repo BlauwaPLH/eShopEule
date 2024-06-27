@@ -7,7 +7,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum TokenType {
     REFRESH_TOKEN("rt"),
-    ACCESS_TOKEN("at");
+    ACCESS_TOKEN("at"),
+    VERIFY_TOKEN("vt");
 
     private final String typeName;
 }

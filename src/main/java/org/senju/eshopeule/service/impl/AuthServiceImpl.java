@@ -162,13 +162,16 @@ public class AuthServiceImpl implements AuthService {
                 .phoneNumber(request.getPhoneNumber())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(bootstrapRole)
-                .isEnabled(true)
+                .isEnabled(false)
                 .isAccountNonLocked(true)
                 .isAccountNonExpired(true)
                 .isCredentialsNonExpired(true)
                 .build();
 
         userRepository.save(newUser);
+
+//        final String verifyToken =
+
         return RegistrationResponse
                 .builder()
                 .message("CHECK EMAIL OR SMS VERIFICATION")
@@ -191,6 +194,11 @@ public class AuthServiceImpl implements AuthService {
             throw new ChangePasswordException(CHANGE_PASSWORD_ERROR_MSG);
         }
         userRepository.updatePasswordByUsername(principal, passwordEncoder.encode(request.getNewPassword()));
+    }
+
+    @Override
+    public void verifyRegister() throws VerifyException {
+
     }
 
     private void revokeRefreshTokenByIdentifier(String identifier) {
