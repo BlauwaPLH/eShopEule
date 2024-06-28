@@ -12,15 +12,13 @@ import org.senju.eshopeule.dto.response.LoginResponse;
 import org.senju.eshopeule.dto.response.RefreshTokenResponse;
 import org.senju.eshopeule.dto.response.RegistrationResponse;
 import org.senju.eshopeule.exceptions.*;
-import org.senju.eshopeule.model.token.Token;
 import org.senju.eshopeule.constant.enums.TokenType;
 import org.senju.eshopeule.model.user.Role;
 import org.senju.eshopeule.model.user.User;
+import org.senju.eshopeule.repository.RedisRepository;
 import org.senju.eshopeule.repository.RoleRepository;
 import org.senju.eshopeule.repository.UserRepository;
-import org.senju.eshopeule.repository.TokenRepository;
 import org.senju.eshopeule.service.AuthService;
-import org.senju.eshopeule.service.InMemoryTokenService;
 import org.senju.eshopeule.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +27,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,9 +44,9 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final AuthenticationManager authenticationManager;
-    private final TokenRepository tokenRepository;
     private final JwtUtil jwtUtil;
-    private final InMemoryTokenService inMemoryTokenService;
+    private final RedisRepository<String> accessTokenRepository;
+    private final RedisRepository<String> refreshTokenRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
@@ -72,25 +69,15 @@ public class AuthServiceImpl implements AuthService {
                 Map.of(JwtClaims.TYPE.getClaimName(), TokenType.ACCESS_TOKEN.getTypeName()),
                 username
         );
-        inMemoryTokenService.save(username, Token.builder()
-                .revoked(false)
-                .token(accessToken)
-                .identifier(username)
-                .build());
+        accessTokenRepository.save(username, accessToken);
 
         final String refreshToken = jwtUtil.generateRefreshToken(
                 Map.of(JwtClaims.TYPE.getClaimName(), TokenType.REFRESH_TOKEN.getTypeName()),
                 username
         );
-        this.revokeRefreshTokenByIdentifier(username);
-        tokenRepository.save(
-                Token.builder()
-                        .type(TokenType.REFRESH_TOKEN)
-                        .token(refreshToken)
-                        .identifier(username)
-                        .revoked(false)
-                        .build()
-        );
+        refreshTokenRepository.deleteByKey(username);
+        refreshTokenRepository.save(username, refreshToken);
+
         return LoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -105,12 +92,12 @@ public class AuthServiceImpl implements AuthService {
         try {
             final String username = jwtUtil.extractUsername(oldRefreshToken);
             String tokenType = jwtUtil.extractClaims(oldRefreshToken, c -> c.get(JwtClaims.TYPE.getClaimName(), String.class));
-            boolean isTokenValid = tokenRepository.findByToken(oldRefreshToken)
-                    .map(t -> t.getIdentifier().equals(username) && !t.isRevoked())
-                    .orElse(false);
-            if (isTokenValid && tokenType.equals(TokenType.REFRESH_TOKEN.getTypeName())) {
-                inMemoryTokenService.delete(username);
-                this.revokeRefreshTokenByIdentifier(username);
+            String storedRefreshToken = refreshTokenRepository.getByKey(username);
+            if (storedRefreshToken == null) throw new RefreshTokenException(JWT_TOKEN_INVALID_ERROR_MSG);
+
+            if (oldRefreshToken.equals(storedRefreshToken) && tokenType.equals(TokenType.REFRESH_TOKEN.getTypeName())) {
+                accessTokenRepository.deleteByKey(username);
+                refreshTokenRepository.deleteByKey(username);
 
                 final String newRefreshToken = jwtUtil.generateRefreshToken(
                         Collections.singletonMap(JwtClaims.TYPE.getClaimName(), TokenType.REFRESH_TOKEN.getTypeName()),
@@ -121,22 +108,8 @@ public class AuthServiceImpl implements AuthService {
                         username
                 );
 
-                inMemoryTokenService.save(username,
-                        Token.builder()
-                                .type(TokenType.ACCESS_TOKEN)
-                                .token(newAccessToken)
-                                .identifier(username)
-                                .revoked(false)
-                                .build()
-                );
-                tokenRepository.save(
-                        Token.builder()
-                                .type(TokenType.REFRESH_TOKEN)
-                                .token(newRefreshToken)
-                                .identifier(username)
-                                .revoked(false)
-                                .build()
-                );
+                accessTokenRepository.save(username, newAccessToken);
+                refreshTokenRepository.save(username, newRefreshToken);
 
                 return RefreshTokenResponse.builder()
                         .message("Refresh token successfully")
@@ -178,8 +151,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void logout(String identifier) {
         logger.debug("LOGOUT.... {}", identifier);
-        inMemoryTokenService.delete(identifier);
-        tokenRepository.revokeRefreshTokenByIdentifier(identifier);
+        accessTokenRepository.deleteByKey(identifier);
+        refreshTokenRepository.deleteByKey(identifier);
     }
 
 
@@ -191,10 +164,5 @@ public class AuthServiceImpl implements AuthService {
             throw new ChangePasswordException(CHANGE_PASSWORD_ERROR_MSG);
         }
         userRepository.updatePasswordByUsername(principal, passwordEncoder.encode(request.getNewPassword()));
-    }
-
-    private void revokeRefreshTokenByIdentifier(String identifier) {
-        logger.debug("REVOKING REFRESH TOKEN BY IDENTIFIER");
-        tokenRepository.revokeRefreshTokenByIdentifier(identifier);
     }
 }

@@ -20,13 +20,17 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: eshop27test@gmail.com
-    password: mborsyryruuaogqj
+    password: vgjzmzepofhxuqjw
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 server:
   port: 8080
@@ -46,6 +50,8 @@ bootstrap:
       password: Abc123456@
 
 security:
+  verify-code:
+    expiration: 600
   jwt:
     secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
     access-token:

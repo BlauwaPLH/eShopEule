@@ -3,7 +3,6 @@ package org.senju.eshopeule;
 import org.junit.jupiter.api.Test;
 import org.senju.eshopeule.constant.enums.TokenType;
 import org.senju.eshopeule.model.token.Token;
-import org.senju.eshopeule.repository.TokenRepository;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 

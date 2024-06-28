@@ -8,9 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.constant.enums.JwtClaims;
 import org.senju.eshopeule.constant.enums.TokenType;
 import org.senju.eshopeule.dto.response.LoginResponse;
-import org.senju.eshopeule.model.token.Token;
-import org.senju.eshopeule.repository.TokenRepository;
-import org.senju.eshopeule.service.InMemoryTokenService;
+import org.senju.eshopeule.repository.RedisRepository;
 import org.senju.eshopeule.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +31,10 @@ public final class OAuth2AuthenticationSuccessHandler implements AuthenticationS
     private final AuthenticationSuccessHandler delegate = new SavedRequestAwareAuthenticationSuccessHandler();
     private final UserRepositoryOAuth2UserHandler oAuth2UserHandler;
     private final ObjectMapper objectMapper;
-    private final InMemoryTokenService inMemoryTokenService;
+    private final RedisRepository<String> accessTokenRepository;
+    private final RedisRepository<String> refreshTokenRepository;
+
     private final JwtUtil jwtUtil;
-    private final TokenRepository tokenRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -51,25 +50,14 @@ public final class OAuth2AuthenticationSuccessHandler implements AuthenticationS
                         Map.of(JwtClaims.TYPE.getClaimName(), TokenType.ACCESS_TOKEN.getTypeName()),
                         username
                 );
-                inMemoryTokenService.save(username, Token.builder()
-                        .revoked(false)
-                        .token(accessToken)
-                        .identifier(username)
-                        .build());
+                accessTokenRepository.save(username, accessToken);
 
                 final String refreshToken = jwtUtil.generateRefreshToken(
                         Map.of(JwtClaims.TYPE.getClaimName(), TokenType.REFRESH_TOKEN.getTypeName()),
                         username
                 );
-                tokenRepository.revokeRefreshTokenByIdentifier(username);
-                tokenRepository.save(
-                        Token.builder()
-                                .type(TokenType.REFRESH_TOKEN)
-                                .token(refreshToken)
-                                .identifier(username)
-                                .revoked(false)
-                                .build()
-                );
+                refreshTokenRepository.deleteByKey(username);
+                refreshTokenRepository.save(username, refreshToken);
 
                 var authResponse = LoginResponse.builder()
                         .accessToken(accessToken)

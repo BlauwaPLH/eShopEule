@@ -4,9 +4,9 @@ package org.senju.eshopeule.security.authProvider;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.exceptions.JwtAuthenticationException;
+import org.senju.eshopeule.repository.RedisRepository;
 import org.senju.eshopeule.security.JwtAuthenticationToken;
 import org.senju.eshopeule.security.SimpleUserDetailsService;
-import org.senju.eshopeule.service.InMemoryTokenService;
 import org.senju.eshopeule.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     private final JwtUtil jwtUtil;
     private final SimpleUserDetailsService userDetailsService;
-    private final InMemoryTokenService inMemoryTokenService;
+    private final RedisRepository<String> accessTokenRepository;
 
     private final UserDetailsChecker authenticationChecks = new SimplePreUserDetailsChecker();
 
@@ -39,7 +39,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         final String accessToken = auth.getAccessToken();
         try {
             final String username = jwtUtil.extractUsername(accessToken);
-            if (accessToken.equals(inMemoryTokenService.get(username))) {
+            if (accessToken.equals(accessTokenRepository.getByKey(username))) {
                 UserDetails user = userDetailsService.loadUserDetailsByUsername(username);
                 this.authenticationChecks.check(user);
                 return new JwtAuthenticationToken(user, user.getAuthorities(), accessToken);

@@ -3,7 +3,6 @@ package org.senju.eshopeule.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.request.LoginRequest;
-import org.senju.eshopeule.repository.TokenRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +13,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 
 public class DemoController {
-
-    private final TokenRepository tokenRepository;
 
     @PostMapping(path = "/api/r/v1/demo")
     public ResponseEntity<Map<?, ?>> demo(@Valid @RequestBody LoginRequest request) {
