@@ -17,6 +17,10 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+
+	all {
+		exclude group: 'commons-logging', module: 'commons-logging'
+	}
 }
 
 repositories {
@@ -25,7 +29,8 @@ repositories {
 
 ext {
 	versions = [
-			jjwt : '0.12.5'
+			jjwt: '0.12.5',
+			twilio: '10.3.0',
 	]
 }
 
@@ -38,7 +43,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-
 	implementation "io.jsonwebtoken:jjwt-api:${versions.jjwt}"
 	runtimeOnly "io.jsonwebtoken:jjwt-impl:${versions.jjwt}"
 	runtimeOnly "io.jsonwebtoken:jjwt-jackson:${versions.jjwt}"
@@ -47,6 +51,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 
 	runtimeOnly 'org.postgresql:postgresql'
+	implementation "com.twilio.sdk:twilio:${versions.twilio}"
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

@@ -21,4 +21,6 @@ public interface AuthService {
     void logout(String identifier);
 
     void changePassword(ChangePasswordRequest request, UserDetails userDetails) throws ChangePasswordException, UserNotExistsException;
+
+    void verifyRegister() throws VerifyException;
 }
