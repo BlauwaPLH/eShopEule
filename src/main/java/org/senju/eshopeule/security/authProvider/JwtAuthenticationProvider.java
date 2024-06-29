@@ -39,11 +39,13 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         final String accessToken = auth.getAccessToken();
         try {
             final String username = jwtUtil.extractUsername(accessToken);
-            if (accessToken.equals(accessTokenRepository.getByKey(username))) {
-                UserDetails user = userDetailsService.loadUserDetailsByUsername(username);
-                this.authenticationChecks.check(user);
-                return new JwtAuthenticationToken(user, user.getAuthorities(), accessToken);
-            } else throw new JwtAuthenticationException(JWT_TOKEN_INVALID_ERROR_MSG);
+            final String storedToken = accessTokenRepository.getByKey(username);
+            if (storedToken == null || !storedToken.equals(accessToken)) {
+                throw new JwtAuthenticationException(JWT_TOKEN_INVALID_ERROR_MSG);
+            }
+            UserDetails user = userDetailsService.loadUserDetailsByUsername(username);
+            this.authenticationChecks.check(user);
+            return new JwtAuthenticationToken(user, user.getAuthorities(), accessToken);
         } catch (JwtException e) {
             throw new JwtAuthenticationException(e.getMessage());
         }

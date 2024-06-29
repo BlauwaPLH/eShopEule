@@ -30,7 +30,6 @@ import java.util.List;
 public class SecurityConfig {
 
     private final AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler;
-//    private final Filter jwtAuthenticationFilter;
     private final AuthenticationProvider jwtAuthenticationProvider;
     private final SimpleUserDetailsService userDetailsService;
     private final AuthenticationEntryPoint restAuthenticationEntryPoint;

@@ -3,7 +3,6 @@ package org.senju.eshopeule.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.senju.eshopeule.validation.constraints.EmailOrPhoneConstraint;
 
 import java.io.Serial;
 
@@ -11,18 +10,19 @@ import static org.senju.eshopeule.constant.pattern.RegexPattern.*;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@EmailOrPhoneConstraint
 public final class RegistrationRequest implements BaseRequest {
 
     @Serial
     private static final long serialVersionUID = -7248245700460613926L;
 
+    @NotBlank(message = "Username is mandatory")
     @Pattern(regexp = USERNAME_PATTERN, message = "Username is not valid")
     private String username;
 
+    @NotBlank(message = "Email is mandatory")
     @Pattern(regexp = EMAIL_PATTERN, message = "Email is not valid")
     private String email;
 

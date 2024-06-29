@@ -25,11 +25,12 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     @Transactional
-    public void createAccount(String username, String password, Role role) throws UsernameAlreadyExistsException {
+    public void createAccount(String username, String password, String email, Role role)  throws UsernameAlreadyExistsException {
         var user = userRepository.findByUsername(username).orElse(null);
         if (user == null) {
             user = User.builder()
                     .username(username)
+                    .email(email)
                     .password(passwordEncoder.encode(password))
                     .isEnabled(true)
                     .isAccountNonLocked(true)

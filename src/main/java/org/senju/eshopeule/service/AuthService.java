@@ -1,12 +1,10 @@
 package org.senju.eshopeule.service;
 
-import org.senju.eshopeule.dto.request.ChangePasswordRequest;
-import org.senju.eshopeule.dto.request.LoginRequest;
-import org.senju.eshopeule.dto.request.RefreshTokenRequest;
-import org.senju.eshopeule.dto.request.RegistrationRequest;
+import org.senju.eshopeule.dto.request.*;
 import org.senju.eshopeule.dto.response.LoginResponse;
 import org.senju.eshopeule.dto.response.RefreshTokenResponse;
 import org.senju.eshopeule.dto.response.RegistrationResponse;
+import org.senju.eshopeule.dto.response.VerifyResponse;
 import org.senju.eshopeule.exceptions.*;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -22,5 +20,9 @@ public interface AuthService {
 
     void changePassword(ChangePasswordRequest request, UserDetails userDetails) throws ChangePasswordException, UserNotExistsException;
 
-    void verifyRegister() throws VerifyException;
+    VerifyResponse verifyRegister(VerifyRequest request) throws VerifyException;
+
+    void resendRegistrationVerifyCode(ResendVerifyCodeRequest request) throws VerifyException;
+
+    void resetPassword(ResetPasswordRequest request) throws ChangePasswordException, UserNotExistsException;
 }

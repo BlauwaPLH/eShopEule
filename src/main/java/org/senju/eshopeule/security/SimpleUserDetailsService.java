@@ -30,7 +30,7 @@ public final class SimpleUserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDetailsService.class);
 
-    public UserDetails loadUserDetailsByUsername(String username) {
+    public UserDetails loadUserDetailsByUsername(String username) throws UsernameNotFoundException {
         logger.debug("loadUserDetailsByUsername in {}", UserServiceImpl.class.getName());
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(

@@ -41,7 +41,7 @@ public final class UserRepositoryOAuth2UserHandler implements BiFunction<String,
         }
 
         if (email != null) {
-            String username = userRepository.findUsernameByEmail(email).orElse(null);
+            String username = userRepository.getUsernameByEmail(email).orElse(null);
             if (username == null) {
                 username = email.split("@")[0];
                 final var newUser = userRepository.save(

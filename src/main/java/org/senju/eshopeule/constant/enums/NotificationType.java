@@ -25,8 +25,7 @@ public final class NotificationType {
     @RequiredArgsConstructor
     public enum ContentType {
         FORGOT_PASSWORD("Reset password"),
-        VERIFY_SIGNUP("Verify register account"),
-        MFA("Multi-factor Authentication");
+        VERIFY_SIGNUP("Verify register account");
 
         private final String contentName;
     }

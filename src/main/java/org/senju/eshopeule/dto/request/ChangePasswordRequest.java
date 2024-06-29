@@ -13,8 +13,8 @@ import static org.senju.eshopeule.constant.pattern.RegexPattern.PASSWORD_PATTERN
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @ChangePasswordConstraint
 public final class ChangePasswordRequest implements BaseRequest {
 

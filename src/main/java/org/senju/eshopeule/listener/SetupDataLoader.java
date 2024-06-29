@@ -44,24 +44,24 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     @Override
     @Transactional
-    public void onApplicationEvent(ContextRefreshedEvent event) {
+    public void onApplicationEvent(final ContextRefreshedEvent event) {
         if (alreadySetup) return;
-        Permission cusReadPerm = permissionService.bootstrapPerm(BootstrapPerm.CUS_READ.getPermName());
-        Permission cusWritePerm = permissionService.bootstrapPerm(BootstrapPerm.CUS_WRITE.getPermName());
-        Permission venReadPerm = permissionService.bootstrapPerm(BootstrapPerm.VENDOR_READ.getPermName());
-        Permission venWritePerm = permissionService.bootstrapPerm(BootstrapPerm.VENDOR_WRITE.getPermName());
-        Permission staffReadPerm = permissionService.bootstrapPerm(BootstrapPerm.STAFF_READ.getPermName());
-        Permission staffWritePerm = permissionService.bootstrapPerm(BootstrapPerm.STAFF_WRITE.getPermName());
-        Permission adminReadPerm = permissionService.bootstrapPerm(BootstrapPerm.ADMIN_READ.getPermName());
-        Permission adminWritePerm = permissionService.bootstrapPerm(BootstrapPerm.ADMIN_WRITE.getPermName());
+        final Permission cusReadPerm = permissionService.bootstrapPerm(BootstrapPerm.CUS_READ.getPermName());
+        final Permission cusWritePerm = permissionService.bootstrapPerm(BootstrapPerm.CUS_WRITE.getPermName());
+        final Permission venReadPerm = permissionService.bootstrapPerm(BootstrapPerm.VENDOR_READ.getPermName());
+        final Permission venWritePerm = permissionService.bootstrapPerm(BootstrapPerm.VENDOR_WRITE.getPermName());
+        final Permission staffReadPerm = permissionService.bootstrapPerm(BootstrapPerm.STAFF_READ.getPermName());
+        final Permission staffWritePerm = permissionService.bootstrapPerm(BootstrapPerm.STAFF_WRITE.getPermName());
+        final Permission adminReadPerm = permissionService.bootstrapPerm(BootstrapPerm.ADMIN_READ.getPermName());
+        final Permission adminWritePerm = permissionService.bootstrapPerm(BootstrapPerm.ADMIN_WRITE.getPermName());
 
-        Role adminRole = roleService.bootstrapRole(BootstrapRole.ADMIN.getRoleName(), List.of(adminReadPerm, adminWritePerm));
+        final Role adminRole = roleService.bootstrapRole(BootstrapRole.ADMIN.getRoleName(), List.of(adminReadPerm, adminWritePerm));
         roleService.bootstrapRole(BootstrapRole.STAFF.getRoleName(), List.of(staffReadPerm, staffWritePerm));
         roleService.bootstrapRole(BootstrapRole.VENDOR.getRoleName(), List.of(venReadPerm, venWritePerm));
         roleService.bootstrapRole(BootstrapRole.CUSTOMER.getRoleName(), List.of(cusReadPerm, cusWritePerm));
 
         try {
-            staffService.createAccount(superAdminUsername, superAdminPassword, adminRole);
+            staffService.createAccount(superAdminUsername, superAdminPassword, superAdminEmail, adminRole);
         } catch (UsernameAlreadyExistsException ex) {
             logger.debug("Creating super admin account: {}", ex.getMessage());
         }

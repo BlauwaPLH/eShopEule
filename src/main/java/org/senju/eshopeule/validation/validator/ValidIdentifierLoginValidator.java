@@ -10,6 +10,6 @@ public class ValidIdentifierLoginValidator implements ConstraintValidator<ValidI
 
     @Override
     public boolean isValid(String identifier, ConstraintValidatorContext context) {
-        return identifier.matches(USERNAME_PATTERN) || identifier.matches(EMAIL_PATTERN) || identifier.matches(PHONE_PATTERN);
+        return identifier.matches(USERNAME_PATTERN) || identifier.matches(EMAIL_PATTERN);
     }
 }
