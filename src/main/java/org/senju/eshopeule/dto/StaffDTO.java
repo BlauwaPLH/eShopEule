@@ -1,10 +1,8 @@
 package org.senju.eshopeule.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.springframework.security.core.parameters.P;
 
 import java.io.Serial;
 
@@ -22,11 +20,9 @@ public final class StaffDTO implements BaseDTO {
 
     private String id;
 
-    @NotBlank(message = "The username is required")
     @Pattern(regexp = USERNAME_PATTERN, message = "Username is invalid")
     private String username;
 
-    @NotBlank(message = "The email is required")
     @Pattern(regexp = EMAIL_PATTERN, message = "Email is invalid")
     private String email;
 
@@ -34,6 +30,7 @@ public final class StaffDTO implements BaseDTO {
     private String password;
 
     @JsonProperty(value = "phone_number")
+    @Pattern(regexp = PHONE_PATTERN, message = "Phone number is invalid")
     private String phoneNumber;
 
     private boolean enabled;

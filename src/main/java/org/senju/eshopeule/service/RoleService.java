@@ -20,5 +20,7 @@ public interface RoleService {
 
     List<RoleDTO> getAllRole();
 
+    List<RoleDTO> getAllStaffRole();
+
     Role bootstrapRole(String name, Collection<Permission> permissions);
 }

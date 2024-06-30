@@ -43,6 +43,13 @@ public class RoleController {
         return ResponseEntity.ok(roleService.getAllRole());
     }
 
+    @GetMapping(path = "/staff")
+    public ResponseEntity<List<RoleDTO>> getAllStaffRole() {
+        logger.debug("Get all staff role");
+        return ResponseEntity.ok(roleService.getAllStaffRole());
+    }
+
+
     @PostMapping
     public ResponseEntity<?> createNewRole(@RequestBody RoleDTO role) {
         logger.debug("Create new role");
@@ -61,8 +68,8 @@ public class RoleController {
         }
     }
 
-    @DeleteMapping(path = "/del")
-    public ResponseEntity<?> deleteRoleById(@RequestParam("id") String id) {
+    @DeleteMapping(path = "/del/{id}")
+    public ResponseEntity<?> deleteRoleById(@PathVariable("id") String id) {
         logger.debug("Delete role with id: {}", id);
         roleService.deleteById(id);
         return ResponseEntity.noContent().build();

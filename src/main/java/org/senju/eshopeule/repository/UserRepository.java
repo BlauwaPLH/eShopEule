@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,8 +19,8 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query(value = "SELECT EXISTS (SELECT 1 FROM users WHERE username = :un OR email = :em)", nativeQuery = true)
     boolean checkUserExistsWithUsernameOrEmail(@Param("un") String username, @Param("em") String email);
 
-    @Query(value = "SELECT EXISTS (SELECT 1 FROM users WHERE username = :un OR email = :em AND id != :id)", nativeQuery = true)
-    boolean checkUserExistsWithUsernameOrEmailExceptId(@Param("un") String username, @Param("em") String email, @Param("id") String id);
+    @Query(value = "SELECT EXISTS (SELECT 1 FROM users WHERE username = :un OR email = :em AND id = :id)", nativeQuery = true)
+    boolean checkUserExistsWithUsernameOrEmailExpectId(@Param("un") String username, @Param("em") String email, @Param("id") String id);
 
     @Query(value = "SELECT email FROM users WHERE username = :ide OR email = :ide OR phone_number = :ide", nativeQuery = true)
     Optional<String> getEmailByIde(@Param("ide") String ide);
@@ -32,6 +33,9 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query(value = "SELECT username, email FROM users WHERE username = :ide OR email = :ide", nativeQuery = true)
     Optional<LoginInfoView> getLoginInfoViewByIdentifier(@Param("ide") String identifier);
+
+    @Query(value = "SELECT u FROM User u WHERE u.role.name NOT IN ('ADMIN', 'CUSTOMER', 'VENDOR')")
+    List<User> getAllStaff();
 
     @Transactional
     @Modifying

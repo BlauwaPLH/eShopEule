@@ -25,6 +25,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.List;
 
+import static org.senju.eshopeule.constant.enums.BootstrapPerm.ADMIN_READ;
+import static org.senju.eshopeule.constant.enums.BootstrapPerm.ADMIN_WRITE;
+
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -58,7 +61,7 @@ public class SecurityConfig {
                         .successHandler(oauth2AuthenticationSuccessHandler)
                 )
                 .authorizeHttpRequests(c -> c
-                        .requestMatchers("/api/v1/demo/admin").hasAnyAuthority(BootstrapPerm.ADMIN_READ.getPermName(), BootstrapPerm.ADMIN_WRITE.getPermName())
+                        .requestMatchers("/api/r/*/role/**").hasAnyAuthority(ADMIN_READ.getPermName(), ADMIN_WRITE.getPermName())
                         .requestMatchers("/api/p/**").permitAll()
                         .anyRequest().authenticated()
                 )

@@ -45,6 +45,12 @@ public class RedisConfig {
                         RedisCacheConfiguration.defaultCacheConfig()
                                 .entryTtl(Duration.ofHours(1))
                                 .disableCachingNullValues()
+                )
+                .withCacheConfiguration(
+                        "staffCache",
+                        RedisCacheConfiguration.defaultCacheConfig()
+                                .entryTtl(Duration.ofHours(12))
+                                .disableCachingNullValues()
                 );
     }
 }

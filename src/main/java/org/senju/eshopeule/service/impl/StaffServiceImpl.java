@@ -2,6 +2,7 @@ package org.senju.eshopeule.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.senju.eshopeule.constant.enums.BootstrapRole;
 import org.senju.eshopeule.dto.StaffDTO;
 import org.senju.eshopeule.exceptions.RoleNotExistsException;
 import org.senju.eshopeule.exceptions.UserAlreadyExistsException;
@@ -15,12 +16,19 @@ import org.senju.eshopeule.repository.UserRepository;
 import org.senju.eshopeule.service.StaffService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.senju.eshopeule.constant.enums.BootstrapRole.*;
+import static org.senju.eshopeule.constant.exceptionMessage.RoleExceptionMsg.ROLE_NOT_EXISTS_MSG;
 import static org.senju.eshopeule.constant.exceptionMessage.RoleExceptionMsg.ROLE_NOT_EXISTS_WITH_ID_MSG;
-import static org.senju.eshopeule.constant.exceptionMessage.UserExceptionMsg.USER_ALREADY_EXISTS_MSG;
-import static org.senju.eshopeule.constant.exceptionMessage.UserExceptionMsg.USER_NOT_EXISTS_MSG;
+import static org.senju.eshopeule.constant.exceptionMessage.UserExceptionMsg.*;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +40,31 @@ public class StaffServiceImpl implements StaffService {
 
     private static final Logger logger = LoggerFactory.getLogger(StaffService.class);
     private final StaffMapper staffMapper;
+
+    @Override
+    public List<StaffDTO> getAllStaff() {
+        return userRepository.getAllStaff().stream()
+                .map(staffMapper::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Cacheable(value = "staffCache", key = "#id")
+    public StaffDTO getStaffWithId(String id) throws UserNotExistsException {
+        final User loadedUser = userRepository.findById(id).orElseThrow(
+                () -> new UserNotExistsException(String.format(USER_NOT_EXISTS_WITH_ID_MSG, id))
+        );
+        String roleName = loadedUser.getRole().getName();
+        if (roleName.equals(CUSTOMER.getRoleName()) || roleName.equals(ADMIN.getRoleName()) || roleName.equals(VENDOR.getRoleName()))
+            throw new UserNotExistsException(USER_NOT_EXISTS_MSG);
+        return staffMapper.convertToDTO(loadedUser);
+    }
+
+    @Override
+    @CacheEvict(value = "staffCache", key = "#id")
+    public void deleteStaffWithId(String id) {
+        userRepository.deleteById(id);
+    }
 
     @Override
     @Transactional
@@ -56,21 +89,35 @@ public class StaffServiceImpl implements StaffService {
     @Override
     public void createAccount(StaffDTO staff) throws UserAlreadyExistsException, RoleNotExistsException {
         final User newStaff = staffMapper.convertToEntity(staff);
-        final Role role = roleRepository.findById(newStaff.getRole().getId()).orElseThrow(
-                () -> new RoleNotExistsException(
-                        String.format(ROLE_NOT_EXISTS_WITH_ID_MSG, newStaff.getRole().getId())
-                )
-        );
-        newStaff.setRole(role);
-        newStaff.setPassword(passwordEncoder.encode(newStaff.getPassword()));
+
         boolean isExistingUser = userRepository.checkUserExistsWithUsernameOrEmail(newStaff.getUsername(), newStaff.getEmail());
         if (isExistingUser) throw new UserAlreadyExistsException(USER_ALREADY_EXISTS_MSG);
+
+        boolean isExistingRole = roleRepository.existsById(newStaff.getId());
+        if (!isExistingRole) throw new RoleNotExistsException(ROLE_NOT_EXISTS_MSG);
+
+        newStaff.setPassword(passwordEncoder.encode(newStaff.getPassword()));
+        newStaff.setAccountNonExpired(true);
+        newStaff.setAccountNonLocked(true);
+        newStaff.setCredentialsNonExpired(true);
         userRepository.save(newStaff);
     }
 
     @Override
-    public void updateAccount(StaffDTO staff) throws UserNotExistsException, UserAlreadyExistsException, RoleNotExistsException {
-        final User updatedUser = staffMapper.convertToEntity(staff);
+    @CachePut(value = "staffCache", key = "#dto.id")
+    public StaffDTO updateAccount(StaffDTO dto) throws UserNotExistsException, UserAlreadyExistsException, RoleNotExistsException {
+        User loadedStaff = userRepository.findById(dto.getId()).orElseThrow(
+                () -> new UserNotExistsException(USER_NOT_EXISTS_MSG)
+        );
+        loadedStaff = staffMapper.updateFromDTO(dto, loadedStaff);
 
+        boolean isUserExisting = userRepository.checkUserExistsWithUsernameOrEmailExpectId(loadedStaff.getUsername(), loadedStaff.getEmail(), loadedStaff.getId());
+        if (isUserExisting) throw new UserAlreadyExistsException(USER_ALREADY_EXISTS_MSG);
+
+        boolean isRoleExisting = roleRepository.existsById(loadedStaff.getRole().getId());
+        if (!isRoleExisting) throw new RoleNotExistsException(ROLE_NOT_EXISTS_MSG);
+
+        if (dto.getPassword() != null) loadedStaff.setPassword(passwordEncoder.encode(dto.getPassword()));
+        return staffMapper.convertToDTO(userRepository.save(loadedStaff));
     }
 }

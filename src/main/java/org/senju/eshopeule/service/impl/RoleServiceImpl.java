@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.senju.eshopeule.constant.exceptionMessage.RoleExceptionMsg.ROLE_NOT_EXISTS_WITH_ID_MSG;
 import static org.senju.eshopeule.constant.exceptionMessage.RoleExceptionMsg.ROLE_NOT_EXISTS_WITH_NAME_MSG;
@@ -64,11 +65,17 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    @Cacheable(value = "roleCache")
     public List<RoleDTO> getAllRole() {
         return roleRepository.findAll().stream()
                 .map(roleMapper::convertToDTO)
-                .toList();
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RoleDTO> getAllStaffRole() {
+        return roleRepository.getAllStaffRole().stream()
+                .map(roleMapper::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
