@@ -107,8 +107,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public RegistrationResponse register(final RegistrationRequest request)
             throws SignUpException, UserAlreadyExistsException {
-        var existingUser = userRepository.getIdByUsernameOrEmail(request.getUsername(), request.getEmail());
-        if (existingUser.isPresent()) throw new UserAlreadyExistsException(USER_ALREADY_EXISTS_MSG);
+        boolean isExistingUser = userRepository.checkUserExistsWithUsernameOrEmail(request.getUsername(), request.getEmail());
+        if (isExistingUser) throw new UserAlreadyExistsException(USER_ALREADY_EXISTS_MSG);
 
         tmpUserRedisRepository.save(request.getUsername(), request);
 
@@ -140,8 +140,8 @@ public class AuthServiceImpl implements AuthService {
         RegistrationRequest registrationRequest = tmpUserRedisRepository.getByKey(username);
         if (registrationRequest == null) throw new VerifyException(USER_NOT_EXISTS_MSG);
 
-        var existingIdUsers = userRepository.getIdByUsernameOrEmail(registrationRequest.getUsername(), registrationRequest.getEmail());
-        if (existingIdUsers.isPresent()) throw new VerifyException(USER_ALREADY_EXISTS_MSG);
+        boolean isExistingUser = userRepository.checkUserExistsWithUsernameOrEmail(registrationRequest.getUsername(), registrationRequest.getEmail());
+        if (isExistingUser) throw new VerifyException(USER_ALREADY_EXISTS_MSG);
 
         Role bootstrapRole = roleRepository.findByName(BootstrapRole.CUSTOMER.getRoleName()).orElseThrow(() -> new VerifyException(SIGNUP_ERROR_MSG));
 

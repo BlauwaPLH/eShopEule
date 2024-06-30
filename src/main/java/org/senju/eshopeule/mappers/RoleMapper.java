@@ -1,33 +1,37 @@
 package org.senju.eshopeule.mappers;
 
+import org.mapstruct.*;
+import org.senju.eshopeule.dto.PermissionDTO;
 import org.senju.eshopeule.dto.RoleDTO;
+import org.senju.eshopeule.model.user.Permission;
 import org.senju.eshopeule.model.user.Role;
 
-public final class RoleMapper implements Mapper<Role, RoleDTO> {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-    private static final PermissionMapper permMapper = PermissionMapper.getInstance();
-    private static final RoleMapper INSTANCE = new RoleMapper();
-    private RoleMapper() {}
-
-    public static RoleMapper getInstance() {return INSTANCE;}
+@Mapper(componentModel = "spring")
+public interface RoleMapper extends BaseMapper<Role, RoleDTO> {
 
     @Override
-    public Role convertToEntity(RoleDTO dto) {
-        return Role.builder()
-                .id(dto.getId())
-                .name(dto.getName())
-                .description(dto.getDescription())
-                .permissions(dto.getPermissions().stream().map(permMapper::convertToEntity).toList())
-                .build();
+    @Mapping(target = "users", ignore = true)
+    @Mapping(target = "permissions", expression = "java(mapPermissions(dto))")
+    Role convertToEntity(RoleDTO dto);
+
+    default List<Permission> mapPermissions(RoleDTO dto) {
+        if (dto.getPermissions() == null) return null;
+        return dto.getPermissions().stream()
+                .map(src -> Permission.builder()
+                        .id(src.getId())
+                        .name(src.getName())
+                        .build())
+                .collect(Collectors.toList());
     }
 
-    @Override
-    public RoleDTO convertToDTO(Role entity) {
-        return RoleDTO.builder()
-                .id(entity.getId())
-                .name(entity.getName())
-                .description(entity.getDescription())
-                .permissions(entity.getPermissions().stream().map(permMapper::convertToDTO).toList())
-                .build();
+    default Role updateFromDto(RoleDTO dto, Role role) {
+        if (dto.getName() != null) role.setName(dto.getName());
+        if (dto.getDescription() != null) role.setDescription(dto.getDescription());
+        role.setPermissions(mapPermissions(dto));
+        return role;
     }
 }

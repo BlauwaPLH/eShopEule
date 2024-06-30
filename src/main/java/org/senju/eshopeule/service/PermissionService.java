@@ -4,10 +4,12 @@ import org.senju.eshopeule.dto.PermissionDTO;
 import org.senju.eshopeule.exceptions.PermissionNotExistsException;
 import org.senju.eshopeule.model.user.Permission;
 
-public interface PermissionService {
-    PermissionDTO getDTOByName(String name) throws PermissionNotExistsException;
+import java.util.List;
 
-    Permission getByName(String name) throws PermissionNotExistsException;
+public interface PermissionService {
+    PermissionDTO getById(String id) throws PermissionNotExistsException;
+
+    List<PermissionDTO> getAllPermission();
 
     Permission bootstrapPerm(String name);
 }

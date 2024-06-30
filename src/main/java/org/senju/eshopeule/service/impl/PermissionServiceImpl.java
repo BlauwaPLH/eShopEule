@@ -10,31 +10,39 @@ import org.senju.eshopeule.repository.PermissionRepository;
 import org.senju.eshopeule.service.PermissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import static org.senju.eshopeule.constant.exceptionMessage.PermExceptionMsg.PERMISSION_NON_EXISTS_WITH_NAME_MSG;
+import java.util.List;
+
+import static org.senju.eshopeule.constant.exceptionMessage.PermExceptionMsg.PERMISSION_NON_EXISTS_WITH_ID_MSG;
 
 @Service
 @RequiredArgsConstructor
 public class PermissionServiceImpl implements PermissionService {
 
     private final PermissionRepository permissionRepository;
+    private final PermissionMapper permissionMapper;
 
-    private static final PermissionMapper permissionMapper = PermissionMapper.getInstance();
     private static final Logger logger = LoggerFactory.getLogger(PermissionService.class);
 
     @Override
-    public PermissionDTO getDTOByName(String name) throws PermissionNotExistsException {
-        return permissionMapper.convertToDTO(this.getByName(name));
+    @Cacheable(value = "permissionCache", key = "#id")
+    public PermissionDTO getById(String id) throws PermissionNotExistsException {
+        return permissionMapper.convertToDTO(
+                permissionRepository.findById(id).orElseThrow(
+                        () -> new PermissionNotExistsException(
+                                String.format(PERMISSION_NON_EXISTS_WITH_ID_MSG, id)
+                        )
+                )
+        );
     }
 
     @Override
-    public Permission getByName(String name) throws PermissionNotExistsException{
-        return permissionRepository.findByName(name).orElseThrow(
-                () -> new PermissionNotExistsException(
-                        String.format(PERMISSION_NON_EXISTS_WITH_NAME_MSG, name)
-                )
-        );
+    public List<PermissionDTO> getAllPermission() {
+        return permissionRepository.findAll().stream()
+                .map(permissionMapper::convertToDTO)
+                .toList();
     }
 
     @Override
