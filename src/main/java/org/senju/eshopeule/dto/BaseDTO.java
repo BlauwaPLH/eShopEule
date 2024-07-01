@@ -1,5 +1,7 @@
 package org.senju.eshopeule.dto;
 
-import java.io.Serializable;
+import org.senju.eshopeule.dto.request.BaseRequest;
+import org.senju.eshopeule.dto.response.BaseResponse;
 
-public interface BaseDTO extends Serializable { }
+
+public interface BaseDTO extends BaseRequest, BaseResponse { }
