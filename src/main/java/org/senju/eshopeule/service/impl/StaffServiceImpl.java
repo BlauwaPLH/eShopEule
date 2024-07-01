@@ -93,7 +93,7 @@ public class StaffServiceImpl implements StaffService {
         boolean isExistingUser = userRepository.checkUserExistsWithUsernameOrEmail(newStaff.getUsername(), newStaff.getEmail());
         if (isExistingUser) throw new UserAlreadyExistsException(USER_ALREADY_EXISTS_MSG);
 
-        boolean isExistingRole = roleRepository.existsById(newStaff.getId());
+        boolean isExistingRole = roleRepository.existsById(newStaff.getRole().getId());
         if (!isExistingRole) throw new RoleNotExistsException(ROLE_NOT_EXISTS_MSG);
 
         newStaff.setPassword(passwordEncoder.encode(newStaff.getPassword()));

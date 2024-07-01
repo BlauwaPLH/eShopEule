@@ -51,7 +51,7 @@ public class StaffController {
         }
     }
 
-    @PutMapping
+    @PutMapping()
     public ResponseEntity<?> updateStaffAccount(@Valid @RequestBody StaffDTO staffDTO) {
         logger.debug("Update staff account");
         try {

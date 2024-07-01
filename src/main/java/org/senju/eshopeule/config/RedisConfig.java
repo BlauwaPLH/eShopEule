@@ -37,7 +37,7 @@ public class RedisConfig {
                 .withCacheConfiguration(
                         "roleCache",
                         RedisCacheConfiguration.defaultCacheConfig()
-                                .entryTtl(Duration.ofSeconds(30))
+                                .entryTtl(Duration.ofMinutes(5))
                                 .disableCachingNullValues()
                 )
                 .withCacheConfiguration(

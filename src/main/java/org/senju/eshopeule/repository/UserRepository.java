@@ -19,7 +19,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query(value = "SELECT EXISTS (SELECT 1 FROM users WHERE username = :un OR email = :em)", nativeQuery = true)
     boolean checkUserExistsWithUsernameOrEmail(@Param("un") String username, @Param("em") String email);
 
-    @Query(value = "SELECT EXISTS (SELECT 1 FROM users WHERE username = :un OR email = :em AND id = :id)", nativeQuery = true)
+    @Query(value = "SELECT EXISTS (SELECT 1 FROM users WHERE (username = :un OR email = :em) AND id != :id)", nativeQuery = true)
     boolean checkUserExistsWithUsernameOrEmailExpectId(@Param("un") String username, @Param("em") String email, @Param("id") String id);
 
     @Query(value = "SELECT email FROM users WHERE username = :ide OR email = :ide OR phone_number = :ide", nativeQuery = true)
