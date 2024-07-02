@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "roles")
-public class Role extends BaseEntity {
+public class Role implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -32,8 +32,8 @@ public class Role extends BaseEntity {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "role_permission",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "permission_id"))
+            joinColumns = @JoinColumn(name = "role_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "permission_id", nullable = false))
     private List<Permission> permissions;
 
     public Role(String name) {
@@ -54,5 +54,17 @@ public class Role extends BaseEntity {
         this.name = name;
         this.description = description;
         this.permissions = (List<Permission>) permissions;
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Role)) return false;
+        return id != null && id.equals(((Role) obj).getId());
     }
 }

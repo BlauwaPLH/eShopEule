@@ -8,7 +8,7 @@ import org.senju.eshopeule.dto.request.ChangePasswordRequest;
 import org.senju.eshopeule.dto.response.BaseResponse;
 import org.senju.eshopeule.dto.response.SimpleResponse;
 import org.senju.eshopeule.exceptions.ChangePasswordException;
-import org.senju.eshopeule.exceptions.UserNotExistsException;
+import org.senju.eshopeule.exceptions.NotFoundException;
 import org.senju.eshopeule.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,7 @@ public class UserController {
         try {
             authService.changePassword(request, currUser);
             return ResponseEntity.ok(SimpleResponse.builder().message("Updated password!").build());
-        } catch (UserNotExistsException | ChangePasswordException ex) {
+        } catch (NotFoundException | ChangePasswordException ex) {
             return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
         }
     }

@@ -3,7 +3,7 @@ package org.senju.eshopeule.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.PermissionDTO;
-import org.senju.eshopeule.exceptions.PermissionNotExistsException;
+import org.senju.eshopeule.exceptions.NotFoundException;
 import org.senju.eshopeule.mappers.PermissionMapper;
 import org.senju.eshopeule.model.user.Permission;
 import org.senju.eshopeule.repository.PermissionRepository;
@@ -28,10 +28,10 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     @Cacheable(value = "permissionCache", key = "#id")
-    public PermissionDTO getById(String id) throws PermissionNotExistsException {
+    public PermissionDTO getById(String id) throws NotFoundException {
         return permissionMapper.convertToDTO(
                 permissionRepository.findById(id).orElseThrow(
-                        () -> new PermissionNotExistsException(
+                        () -> new NotFoundException(
                                 String.format(PERMISSION_NON_EXISTS_WITH_ID_MSG, id)
                         )
                 )

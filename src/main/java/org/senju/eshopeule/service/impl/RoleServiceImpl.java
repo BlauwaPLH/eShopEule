@@ -3,7 +3,7 @@ package org.senju.eshopeule.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.RoleDTO;
-import org.senju.eshopeule.exceptions.RoleNotExistsException;
+import org.senju.eshopeule.exceptions.NotFoundException;
 import org.senju.eshopeule.mappers.RoleMapper;
 import org.senju.eshopeule.model.user.Permission;
 import org.senju.eshopeule.model.user.Role;
@@ -34,10 +34,10 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Cacheable(value = "roleCache", key = "#id")
-    public RoleDTO getById(String id) throws RoleNotExistsException {
+    public RoleDTO getById(String id) throws NotFoundException {
         return roleMapper.convertToDTO(
                 roleRepository.findById(id).orElseThrow(
-                        () -> new RoleNotExistsException(ROLE_NOT_EXISTS_WITH_NAME_MSG)
+                        () -> new NotFoundException(ROLE_NOT_EXISTS_WITH_NAME_MSG)
                 )
         );
     }
@@ -49,9 +49,9 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @CachePut(value = "roleCache", key = "#dto.id")
-    public RoleDTO updateRole(RoleDTO dto) throws RoleNotExistsException {
+    public RoleDTO updateRole(RoleDTO dto) throws NotFoundException {
         Role loadedRole = roleRepository.findById(dto.getId()).orElseThrow(
-                () -> new RoleNotExistsException(
+                () -> new NotFoundException(
                         String.format(ROLE_NOT_EXISTS_WITH_ID_MSG, dto.getId()))
         );
         loadedRole = roleMapper.updateFromDto(dto, loadedRole);

@@ -2,13 +2,11 @@ package org.senju.eshopeule.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.senju.eshopeule.dto.StaffDTO;
 import org.senju.eshopeule.dto.response.BaseResponse;
 import org.senju.eshopeule.dto.response.SimpleResponse;
-import org.senju.eshopeule.exceptions.RoleNotExistsException;
-import org.senju.eshopeule.exceptions.UserAlreadyExistsException;
-import org.senju.eshopeule.exceptions.UserNotExistsException;
+import org.senju.eshopeule.exceptions.NotFoundException;
+import org.senju.eshopeule.exceptions.ObjectAlreadyExistsException;
 import org.senju.eshopeule.service.StaffService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.Collections;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,7 +35,7 @@ public class StaffController {
         logger.debug("Get staff with id: {}", id);
         try {
             return ResponseEntity.ok(staffService.getStaffWithId(id));
-        } catch (UserNotExistsException ex) {
+        } catch (NotFoundException ex) {
             return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
         }
     }
@@ -49,7 +46,7 @@ public class StaffController {
         try {
             staffService.createAccount(staffDTO);
             return ResponseEntity.ok(SimpleResponse.builder().message("Create staff account successfully").build());
-        } catch (UserAlreadyExistsException | RoleNotExistsException ex) {
+        } catch (ObjectAlreadyExistsException | NotFoundException ex) {
             return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
         }
     }
@@ -59,7 +56,7 @@ public class StaffController {
         logger.debug("Update staff account");
         try {
             return ResponseEntity.ok(staffService.updateAccount(staffDTO));
-        } catch (UserAlreadyExistsException | UserNotExistsException | RoleNotExistsException ex) {
+        } catch (ObjectAlreadyExistsException | NotFoundException ex) {
             return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
         }
     }

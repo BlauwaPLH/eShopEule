@@ -31,7 +31,7 @@ public class AuthController {
         try {
             LoginResponse response = authService.authenticate(request);
             return ResponseEntity.ok(response);
-        } catch (UserNotExistsException | LoginException ex) {
+        } catch (NotFoundException | LoginException ex) {
             logger.error(ex.getMessage());
             return ResponseEntity.status(UNAUTHORIZED).body(SimpleResponse.builder().message(ex.getMessage()).build());
         }
@@ -43,7 +43,7 @@ public class AuthController {
             RegistrationResponse response = authService.register(request);
             response.setMessage("Register successful!");
             return ResponseEntity.ok(response);
-        } catch (UserAlreadyExistsException | SignUpException ex) {
+        } catch (ObjectAlreadyExistsException | SignUpException ex) {
             logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
         }
@@ -85,7 +85,7 @@ public class AuthController {
         try {
             authService.resetPassword(request);
             return ResponseEntity.ok(SimpleResponse.builder().message("Reset password successfully!").build());
-        } catch (ChangePasswordException | UserNotExistsException ex) {
+        } catch (ChangePasswordException | NotFoundException ex) {
             return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
         }
     }

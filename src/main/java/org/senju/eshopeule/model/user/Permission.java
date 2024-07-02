@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "permissions")
-public class Permission extends BaseEntity {
+public class Permission implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -35,5 +35,17 @@ public class Permission extends BaseEntity {
     public Permission(String name, String description) {
         this.name = name;
         this.description = description;
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Permission)) return false;
+        return id != null && id.equals(((Permission) obj).getId());
     }
 }

@@ -5,19 +5,15 @@ import org.senju.eshopeule.dto.PermissionDTO;
 import org.senju.eshopeule.dto.RoleDTO;
 import org.senju.eshopeule.dto.response.BaseResponse;
 import org.senju.eshopeule.dto.response.SimpleResponse;
-import org.senju.eshopeule.exceptions.PermissionNotExistsException;
-import org.senju.eshopeule.exceptions.RoleNotExistsException;
+import org.senju.eshopeule.exceptions.NotFoundException;
 import org.senju.eshopeule.service.PermissionService;
 import org.senju.eshopeule.service.RoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -36,7 +32,7 @@ public class RoleController {
         logger.debug("Get role with id: {}", id);
         try {
             return ResponseEntity.ok(roleService.getById(id));
-        } catch (RoleNotExistsException ex) {
+        } catch (NotFoundException ex) {
             return ResponseEntity.status(NOT_FOUND).body(SimpleResponse.builder().message(ex.getMessage()).build());
         }
     }
@@ -66,7 +62,7 @@ public class RoleController {
         logger.debug("Update role");
         try {
             return ResponseEntity.ok(roleService.updateRole(role));
-        } catch (RoleNotExistsException ex) {
+        } catch (NotFoundException ex) {
             logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
         }
@@ -90,7 +86,7 @@ public class RoleController {
         logger.debug("Get permission with id: {}", id);
         try {
             return ResponseEntity.ok(permissionService.getById(id));
-        } catch (PermissionNotExistsException ex) {
+        } catch (NotFoundException ex) {
             return ResponseEntity.status(NOT_FOUND).body(SimpleResponse.builder().message(ex.getMessage()).build());
         }
     }
