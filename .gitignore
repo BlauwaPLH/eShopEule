@@ -36,4 +36,4 @@ out/
 ### VS Code ###
 .vscode/
 
-./eshopeule-firebase-key.json
+eshopeule-firebase-key.json
