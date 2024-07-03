@@ -1,5 +1,6 @@
 package org.senju.eshopeule.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.io.Serial;

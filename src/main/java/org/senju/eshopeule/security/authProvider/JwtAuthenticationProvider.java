@@ -4,7 +4,7 @@ package org.senju.eshopeule.security.authProvider;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.exceptions.JwtAuthenticationException;
-import org.senju.eshopeule.repository.RedisRepository;
+import org.senju.eshopeule.repository.redis.RedisRepository;
 import org.senju.eshopeule.security.JwtAuthenticationToken;
 import org.senju.eshopeule.security.SimpleUserDetailsService;
 import org.senju.eshopeule.utils.JwtUtil;

@@ -41,15 +41,7 @@ public class Product extends AuditingEntityListener {
     @Column(nullable = false)
     private boolean isAllowedToOrder;
 
-    private String shortDescription;
-
     private String description;
-
-    private String metaDescription;
-
-    private String metaTitle;
-
-    private String metaKeyword;
 
     @ManyToOne
     @JoinColumn(name = "brand_id")
@@ -62,6 +54,9 @@ public class Product extends AuditingEntityListener {
             inverseJoinColumns = @JoinColumn(name = "category_id", nullable = false)
     )
     private List<Category> categories;
+
+    @OneToMany(mappedBy = "product")
+    private List<ProductImage> productImages;
 
     @Override
     public int hashCode() {

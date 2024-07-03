@@ -8,7 +8,6 @@ import java.io.Serial;
 @Setter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public final class SimpleResponse implements BaseResponse {
     @Serial
     private static final long serialVersionUID = -8805791124352662262L;

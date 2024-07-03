@@ -1,9 +1,5 @@
 package org.senju.eshopeule.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.NamedNativeQueries;
-import jakarta.persistence.NamedNativeQuery;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.io.Serial;

@@ -1,4 +1,4 @@
-package org.senju.eshopeule.repository;
+package org.senju.eshopeule.repository.redis;
 
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.redis.core.RedisTemplate;

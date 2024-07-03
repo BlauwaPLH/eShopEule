@@ -1,7 +1,6 @@
-package org.senju.eshopeule.repository;
+package org.senju.eshopeule.repository.redis;
 
 import org.senju.eshopeule.dto.request.RegistrationRequest;
-import org.senju.eshopeule.model.user.User;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 

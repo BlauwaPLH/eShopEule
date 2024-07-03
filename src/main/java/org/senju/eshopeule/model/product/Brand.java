@@ -2,7 +2,9 @@ package org.senju.eshopeule.model.product;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.senju.eshopeule.model.AbstractAuditEntity;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -11,15 +13,20 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor
 @Entity
 @Table(name = "brands")
-public class Brand extends AuditingEntityListener {
+public class Brand extends AbstractAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(nullable = false, unique = true)
     private String slug;
+
+    @OneToMany(mappedBy = "brand")
+    private List<Product> products;
 
     @Override
     public boolean equals(Object obj) {

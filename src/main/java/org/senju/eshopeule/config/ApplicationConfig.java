@@ -1,15 +1,15 @@
 package org.senju.eshopeule.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
-import org.senju.eshopeule.repository.PermissionRepository;
-import org.senju.eshopeule.repository.RoleRepository;
-import org.senju.eshopeule.repository.UserRepository;
+import org.senju.eshopeule.repository.jpa.PermissionRepository;
+import org.senju.eshopeule.repository.jpa.RoleRepository;
+import org.senju.eshopeule.repository.jpa.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.client.RestTemplate;
@@ -17,12 +17,8 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Optional;
 
 @Configuration
-@RequiredArgsConstructor
-@EnableJpaRepositories(basePackageClasses = {
-        UserRepository.class,
-        PermissionRepository.class,
-        RoleRepository.class
-})
+@EnableJpaRepositories(basePackages = "org.senju.eshopeule.repository.jpa")
+@EnableMongoRepositories(basePackages = "org.senju.eshopeule.repository.mongodb")
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
 public class ApplicationConfig {
 

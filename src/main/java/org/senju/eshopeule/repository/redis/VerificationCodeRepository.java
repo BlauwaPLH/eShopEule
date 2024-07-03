@@ -1,4 +1,4 @@
-package org.senju.eshopeule.repository;
+package org.senju.eshopeule.repository.redis;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
