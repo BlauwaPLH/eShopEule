@@ -58,6 +58,9 @@ public class Product extends AuditingEntityListener {
     @OneToMany(mappedBy = "product")
     private List<ProductImage> productImages;
 
+    @OneToMany(mappedBy = "product")
+    private List<ProductOption> productOptions;
+
     @Override
     public int hashCode() {
         return getClass().hashCode();

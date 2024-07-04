@@ -10,6 +10,7 @@ import org.springframework.expression.ExpressionException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,7 +45,8 @@ public class GlobalExceptionHandler {
             DataAccessException.class,
             ExpressionException.class,
             InvalidDefinitionException.class,
-            HttpMessageNotReadableException.class
+            HttpMessageNotReadableException.class,
+            HttpRequestMethodNotSupportedException.class
     })
     public ResponseEntity<? extends BaseResponse> handleBadRequest(Exception ex) {
         logger.error(ex.getMessage());

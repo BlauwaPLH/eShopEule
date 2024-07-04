@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.io.Serial;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -36,6 +37,9 @@ public final class CategoryDTO implements BaseDTO {
     private boolean isPublished;
 
     private CategoryDTO parent;
+
+    @JsonProperty(value = "product_attributes")
+    private List<ProductAttributeDTO> productAttributes;
 
     @JsonProperty(value = "create_on")
     private ZonedDateTime createdOn;

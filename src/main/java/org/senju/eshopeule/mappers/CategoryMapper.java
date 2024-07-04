@@ -2,25 +2,29 @@ package org.senju.eshopeule.mappers;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 import org.senju.eshopeule.dto.CategoryDTO;
+import org.senju.eshopeule.dto.ProductAttributeDTO;
 import org.senju.eshopeule.model.product.Category;
+import org.senju.eshopeule.model.product.ProductAttribute;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Mapper(componentModel = "spring")
 public interface CategoryMapper extends BaseMapper<Category, CategoryDTO> {
 
     @Override
-    @Mapping(target = "createdOn", expression = "java(entity.getCreatedOn())")
-    @Mapping(target = "createdBy", expression = "java(entity.getCreatedBy())")
-    @Mapping(target = "lastModifiedOn", expression = "java(entity.getLastModifiedOn())")
-    @Mapping(target = "lastModifiedBy", expression = "java(entity.getLastModifiedBy())")
     @Mapping(target = "parent", expression = "java(mappingParent(entity))")
+    @Mapping(target = "productAttributes", expression = "java(mappingProdAttr(entity))")
     @Mapping(target = "isPublished", source = "published")
     CategoryDTO convertToDTO(Category entity);
 
     @Override
     @Mapping(target = "products", ignore = true)
     @Mapping(target = "parent", expression = "java(mappingParent(dto))")
+    @Mapping(target = "productAttributes", expression = "java(mappingProdAttr(dto))")
     @Mapping(target = "isPublished", source = "published")
     Category convertToEntity(CategoryDTO dto);
 
@@ -33,7 +37,7 @@ public interface CategoryMapper extends BaseMapper<Category, CategoryDTO> {
 
         loadedCategory.setPublished(dto.isPublished());
         loadedCategory.setParent(mappingParent(dto));
-
+        loadedCategory.setProductAttributes(mappingProdAttr(dto));
         return loadedCategory;
     }
 
@@ -53,5 +57,19 @@ public interface CategoryMapper extends BaseMapper<Category, CategoryDTO> {
                 .name(dto.getParent().getName())
                 .slug(dto.getParent().getSlug())
                 .build();
+    }
+
+    default List<ProductAttributeDTO> mappingProdAttr(Category entity) {
+        if (entity.getProductAttributes() == null) return null;
+        return entity.getProductAttributes().stream()
+                .map(s -> Mappers.getMapper(ProductAttributeMapper.class).convertToDTO(s))
+                .toList();
+    }
+
+    default List<ProductAttribute> mappingProdAttr(CategoryDTO dto) {
+        if (dto.getProductAttributes() == null) return null;
+        return dto.getProductAttributes().stream()
+                .map(s -> Mappers.getMapper(ProductAttributeMapper.class).convertToEntity(s))
+                .collect(Collectors.toList());
     }
 }

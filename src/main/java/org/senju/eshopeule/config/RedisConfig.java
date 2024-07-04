@@ -63,6 +63,12 @@ public class RedisConfig {
                         RedisCacheConfiguration.defaultCacheConfig()
                                 .entryTtl(Duration.ofHours(1))
                                 .disableCachingNullValues()
+                )
+                .withCacheConfiguration(
+                        "productAttributeCache",
+                        RedisCacheConfiguration.defaultCacheConfig()
+                                .entryTtl(Duration.ofHours(2))
+                                .disableCachingNullValues()
                 );
     }
 }

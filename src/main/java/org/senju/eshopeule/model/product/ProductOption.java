@@ -2,7 +2,9 @@ package org.senju.eshopeule.model.product;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.senju.eshopeule.model.BaseEntity;
+import org.senju.eshopeule.model.AbstractAuditEntity;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -10,19 +12,24 @@ import org.senju.eshopeule.model.BaseEntity;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "product_images")
-public class ProductImage implements BaseEntity {
+@Table(name = "product_options")
+public class ProductOption extends AbstractAuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false, unique = true)
-    private String imageUrl;
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
+
+    @OneToMany(
+            mappedBy = "productOption",
+            cascade = CascadeType.REMOVE
+    )
+    private List<ProductAttributeValue> productAttributeValues;
 
     @Override
     public int hashCode() {
@@ -32,7 +39,7 @@ public class ProductImage implements BaseEntity {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof ProductImage)) return false;
-        return id != null && id.equals(((ProductImage) obj).getId());
+        if (!(obj instanceof ProductOption)) return false;
+        return id != null && id.equals(((ProductOption) obj).getId());
     }
 }

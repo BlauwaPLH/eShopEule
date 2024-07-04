@@ -40,6 +40,14 @@ public class Category extends AbstractAuditEntity {
     @ManyToMany(mappedBy = "categories")
     private List<Product> products;
 
+    @ManyToMany
+    @JoinTable(
+            name = "product_attribute_category",
+            joinColumns = @JoinColumn(name = "category_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "product_attribute_id", nullable = false)
+    )
+    private List<ProductAttribute> productAttributes;
+
     @Override
     public int hashCode() {
         return getClass().hashCode();
