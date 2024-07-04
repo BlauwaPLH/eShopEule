@@ -39,16 +39,16 @@ public class UserController {
             authService.logout(auth.getName());
             logoutHandler.logout(request, response, auth);
         }
-        return ResponseEntity.ok(SimpleResponse.builder().message("Logout successfully!").build());
+        return ResponseEntity.ok(new SimpleResponse("Logout successfully!"));
     }
 
     @PostMapping(path = "/changePassword")
     public ResponseEntity<? extends BaseResponse> changePassword(@Valid @RequestBody ChangePasswordRequest request, @AuthenticationPrincipal UserDetails currUser) {
         try {
             authService.changePassword(request, currUser);
-            return ResponseEntity.ok(SimpleResponse.builder().message("Updated password!").build());
+            return ResponseEntity.ok(new SimpleResponse("Updated password!"));
         } catch (NotFoundException | ChangePasswordException ex) {
-            return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
 }

@@ -1,17 +1,18 @@
 package org.senju.eshopeule.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.io.Serial;
 import java.time.ZonedDateTime;
-import java.util.List;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
 public final class CategoryDTO implements BaseDTO {
 
     @Serial
@@ -35,8 +36,6 @@ public final class CategoryDTO implements BaseDTO {
     private boolean isPublished;
 
     private CategoryDTO parent;
-
-    private List<CategoryDTO> children;
 
     @JsonProperty(value = "create_on")
     private ZonedDateTime createdOn;

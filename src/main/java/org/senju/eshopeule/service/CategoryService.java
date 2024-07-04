@@ -8,11 +8,15 @@ import java.util.List;
 
 public interface CategoryService {
 
-    void createNewCategory(CategoryDTO dto) throws ObjectAlreadyExistsException;
+    void createNewCategory(CategoryDTO dto) throws ObjectAlreadyExistsException, NotFoundException;
+
+    CategoryDTO updateCategory(CategoryDTO dto) throws ObjectAlreadyExistsException, NotFoundException;
 
     CategoryDTO getById(String id) throws NotFoundException;
 
-    List<CategoryDTO> getAllCategory();
+    List<CategoryDTO> getAllCategories();
+
+    List<CategoryDTO> getAllCategoryChildren(String parentId);
 
     void deleteById(String id);
 }

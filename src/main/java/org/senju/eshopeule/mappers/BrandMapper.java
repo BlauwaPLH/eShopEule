@@ -18,6 +18,7 @@ public interface BrandMapper extends BaseMapper<Brand, BrandDTO> {
     @Mapping(target = "lastModifiedBy", expression = "java(entity.getLastModifiedBy())")
     BrandDTO convertToDTO(Brand entity);
 
+    @Mapping(target = "products", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateFromDTO(BrandDTO dto, @MappingTarget Brand entity);
 }

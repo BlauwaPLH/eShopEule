@@ -45,7 +45,7 @@ public class BrandServiceImpl implements BrandService {
                 () -> new NotFoundException(
                         String.format(BRAND_NOT_FOUND_WITH_ID_MSG, dto.getId())));
         brandMapper.updateFromDTO(dto, loadedBrand);
-        if (brandRepository.checkBrandExistsWithNameOrSlug(loadedBrand.getName(), loadedBrand.getSlug())) {
+        if (brandRepository.checkBrandExistsWithNameOrSlugExceptId(loadedBrand.getName(), loadedBrand.getSlug(), loadedBrand.getId())) {
             throw new ObjectAlreadyExistsException(BRAND_ALREADY_EXISTS_MSG);
         }
         return brandMapper.convertToDTO(brandRepository.save(loadedBrand));

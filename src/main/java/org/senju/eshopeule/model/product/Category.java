@@ -37,9 +37,6 @@ public class Category extends AbstractAuditEntity {
     @JoinColumn(name = "parent_id")
     private Category parent;
 
-    @OneToMany(mappedBy = "parent")
-    private List<Category> children;
-
     @ManyToMany(mappedBy = "categories")
     private List<Product> products;
 

@@ -6,7 +6,6 @@ import java.io.Serial;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 public final class SimpleResponse implements BaseResponse {
     @Serial

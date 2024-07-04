@@ -33,7 +33,7 @@ public class RoleController {
         try {
             return ResponseEntity.ok(roleService.getById(id));
         } catch (NotFoundException ex) {
-            return ResponseEntity.status(NOT_FOUND).body(SimpleResponse.builder().message(ex.getMessage()).build());
+            return ResponseEntity.status(NOT_FOUND).body(new SimpleResponse(ex.getMessage()));
         }
     }
 
@@ -54,17 +54,17 @@ public class RoleController {
     public ResponseEntity<? extends BaseResponse> createNewRole(@RequestBody RoleDTO role) {
         logger.debug("Create new role");
         roleService.createNewRole(role);
-        return ResponseEntity.ok(SimpleResponse.builder().message("Save successfully").build());
+        return ResponseEntity.ok(new SimpleResponse("Save successfully"));
     }
 
     @PutMapping
-    public ResponseEntity<? extends BaseResponse> updateRole(@RequestParam("id") String id, @RequestBody RoleDTO role) {
+    public ResponseEntity<? extends BaseResponse> updateRole(@RequestBody RoleDTO role) {
         logger.debug("Update role");
         try {
             return ResponseEntity.ok(roleService.updateRole(role));
         } catch (NotFoundException ex) {
             logger.error(ex.getMessage());
-            return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
 
@@ -87,7 +87,7 @@ public class RoleController {
         try {
             return ResponseEntity.ok(permissionService.getById(id));
         } catch (NotFoundException ex) {
-            return ResponseEntity.status(NOT_FOUND).body(SimpleResponse.builder().message(ex.getMessage()).build());
+            return ResponseEntity.status(NOT_FOUND).body(new SimpleResponse(ex.getMessage()));
         }
     }
 }

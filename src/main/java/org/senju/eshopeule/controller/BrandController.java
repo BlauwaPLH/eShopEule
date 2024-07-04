@@ -18,7 +18,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "api/p/v1/brand")
+@RequestMapping(path = "/api/p/v1/brand")
 public class BrandController {
 
     private final BrandService brandService;
@@ -32,8 +32,10 @@ public class BrandController {
     @GetMapping
     public ResponseEntity<? extends BaseResponse> getBrandWithId(@RequestParam("id") String id) {
         try {
+            logger.debug("Get brand with id: {}", id);
             return ResponseEntity.ok(brandService.getById(id));
         } catch (NotFoundException ex) {
+            logger.error(ex.getMessage());
             return ResponseEntity.status(NOT_FOUND).body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -41,9 +43,11 @@ public class BrandController {
     @PostMapping
     public ResponseEntity<? extends BaseResponse> createNewBrand(@RequestBody BrandDTO dto) {
         try {
+            logger.debug("Create new brand..");
             brandService.createNewBrand(dto);
             return ResponseEntity.ok(new SimpleResponse("Create new brand successfully!"));
         } catch (ObjectAlreadyExistsException ex) {
+            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -51,14 +55,17 @@ public class BrandController {
     @PutMapping
     public ResponseEntity<? extends BaseResponse> updateBrand(@RequestBody BrandDTO dto) {
         try {
+            logger.debug("Update brand with id: {}", dto.getId());
             return ResponseEntity.ok(brandService.updateBrand(dto));
         } catch (ObjectAlreadyExistsException | NotFoundException ex) {
+            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
 
     @DeleteMapping(path = "/del")
     public ResponseEntity<?> deleteBrandWithId(@RequestParam("id") String id) {
+        logger.debug("Delete brand with id: {}", id);
         brandService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

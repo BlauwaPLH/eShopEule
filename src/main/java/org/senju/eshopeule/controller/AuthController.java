@@ -33,7 +33,7 @@ public class AuthController {
             return ResponseEntity.ok(response);
         } catch (NotFoundException | LoginException ex) {
             logger.error(ex.getMessage());
-            return ResponseEntity.status(UNAUTHORIZED).body(SimpleResponse.builder().message(ex.getMessage()).build());
+            return ResponseEntity.status(UNAUTHORIZED).body(new SimpleResponse(ex.getMessage()));
         }
     }
 
@@ -45,7 +45,7 @@ public class AuthController {
             return ResponseEntity.ok(response);
         } catch (ObjectAlreadyExistsException | SignUpException ex) {
             logger.error(ex.getMessage());
-            return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
 
@@ -56,7 +56,7 @@ public class AuthController {
             RefreshTokenResponse response = authService.refreshToken(request);
             return ResponseEntity.ok(response);
         } catch (RefreshTokenException ex) {
-            return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
 
@@ -66,7 +66,7 @@ public class AuthController {
             VerifyResponse response = authService.verifyRegister(request);
             return ResponseEntity.ok(response);
         } catch (VerifyException ex) {
-            return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
 
@@ -74,9 +74,9 @@ public class AuthController {
     public ResponseEntity<? extends BaseResponse> resendVerifyCode(@Valid @RequestBody final ResendVerifyCodeRequest request) {
         try {
             authService.resendRegistrationVerifyCode(request);
-            return ResponseEntity.ok(SimpleResponse.builder().message("Resend successfully!").build());
+            return ResponseEntity.ok(new SimpleResponse("Resend successfully!"));
         } catch (VerifyException ex) {
-            return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
 
@@ -84,9 +84,9 @@ public class AuthController {
     public ResponseEntity<? extends BaseResponse> resetPassword(@Valid @RequestBody final ResetPasswordRequest request) {
         try {
             authService.resetPassword(request);
-            return ResponseEntity.ok(SimpleResponse.builder().message("Reset password successfully!").build());
+            return ResponseEntity.ok(new SimpleResponse("Reset password successfully!"));
         } catch (ChangePasswordException | NotFoundException ex) {
-            return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
 }

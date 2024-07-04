@@ -36,7 +36,7 @@ public class StaffController {
         try {
             return ResponseEntity.ok(staffService.getStaffWithId(id));
         } catch (NotFoundException ex) {
-            return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
 
@@ -45,9 +45,9 @@ public class StaffController {
         logger.debug("Create new staff account");
         try {
             staffService.createAccount(staffDTO);
-            return ResponseEntity.ok(SimpleResponse.builder().message("Create staff account successfully").build());
+            return ResponseEntity.ok(new SimpleResponse("Create staff account successfully"));
         } catch (ObjectAlreadyExistsException | NotFoundException ex) {
-            return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
 
@@ -57,7 +57,7 @@ public class StaffController {
         try {
             return ResponseEntity.ok(staffService.updateAccount(staffDTO));
         } catch (ObjectAlreadyExistsException | NotFoundException ex) {
-            return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
 

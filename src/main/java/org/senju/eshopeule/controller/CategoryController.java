@@ -35,7 +35,12 @@ public class CategoryController {
 
     @GetMapping(path = "/all")
     public ResponseEntity<Collection<? extends BaseResponse>> getAllCategories() {
-        return ResponseEntity.ok(categoryService.getAllCategory());
+        return ResponseEntity.ok(categoryService.getAllCategories());
+    }
+
+    @GetMapping(path = "/children")
+    public ResponseEntity<Collection<? extends BaseResponse>> getAllCategoryChildrenWithParentId(@RequestParam("id") String parentId) {
+        return ResponseEntity.ok(categoryService.getAllCategoryChildren(parentId));
     }
 
     @PostMapping
@@ -43,7 +48,16 @@ public class CategoryController {
         try {
             categoryService.createNewCategory(dto);
             return ResponseEntity.ok(new SimpleResponse("Create new category successfully!"));
-        } catch (ObjectAlreadyExistsException ex) {
+        } catch (ObjectAlreadyExistsException | NotFoundException ex) {
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
+        }
+    }
+
+    @PutMapping
+    public ResponseEntity<? extends BaseResponse> updateCategory(@RequestBody CategoryDTO dto) {
+        try {
+            return ResponseEntity.ok(categoryService.updateCategory(dto));
+        } catch (ObjectAlreadyExistsException | NotFoundException ex) {
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
