@@ -55,7 +55,7 @@ public class Product extends AuditingEntityListener {
     )
     private List<Category> categories;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
     private List<ProductImage> productImages;
 
     @OneToMany(mappedBy = "product")

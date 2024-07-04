@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ProductAttributeRepository extends JpaRepository<ProductAttribute, String> {
 
-    @Query(value = "SELECT id, name FROM product_attributes WHERE category_id = :cateId", nativeQuery = true)
+    @Query(value = "SELECT pa.id, pa.name FROM product_attributes AS pa INNER JOIN product_attribute_category AS pc ON pa.id = pc.product_attribute_id WHERE pc.category_id = :cateId", nativeQuery = true)
     List<SimpleProdAttrView> getAllProdAttrWithCategoryId(@Param("cateId") String categoryId);
 
     @Query(value = "SELECT EXISTS (SELECT 1 FROM product_attributes WHERE name = :name)", nativeQuery = true)
