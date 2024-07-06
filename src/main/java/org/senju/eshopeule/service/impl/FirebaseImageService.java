@@ -5,6 +5,7 @@ import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.service.ImageService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +20,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FirebaseImageService implements ImageService {
 
+    @Value("${firebase.image-url}")
+    private String imageUrl;
+
+    @Override
+    public String getImageUrl(String name) {
+        return String.format(imageUrl, name);
+    }
 
     @Override
     public String save(MultipartFile file) throws IOException {
@@ -46,9 +54,8 @@ public class FirebaseImageService implements ImageService {
     }
 
 
-
     private String generateFileName(String originalFileName) {
-        return UUID.randomUUID().toString() + getFileExtension(originalFileName);
+        return UUID.randomUUID() + getFileExtension(originalFileName);
     }
 
     private byte[] getByteArrays(BufferedImage image, String format) throws IOException {

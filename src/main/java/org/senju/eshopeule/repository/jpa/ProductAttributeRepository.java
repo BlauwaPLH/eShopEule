@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductAttributeRepository extends JpaRepository<ProductAttribute, String> {
 
@@ -18,4 +19,12 @@ public interface ProductAttributeRepository extends JpaRepository<ProductAttribu
 
     @Query(value = "SELECT EXISTS (SELECT 1 FROM product_attributes WHERE name = :name AND id != :id)", nativeQuery = true)
     boolean checkProdAttrExistsWithNameExceptId(@Param("name") String name, @Param("id") String id);
+
+    Optional<ProductAttribute> findByName(String name);
+
+    @Query(value = "SELECT EXISTS (" +
+            "SELECT 1 FROM product_attribute_category AS pac " +
+            "INNER JOIN product_category AS pc ON pac.category_id = pc.category_id " +
+            "WHERE pac.product_attribute_id = :prodAttrId AND pc.product_id = :prodId)", nativeQuery = true)
+    boolean checkCategoryContainsProductAndAttribute(@Param("prodId") String productId, @Param("prodAttrId") String productAttributeId);
 }

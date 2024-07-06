@@ -6,6 +6,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public interface ImageService {
+
+    String getImageUrl(String name);
+
     String save(MultipartFile file) throws IOException;
 
     String save(BufferedImage bufferedImage, String originalFileName) throws IOException;
