@@ -1,5 +1,7 @@
 package org.senju.eshopeule.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.BrandDTO;
 import org.senju.eshopeule.dto.response.BaseResponse;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
+import static org.senju.eshopeule.constant.pattern.RegexPattern.ID_PATTERN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
@@ -30,7 +33,7 @@ public class BrandController {
     }
 
     @GetMapping
-    public ResponseEntity<? extends BaseResponse> getBrandWithId(@RequestParam("id") String id) {
+    public ResponseEntity<? extends BaseResponse> getBrandWithId(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
         try {
             logger.debug("Get brand with id: {}", id);
             return ResponseEntity.ok(brandService.getById(id));
@@ -41,7 +44,7 @@ public class BrandController {
     }
 
     @PostMapping
-    public ResponseEntity<? extends BaseResponse> createNewBrand(@RequestBody BrandDTO dto) {
+    public ResponseEntity<? extends BaseResponse> createNewBrand(@Valid @RequestBody BrandDTO dto) {
         try {
             logger.debug("Create new brand..");
             brandService.createNewBrand(dto);
@@ -53,7 +56,7 @@ public class BrandController {
     }
 
     @PutMapping
-    public ResponseEntity<? extends BaseResponse> updateBrand(@RequestBody BrandDTO dto) {
+    public ResponseEntity<? extends BaseResponse> updateBrand(@Valid @RequestBody BrandDTO dto) {
         try {
             logger.debug("Update brand with id: {}", dto.getId());
             return ResponseEntity.ok(brandService.updateBrand(dto));
@@ -64,7 +67,7 @@ public class BrandController {
     }
 
     @DeleteMapping(path = "/del")
-    public ResponseEntity<?> deleteBrandWithId(@RequestParam("id") String id) {
+    public ResponseEntity<?> deleteBrandWithId(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
         logger.debug("Delete brand with id: {}", id);
         brandService.deleteById(id);
         return ResponseEntity.noContent().build();

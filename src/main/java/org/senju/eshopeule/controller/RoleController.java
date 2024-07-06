@@ -1,5 +1,7 @@
 package org.senju.eshopeule.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.PermissionDTO;
 import org.senju.eshopeule.dto.RoleDTO;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
+import static org.senju.eshopeule.constant.pattern.RegexPattern.ID_PATTERN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
@@ -28,7 +31,7 @@ public class RoleController {
     private static final Logger logger = LoggerFactory.getLogger(RoleController.class);
 
     @GetMapping
-    public ResponseEntity<? extends BaseResponse> getRoleById(@RequestParam("id") String id) {
+    public ResponseEntity<? extends BaseResponse> getRoleById(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
         logger.debug("Get role with id: {}", id);
         try {
             return ResponseEntity.ok(roleService.getById(id));
@@ -51,14 +54,14 @@ public class RoleController {
 
 
     @PostMapping
-    public ResponseEntity<? extends BaseResponse> createNewRole(@RequestBody RoleDTO role) {
+    public ResponseEntity<? extends BaseResponse> createNewRole(@Valid  @RequestBody RoleDTO role) {
         logger.debug("Create new role");
         roleService.createNewRole(role);
         return ResponseEntity.ok(new SimpleResponse("Save successfully"));
     }
 
     @PutMapping
-    public ResponseEntity<? extends BaseResponse> updateRole(@RequestBody RoleDTO role) {
+    public ResponseEntity<? extends BaseResponse> updateRole(@Valid @RequestBody RoleDTO role) {
         logger.debug("Update role");
         try {
             return ResponseEntity.ok(roleService.updateRole(role));
@@ -69,7 +72,7 @@ public class RoleController {
     }
 
     @DeleteMapping(path = "/del/{id}")
-    public ResponseEntity<?> deleteRoleById(@PathVariable("id") String id) {
+    public ResponseEntity<?> deleteRoleById(@PathVariable("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
         logger.debug("Delete role with id: {}", id);
         roleService.deleteById(id);
         return ResponseEntity.noContent().build();
@@ -82,7 +85,7 @@ public class RoleController {
     }
 
     @GetMapping(path = "/perm")
-    public ResponseEntity<? extends BaseResponse> getPermissionById(@RequestParam("id") String id) {
+    public ResponseEntity<? extends BaseResponse> getPermissionById(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
         logger.debug("Get permission with id: {}", id);
         try {
             return ResponseEntity.ok(permissionService.getById(id));

@@ -21,10 +21,10 @@ import static org.senju.eshopeule.constant.pattern.RegexPattern.ID_PATTERN;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/p/v1/prod-attr")
-public class ProductAttributeController {
+public class ProdAttributeController {
 
     private final ProductAttributeService productAttributeService;
-    private static final Logger logger = LoggerFactory.getLogger(ProductAttributeController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProdAttributeController.class);
 
     @GetMapping
     public ResponseEntity<? extends BaseResponse> getProdAttrById(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
