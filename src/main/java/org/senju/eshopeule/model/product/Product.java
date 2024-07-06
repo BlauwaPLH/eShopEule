@@ -2,9 +2,12 @@ package org.senju.eshopeule.model.product;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.senju.eshopeule.model.AbstractAuditEntity;
 
 import java.util.List;
+
+import static jakarta.persistence.CascadeType.PERSIST;
+import static jakarta.persistence.CascadeType.REMOVE;
 
 
 @Getter
@@ -14,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "products")
-public class Product extends AuditingEntityListener {
+public class Product extends AbstractAuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -26,8 +29,13 @@ public class Product extends AuditingEntityListener {
 
     private String gtin;
 
+    @Column(nullable = false, unique = true)
+    private String slug;
+
     @Column(nullable = false)
-    private Double price;
+    private double price;
+
+    private double discount;
 
     @Column(nullable = false)
     private long quantity;
@@ -47,18 +55,13 @@ public class Product extends AuditingEntityListener {
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
-    @ManyToMany
-    @JoinTable(
-            name = "product_category",
-            joinColumns = @JoinColumn(name = "product_id", nullable = false),
-            inverseJoinColumns = @JoinColumn(name = "category_id", nullable = false)
-    )
-    private List<Category> categories;
+    @OneToMany(mappedBy = "product", cascade = {REMOVE, PERSIST})
+    private List<ProductCategory> productCategories;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "product", cascade = REMOVE)
     private List<ProductImage> productImages;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = REMOVE)
     private List<ProductOption> productOptions;
 
     @Override

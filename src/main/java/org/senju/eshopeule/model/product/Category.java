@@ -37,8 +37,8 @@ public class Category extends AbstractAuditEntity {
     @JoinColumn(name = "parent_id")
     private Category parent;
 
-    @ManyToMany(mappedBy = "categories")
-    private List<Product> products;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
+    private List<ProductCategory> productCategories;
 
     @ManyToMany
     @JoinTable(
@@ -47,6 +47,11 @@ public class Category extends AbstractAuditEntity {
             inverseJoinColumns = @JoinColumn(name = "product_attribute_id", nullable = false)
     )
     private List<ProductAttribute> productAttributes;
+
+    public Category(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     @Override
     public int hashCode() {
@@ -59,4 +64,5 @@ public class Category extends AbstractAuditEntity {
         if (!(obj instanceof Category)) return false;
         return id != null && id.equals(((Category) obj).getId());
     }
+
 }

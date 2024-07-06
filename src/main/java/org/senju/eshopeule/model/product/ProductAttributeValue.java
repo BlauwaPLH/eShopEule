@@ -2,7 +2,6 @@ package org.senju.eshopeule.model.product;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.checkerframework.checker.units.qual.C;
 import org.senju.eshopeule.dto.response.BaseResponse;
 
 @Getter
@@ -22,11 +21,11 @@ public class ProductAttributeValue implements BaseResponse {
     private String value;
 
     @ManyToOne
-    @JoinColumn(name = "product_option_id", nullable = false)
+    @JoinColumn(name = "product_option_id")
     private ProductOption productOption;
 
     @ManyToOne
-    @JoinColumn(name = "product_attribute_id", nullable = false)
+    @JoinColumn(name = "product_attribute_id")
     private ProductAttribute productAttribute;
 
     @Override
