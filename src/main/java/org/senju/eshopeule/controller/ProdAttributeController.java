@@ -1,5 +1,7 @@
 package org.senju.eshopeule.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.ProductAttributeDTO;
 import org.senju.eshopeule.dto.response.BaseResponse;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
+import static org.senju.eshopeule.constant.pattern.RegexPattern.ID_PATTERN;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/p/v1/prod-attr")
@@ -23,7 +27,7 @@ public class ProductAttributeController {
     private static final Logger logger = LoggerFactory.getLogger(ProductAttributeController.class);
 
     @GetMapping
-    public ResponseEntity<? extends BaseResponse> getProdAttrById(@RequestParam("id") String id) {
+    public ResponseEntity<? extends BaseResponse> getProdAttrById(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
         try {
             logger.debug("Get product attribute with id: {}", id);
             return ResponseEntity.ok(productAttributeService.getById(id));
@@ -39,13 +43,13 @@ public class ProductAttributeController {
     }
 
     @GetMapping(path = "/cate")
-    public ResponseEntity<Collection<? extends BaseResponse>> getAllProdAttrWithCategoryId(@RequestParam("id") String id) {
+    public ResponseEntity<Collection<? extends BaseResponse>> getAllProdAttrWithCategoryId(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
         logger.debug("Get all product attributes with category id: {}", id);
         return ResponseEntity.ok(productAttributeService.getAllProdAttWithCategoryId(id));
     }
 
     @PostMapping
-    public ResponseEntity<? extends BaseResponse> createNewProdAttr(@RequestBody ProductAttributeDTO dto) {
+    public ResponseEntity<? extends BaseResponse> createNewProdAttr(@Valid @RequestBody ProductAttributeDTO dto) {
         try {
             logger.debug("Create new product attribute");
             productAttributeService.createNewProdAtt(dto);
@@ -56,7 +60,7 @@ public class ProductAttributeController {
     }
 
     @PutMapping
-    public ResponseEntity<? extends BaseResponse> updateProdAttr(@RequestBody ProductAttributeDTO dto) {
+    public ResponseEntity<? extends BaseResponse> updateProdAttr(@Valid @RequestBody ProductAttributeDTO dto) {
         try {
             logger.debug("Update product attribute");
             return ResponseEntity.ok(productAttributeService.updateProdAtt(dto));
@@ -66,7 +70,7 @@ public class ProductAttributeController {
     }
 
     @DeleteMapping(path = "/del")
-    public ResponseEntity<?> deleteById(@RequestParam("id") String id) {
+    public ResponseEntity<?> deleteById(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
         logger.debug("Delete product attribute with id: {}", id);
         productAttributeService.deleteById(id);
         return ResponseEntity.noContent().build();
