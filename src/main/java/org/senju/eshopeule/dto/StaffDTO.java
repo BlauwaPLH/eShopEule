@@ -18,6 +18,7 @@ public final class StaffDTO implements BaseDTO {
     @Serial
     private static final long serialVersionUID = -4722816414815982021L;
 
+    @Pattern(regexp = ID_PATTERN, message = "ID is invalid")
     private String id;
 
     @Pattern(regexp = USERNAME_PATTERN, message = "Username is invalid")

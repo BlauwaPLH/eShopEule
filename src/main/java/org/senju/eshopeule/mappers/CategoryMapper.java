@@ -22,7 +22,7 @@ public interface CategoryMapper extends BaseMapper<Category, CategoryDTO> {
     CategoryDTO convertToDTO(Category entity);
 
     @Override
-    @Mapping(target = "products", ignore = true)
+    @Mapping(target = "productCategories", ignore = true)
     @Mapping(target = "parent", expression = "java(mappingParent(dto))")
     @Mapping(target = "productAttributes", expression = "java(mappingProdAttr(dto))")
     @Mapping(target = "isPublished", source = "published")

@@ -7,19 +7,16 @@ import java.io.Serial;
 
 import static org.senju.eshopeule.constant.pattern.RegexPattern.ID_PATTERN;
 
-
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public final class PermissionDTO implements BaseDTO {
+@NoArgsConstructor
+public final class ProductAttributeValueDTO implements BaseDTO {
 
     @Serial
-    private static final long serialVersionUID = -6901024370470808190L;
+    private static final long serialVersionUID = -9218534996942955188L;
 
     @Pattern(regexp = ID_PATTERN, message = "ID is invalid")
     private String id;
-    private String name;
-    private String description;
+    private String value;
 }
