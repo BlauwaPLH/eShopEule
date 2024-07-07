@@ -36,6 +36,17 @@ public class ProductController {
         }
     }
 
+    @GetMapping(path = "/{prodSlug}")
+    public ResponseEntity<? extends BaseResponse> getProductBySlug(@PathVariable("prodSlug") String productSlug) {
+        logger.debug("Get product with slug: {}", productSlug);
+        try {
+            return ResponseEntity.ok(productService.getBySlug(productSlug));
+        } catch (NotFoundException ex) {
+            logger.error(ex.getMessage());
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
+        }
+    }
+
     @GetMapping(path = "/detail")
     public ResponseEntity<? extends BaseResponse> getProductDetailById(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
         logger.debug("Get product detail with id: {}", id);

@@ -82,3 +82,4 @@ twilio:
 
 firebase:
   storage-bucket: eshopeule.appspot.com
+  image-url: https://storage.googleapis.com/${firebase.storage-bucket}/%s
