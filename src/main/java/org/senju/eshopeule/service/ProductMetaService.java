@@ -2,6 +2,7 @@ package org.senju.eshopeule.service;
 
 import org.senju.eshopeule.dto.ProductMetaDTO;
 import org.senju.eshopeule.exceptions.NotFoundException;
+import org.senju.eshopeule.exceptions.ObjectAlreadyExistsException;
 
 public interface ProductMetaService {
 
@@ -9,7 +10,7 @@ public interface ProductMetaService {
 
     ProductMetaDTO getByProductId(String productId) throws NotFoundException;
 
-    ProductMetaDTO createProdMeta(ProductMetaDTO dto) throws NotFoundException;
+    ProductMetaDTO createProdMeta(ProductMetaDTO dto) throws NotFoundException, ObjectAlreadyExistsException;
 
     ProductMetaDTO updateProdMeta(ProductMetaDTO dto) throws NotFoundException;
 

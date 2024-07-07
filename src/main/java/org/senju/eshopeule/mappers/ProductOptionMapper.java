@@ -10,9 +10,9 @@ import org.senju.eshopeule.model.product.ProductAttributeValue;
 import org.senju.eshopeule.model.product.ProductOption;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface ProductOptionMapper extends BaseMapper<ProductOption, ProductOptionDTO> {
@@ -29,14 +29,12 @@ public interface ProductOptionMapper extends BaseMapper<ProductOption, ProductOp
 
     default Map<String, ProductAttributeValueDTO> mappingAttributes(ProductOption entity) {
         if (entity.getProductAttributeValues() == null) return null;
-        final Map<String, ProductAttributeValueDTO> target = new HashMap<>();
-        entity.getProductAttributeValues().forEach(
-              pav -> target.put(
-                      pav.getProductAttribute().getName(),
-                      new ProductAttributeValueDTO(pav.getId(), pav.getValue())
-              )
-        );
-        return target;
+        return entity.getProductAttributeValues()
+                .stream()
+                .collect(Collectors.toMap(
+                        pav -> pav.getProductAttribute().getName(),
+                        pav -> new ProductAttributeValueDTO(pav.getId(), pav.getValue())
+                ));
     }
 
     default List<ProductAttributeValue> mappingAttributes(ProductOptionDTO dto) {

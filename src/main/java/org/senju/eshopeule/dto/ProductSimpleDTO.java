@@ -18,11 +18,16 @@ public final class ProductSimpleDTO implements ProductDTO {
     private static final long serialVersionUID = -2475496787277491678L;
 
     private String id;
+
     private String name;
+
     private String slug;
+
     @JsonProperty("image_url")
     private String imageUrl;
-    private double price;
-    private double discount;
+
+    private Double price;
+
+    private Double discount;
 
 }

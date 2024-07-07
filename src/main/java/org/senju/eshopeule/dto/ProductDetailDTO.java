@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.io.Serial;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.senju.eshopeule.constant.pattern.RegexPattern.ID_PATTERN;
@@ -32,11 +33,11 @@ public class ProductDetailDTO implements ProductDTO {
 
     private String slug;
 
-    private double price;
+    private Double price;
 
-    private double discount;
+    private Double discount;
 
-    private long quantity;
+    private Long quantity;
 
     @JsonProperty(value = "has_options")
     private boolean hasOptions;
@@ -60,4 +61,16 @@ public class ProductDetailDTO implements ProductDTO {
 
     @JsonProperty(value = "product_meta")
     private ProductMetaDTO productMeta;
+
+    @JsonProperty(value = "create_on")
+    private ZonedDateTime createdOn;
+
+    @JsonProperty(value = "created_by")
+    private String createdBy;
+
+    @JsonProperty(value = "last_modified_on")
+    private ZonedDateTime lastModifiedOn;
+
+    @JsonProperty(value = "last_modified_by")
+    private String lastModifiedBy;
 }

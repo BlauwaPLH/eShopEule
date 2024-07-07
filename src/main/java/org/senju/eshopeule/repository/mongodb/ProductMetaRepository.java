@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface ProductMetaRepository extends MongoRepository<ProductMeta, String> {
 
     Optional<ProductMeta> findByProductId(String productId);
+
+    void deleteByProductId(String productId);
 }

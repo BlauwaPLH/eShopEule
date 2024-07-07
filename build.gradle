@@ -46,7 +46,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 
-
 	implementation "io.jsonwebtoken:jjwt-api:${versions.jjwt}"
 	runtimeOnly "io.jsonwebtoken:jjwt-impl:${versions.jjwt}"
 	runtimeOnly "io.jsonwebtoken:jjwt-jackson:${versions.jjwt}"

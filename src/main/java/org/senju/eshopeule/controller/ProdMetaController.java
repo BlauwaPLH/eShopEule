@@ -7,6 +7,7 @@ import org.senju.eshopeule.dto.ProductMetaDTO;
 import org.senju.eshopeule.dto.response.BaseResponse;
 import org.senju.eshopeule.dto.response.SimpleResponse;
 import org.senju.eshopeule.exceptions.NotFoundException;
+import org.senju.eshopeule.exceptions.ObjectAlreadyExistsException;
 import org.senju.eshopeule.service.ProductMetaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,7 @@ public class ProdMetaController {
         logger.debug("Create product meta");
         try {
             return ResponseEntity.ok(productMetaService.createProdMeta(dto));
-        } catch (NotFoundException ex) {
+        } catch (NotFoundException | ObjectAlreadyExistsException ex) {
             logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }

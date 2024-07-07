@@ -25,4 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query(value = "SELECT p FROM Product p JOIN ProductCategory pc WHERE pc.category.slug = :cateSlug")
     Page<Product> findAllByCategorySlug(@Param("cateSlug") String categorySlug, Pageable pageable);
 
+    @Query(value = "SELECT EXISTS (SELECT 1 FROM products WHERE slug = :slug)", nativeQuery = true)
+    boolean checkExistsWithSlug(@Param("slug") String slug);
+
 }

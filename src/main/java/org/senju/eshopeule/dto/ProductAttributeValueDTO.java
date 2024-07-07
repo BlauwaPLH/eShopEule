@@ -19,4 +19,8 @@ public final class ProductAttributeValueDTO implements BaseDTO {
     @Pattern(regexp = ID_PATTERN, message = "ID is invalid")
     private String id;
     private String value;
+
+    public ProductAttributeValueDTO(String value) {
+        this.value = value;
+    }
 }

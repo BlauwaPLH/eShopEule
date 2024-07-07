@@ -1,12 +1,16 @@
 package org.senju.eshopeule.controller;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.constant.pagination.ProductPageable;
+import org.senju.eshopeule.dto.ProductPostDTO;
 import org.senju.eshopeule.dto.response.BaseResponse;
 import org.senju.eshopeule.dto.response.SimpleResponse;
 import org.senju.eshopeule.exceptions.NotFoundException;
+import org.senju.eshopeule.exceptions.ObjectAlreadyExistsException;
 import org.senju.eshopeule.exceptions.PagingException;
+import org.senju.eshopeule.exceptions.ProductException;
 import org.senju.eshopeule.service.ProductService;
 import org.senju.eshopeule.utils.PaginationUtil;
 import org.slf4j.Logger;
@@ -40,7 +44,7 @@ public class ProductController {
     public ResponseEntity<? extends BaseResponse> getProductBySlug(@PathVariable("prodSlug") String productSlug) {
         logger.debug("Get product with slug: {}", productSlug);
         try {
-            return ResponseEntity.ok(productService.getBySlug(productSlug));
+            return ResponseEntity.ok(productService.getProductBySlug(productSlug));
         } catch (NotFoundException ex) {
             logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
@@ -51,7 +55,18 @@ public class ProductController {
     public ResponseEntity<? extends BaseResponse> getProductDetailById(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
         logger.debug("Get product detail with id: {}", id);
         try {
-            return ResponseEntity.ok(productService.getProductById(id));
+            return ResponseEntity.ok(productService.getProductDetailById(id));
+        } catch (NotFoundException ex) {
+            logger.error(ex.getMessage());
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
+        }
+    }
+
+    @GetMapping(path = "/detail/{prodSlug}")
+    public ResponseEntity<? extends BaseResponse> getProductDetailBySlug(@PathVariable("prodSlug") String productSlug) {
+        logger.debug("Get product detail with slug: {}", productSlug);
+        try {
+            return ResponseEntity.ok(productService.getProductDetailBySlug(productSlug));
         } catch (NotFoundException ex) {
             logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
@@ -123,10 +138,21 @@ public class ProductController {
         logger.debug("Get all product (pageable) with category slug: {}", categorySlug);
         try {
             return ResponseEntity.ok(
-                    productService.getAllProductByCategoryId(categorySlug,
+                    productService.getAllProductByCategorySlug(categorySlug,
                             PaginationUtil.findPaginated(pageNo, pageSize, sortField, sortDirection))
             );
         } catch (PagingException ex) {
+            logger.error(ex.getMessage());
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<? extends BaseResponse> createNewProduct(@Valid @RequestBody ProductPostDTO dto) {
+        logger.debug("Create new product with name: {}", dto.getName());
+        try {
+            return ResponseEntity.ok(productService.createNewProduct(dto));
+        } catch (NotFoundException | ObjectAlreadyExistsException | ProductException ex) {
             logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }

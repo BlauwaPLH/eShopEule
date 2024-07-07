@@ -33,21 +33,21 @@ public class Product extends AbstractAuditEntity {
     private String slug;
 
     @Column(nullable = false)
-    private double price;
+    private Double price;
 
-    private double discount;
-
-    @Column(nullable = false)
-    private long quantity;
+    private Double discount;
 
     @Column(nullable = false)
-    private boolean hasOptions;
+    private Long quantity;
 
     @Column(nullable = false)
-    private boolean isPublished;
+    private Boolean hasOptions;
 
     @Column(nullable = false)
-    private boolean isAllowedToOrder;
+    private Boolean isPublished;
+
+    @Column(nullable = false)
+    private Boolean isAllowedToOrder;
 
     private String description;
 
@@ -61,7 +61,7 @@ public class Product extends AbstractAuditEntity {
     @OneToMany(mappedBy = "product", cascade = REMOVE)
     private List<ProductImage> productImages;
 
-    @OneToMany(mappedBy = "product", cascade = REMOVE)
+    @OneToMany(mappedBy = "product", cascade = {REMOVE, PERSIST})
     private List<ProductOption> productOptions;
 
     @Override
