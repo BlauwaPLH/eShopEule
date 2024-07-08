@@ -8,9 +8,7 @@ import org.senju.eshopeule.exceptions.ObjectAlreadyExistsException;
 import org.senju.eshopeule.exceptions.ProductException;
 import org.senju.eshopeule.mappers.*;
 import org.senju.eshopeule.model.product.*;
-import org.senju.eshopeule.repository.jpa.ProductAttributeRepository;
-import org.senju.eshopeule.repository.jpa.ProductImageRepository;
-import org.senju.eshopeule.repository.jpa.ProductRepository;
+import org.senju.eshopeule.repository.jpa.*;
 import org.senju.eshopeule.repository.mongodb.ProductMetaRepository;
 import org.senju.eshopeule.service.ImageService;
 import org.senju.eshopeule.service.ProductService;
@@ -28,6 +26,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.senju.eshopeule.constant.exceptionMessage.BrandExceptionMsg.BRAND_NOT_FOUND_WITH_ID_MSG;
+import static org.senju.eshopeule.constant.exceptionMessage.CategoryExceptionMsg.CATEGORY_NOT_FOUND_MSG;
 import static org.senju.eshopeule.constant.exceptionMessage.ProductExceptionMsg.*;
 
 @Service
@@ -39,7 +39,10 @@ public class ProductServiceImpl implements ProductService {
     private final ProductAttributeRepository attributeRepository;
     private final ProductImageRepository prodImgRepository;
     private final ProductMetaRepository prodMetaRepository;
+    private final ProductCategoryRepository prodCategoryRepository;
     private final ImageService imageService;
+    private final CategoryRepository categoryRepository;
+    private final BrandRepository brandRepository;
 
     private final ProductMetaMapper prodMetaMapper;
     private final ProductSimpleMapper prodSimpleMapper;
@@ -120,49 +123,64 @@ public class ProductServiceImpl implements ProductService {
         }
         Product newProduct = prodPostMapper.convertToEntity(dto);
 
-        if (!dto.getHasOptions() || dto.getOptions() == null || dto.getOptions().isEmpty()) {
+        if (dto.getOptions() == null || dto.getOptions().isEmpty()) {
             newProduct.setHasOptions(false);
         } else {
             newProduct.setHasOptions(true);
-            newProduct.setProductOptions(this.createOptions(dto));
+            this.createOptions(newProduct, dto);
         }
+        this.createProductCategories(newProduct, dto);
+        this.createProductBrand(newProduct, dto);
+
         newProduct = productRepository.save(newProduct);
+
         this.createProductMeta(dto, newProduct.getId());
         this.createProductImages(images, newProduct);
 
-        return prodPubMapper.convertToDTO(newProduct);
+        return prodSimpleMapper.convertToDTO(newProduct);
     }
 
-    @Override
-    public ProductDTO updateProduct(ProductPutDTO dto) {
-        Product loadedProduct = productRepository.findById(dto.getId()).orElseThrow(
-                () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, dto.getId()))
+    private void createProductBrand(Product newProduct, ProductPostDTO dto) {
+        setProductBrand(newProduct, dto.getBrandId());
+    }
+
+    private void createProductCategories(Product newProduct, ProductPostDTO dto) {
+        if (dto.getCategoryIds() == null || dto.getCategoryIds().isEmpty()) return;
+        int existingCategoryCount = categoryRepository.countCategoriesWithIds(dto.getCategoryIds());
+        if (existingCategoryCount != dto.getCategoryIds().size()) {
+            throw new NotFoundException(CATEGORY_NOT_FOUND_MSG);
+        }
+        final List<ProductCategory> productCategoryList = new ArrayList<>();
+        dto.getCategoryIds().forEach(
+                cId -> {
+                    final ProductCategory pc = ProductCategory.builder()
+                            .category(Category.builder().id(cId).build())
+                            .product(newProduct)
+                            .build();
+                    productCategoryList.add(pc);
+                }
         );
-        prodPutMapper.updateProductFromDTO(dto, loadedProduct);
-        return prodPubMapper.convertToDTO(loadedProduct);
+        newProduct.setProductCategories(productCategoryList);
     }
 
-    @Override
-    public void deleteProductWithId(String productId) {
-        Product loadedProduct = productRepository.findById(productId).orElseThrow(
-                () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, productId))
-        );
-        loadedProduct.setIsPublished(false);
-        loadedProduct.setIsAllowedToOrder(false);
-        productRepository.save(loadedProduct);
+    private void createOptions(Product newProduct, ProductPostDTO dto) {
+        newProduct.setProductOptions(
+                dto.getOptions()
+                        .stream()
+                        .map(optionDTO -> {
+                            final ProductOption entity = ProductOption.builder()
+                                    .name(optionDTO.getName())
+                                    .product(newProduct)
+                                    .build();
+                            this.createAttributeVal(entity, optionDTO);
+                            return entity;
+                        })
+                        .collect(Collectors.toList()));
     }
 
-    private List<ProductOption> createOptions(ProductPostDTO dto) {
-        return dto.getOptions().stream()
-                .map(o -> ProductOption.builder()
-                        .name(o.getName())
-                        .productAttributeValues(this.createAttributeVal(o))
-                        .build())
-                .collect(Collectors.toList());
-    }
-
-    private List<ProductAttributeValue> createAttributeVal(ProductOptionDTO dto) {
-        if (dto.getAttributes() == null || dto.getAttributes().isEmpty()) return null;
+    private void createAttributeVal(ProductOption entity, ProductOptionDTO dto) {
+        logger.debug("Create attribute values");
+        if (dto.getAttributes() == null || dto.getAttributes().isEmpty()) return;
         final List<ProductAttributeValue> attributeValues = new ArrayList<>();
         dto.getAttributes().forEach(
                 (attrName, valDTO) -> {
@@ -172,15 +190,16 @@ public class ProductServiceImpl implements ProductService {
                     final ProductAttributeValue value = ProductAttributeValue.builder()
                             .value(valDTO.getValue())
                             .productAttribute(attr)
+                            .productOption(entity)
                             .build();
                     attributeValues.add(value);
                 }
         );
-        return attributeValues;
+        entity.setProductAttributeValues(attributeValues);
     }
 
     private void createProductImages(MultipartFile[] images, Product savedProduct) {
-        if (images.length == 0) return;
+        if (images == null || images.length == 0) return;
         Arrays.stream(images).forEach(
                 img -> {
                     try {
@@ -198,11 +217,77 @@ public class ProductServiceImpl implements ProductService {
         );
     }
 
-
     private void createProductMeta(ProductPostDTO dto, String productId) {
         if (dto.getProductMeta() == null) return;
         final ProductMetaDTO productMetaDTO = dto.getProductMeta();
         productMetaDTO.setProductId(productId);
         prodMetaRepository.save(prodMetaMapper.convertToEntity(productMetaDTO));
+    }
+
+    @Override
+    public ProductDTO updateProduct(ProductPutDTO dto) {
+        Product loadedProduct = productRepository.findById(dto.getId()).orElseThrow(
+                () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, dto.getId()))
+        );
+        if (dto.getSlug() != null && !dto.getSlug().isBlank()) {
+            if (productRepository.checkExistsWithSlugExceptId(dto.getId(), dto.getSlug())) {
+                throw new ObjectAlreadyExistsException(String.format(PRODUCT_ALREADY_EXISTS_WITH_SLUG_MSG, dto.getSlug()));
+            }
+        }
+        prodPutMapper.updateProductFromDTO(dto, loadedProduct);
+        this.updateProductBrand(loadedProduct, dto);
+        this.updateProductCategories(loadedProduct, dto);
+        loadedProduct = productRepository.save(loadedProduct);
+
+        return prodSimpleMapper.convertToDTO(loadedProduct);
+    }
+
+    private void updateProductBrand(Product loadedProduct, ProductPutDTO dto) {
+        if (dto.getBrandId() == null) return;
+        if (dto.getBrandId().isBlank()) {
+            loadedProduct.setBrand(null);
+        } else {
+            setProductBrand(loadedProduct, dto.getBrandId());
+        }
+    }
+
+    private void setProductBrand(Product entity, String brandId) {
+        if (!brandRepository.existsById(brandId)) throw new NotFoundException(String.format(BRAND_NOT_FOUND_WITH_ID_MSG, brandId));
+        entity.setBrand(Brand.builder().id(brandId).build());
+    }
+
+    private void updateProductCategories(Product loadedProduct, ProductPutDTO dto) {
+        if (dto.getCategoryIds() == null) return;
+        if (dto.getCategoryIds().isEmpty()) {
+            prodCategoryRepository.deleteByProductId(loadedProduct.getId());
+            loadedProduct.setProductCategories(null);
+        } else {
+            int existingCategoryCount = categoryRepository.countCategoriesWithIds(dto.getCategoryIds());
+            if (existingCategoryCount != dto.getCategoryIds().size()) {
+                throw new NotFoundException(CATEGORY_NOT_FOUND_MSG);
+            }
+            prodCategoryRepository.deleteWithCategoryIdNotInList(loadedProduct.getId(), dto.getCategoryIds());
+            dto.getCategoryIds().forEach(
+                    cId -> {
+                        if (!prodCategoryRepository.checkExistsWithProductIdAndCategoryId(loadedProduct.getId(), cId)) {
+                            final ProductCategory newProdCate = ProductCategory.builder()
+                                    .category(Category.builder().id(cId).build())
+                                    .product(loadedProduct)
+                                    .build();
+                            prodCategoryRepository.save(newProdCate);
+                        }
+                    }
+            );
+        }
+    }
+
+    @Override
+    public void deleteProductWithId(String productId) {
+        Product loadedProduct = productRepository.findById(productId).orElseThrow(
+                () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, productId))
+        );
+        loadedProduct.setIsPublished(false);
+        loadedProduct.setIsAllowedToOrder(false);
+        productRepository.save(loadedProduct);
     }
 }

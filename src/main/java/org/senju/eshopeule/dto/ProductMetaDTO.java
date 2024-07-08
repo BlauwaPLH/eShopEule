@@ -25,7 +25,6 @@ public final class ProductMetaDTO implements BaseDTO {
     @Pattern(regexp = ID_PATTERN, message = "ID is invalid")
     private String id;
 
-    @NotBlank(message = "Product's ID is required")
     @Pattern(regexp = ID_PATTERN, message = "ID is invalid")
     @JsonProperty(value = "product_id")
     private String productId;

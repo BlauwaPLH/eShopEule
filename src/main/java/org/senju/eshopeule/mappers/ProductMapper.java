@@ -10,6 +10,7 @@ import java.util.List;
 public interface ProductMapper<D extends ProductDTO> extends BaseMapper<Product, D> {
 
     default List<String> mappingImageUrls(Product entity) {
+        if (entity.getProductImages() == null) return null;
         return entity.getProductImages().stream()
                 .map(ProductImage::getImageUrl)
                 .toList();

@@ -30,4 +30,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query(value = "SELECT EXISTS (SELECT 1 FROM products WHERE slug = :slug)", nativeQuery = true)
     boolean checkExistsWithSlug(@Param("slug") String slug);
 
+    @Query(value = "SELECT EXISTS (SELECT 1 FROM products WHERE slug = :slug AND id != :prodId)", nativeQuery = true)
+    boolean checkExistsWithSlugExceptId(@Param("prodId") String productId, @Param("slug") String slug);
+
 }

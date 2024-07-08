@@ -20,6 +20,9 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
     @Query(value = "SELECT EXISTS (SELECT 1 FROM categories WHERE (name = :name OR slug = :slug) AND id != :id)", nativeQuery = true)
     boolean checkCategoryExistsWithNameOrSlugExceptId(@Param("name") String name, @Param("slug") String slug, @Param("id") String id);
 
+    @Query(value = "SELECT COUNT(1) FROM categories WHERE id IN :cateIds", nativeQuery = true)
+    int countCategoriesWithIds(@Param("cateIds") List<String> categoryIds);
+
     @Query(value = "SELECT id, name, slug FROM categories WHERE parent_id = :parentId", nativeQuery = true)
     List<SimpleCategoryView> getAllCategoryChildrenByParentId(@Param("parentId") String parentId);
 

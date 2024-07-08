@@ -1,5 +1,6 @@
 package org.senju.eshopeule.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -14,6 +15,7 @@ import static org.senju.eshopeule.constant.pattern.RegexPattern.ID_PATTERN;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public final class ProductOptionDTO implements BaseDTO {
 
     @Serial

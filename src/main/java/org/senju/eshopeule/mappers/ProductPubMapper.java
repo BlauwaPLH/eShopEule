@@ -32,10 +32,12 @@ public abstract class ProductPubMapper implements ProductMapper<ProductPubDTO> {
     public abstract ProductPubDTO convertToDTO(Product entity);
 
     protected String mappingBrand(Product entity) {
+        if (entity.getBrand() == null) return null;
         return entity.getBrand().getName();
     }
 
     protected List<String> mappingCategories(Product entity) {
+        if (entity.getProductCategories() == null) return null;
         return entity.getProductCategories().stream()
                 .map(pc -> pc.getCategory().getName())
                 .toList();

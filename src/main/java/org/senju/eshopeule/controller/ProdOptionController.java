@@ -1,7 +1,6 @@
 package org.senju.eshopeule.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.ProductOptionDTO;
 import org.senju.eshopeule.dto.response.BaseResponse;
@@ -16,8 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
-import static org.senju.eshopeule.constant.pattern.RegexPattern.ID_PATTERN;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/p/v1/po")
@@ -27,7 +24,7 @@ public class ProdOptionController {
     private static final Logger logger = LoggerFactory.getLogger(ProdOptionController.class);
 
     @GetMapping
-    public ResponseEntity<? extends BaseResponse> getProductOption(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String optionId) {
+    public ResponseEntity<? extends BaseResponse> getProductOption(@RequestParam("id") String optionId) {
         logger.debug("Get product option with id: {}", optionId);
         try {
             return ResponseEntity.ok(optionService.getById(optionId));
@@ -38,7 +35,7 @@ public class ProdOptionController {
     }
 
     @GetMapping(path = "/prod")
-    public ResponseEntity<Collection<? extends BaseResponse>> getProductOptionByProductId(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String prodId) {
+    public ResponseEntity<Collection<? extends BaseResponse>> getProductOptionByProductId(@RequestParam("id") String prodId) {
         logger.debug("Get all product option with product id: {}", prodId);
         return ResponseEntity.ok(optionService.getAllByProductId(prodId));
     }
@@ -66,14 +63,14 @@ public class ProdOptionController {
     }
 
     @DeleteMapping(path = "/prod/del")
-    public ResponseEntity<?> deleteByProductId(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String productId) {
+    public ResponseEntity<?> deleteByProductId(@RequestParam("id") String productId) {
         logger.debug("Delete all product option with product's id: {}", productId);
         optionService.deleteByProductId(productId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(path = "/del")
-    public ResponseEntity<?> deleteById(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String optionId) {
+    public ResponseEntity<?> deleteById(@RequestParam("id") String optionId) {
         logger.debug("Delete product option with id: {}", optionId);
         optionService.deleteById(optionId);
         return ResponseEntity.noContent().build();

@@ -55,7 +55,9 @@ public final class ProductPutDTO implements ProductDTO {
 
     private String description;
 
+    @JsonProperty(value = "brand_id")
     private String brandId;
 
+    @JsonProperty(value = "category_ids")
     private List<String> categoryIds;
 }

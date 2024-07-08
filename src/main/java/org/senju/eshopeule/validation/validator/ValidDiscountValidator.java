@@ -8,6 +8,7 @@ public class ValidDiscountValidator implements ConstraintValidator<ValidDiscount
 
     @Override
     public boolean isValid(Double value, ConstraintValidatorContext context) {
+        if (value == null) return true;
         return value >= 0.0 && value <= 100.0;
     }
 }

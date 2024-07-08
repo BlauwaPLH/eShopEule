@@ -8,6 +8,7 @@ public class ValidPriceValidator implements ConstraintValidator<ValidPriceConstr
 
     @Override
     public boolean isValid(Double value, ConstraintValidatorContext context) {
+        if (value == null) return true;
         return value >= 0;
     }
 }

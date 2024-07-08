@@ -55,7 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category loadedCategory = categoryRepository.findById(dto.getId()).orElseThrow(
                 () -> new NotFoundException(String.format(CATEGORY_NOT_FOUND_WITH_ID_MSG, dto.getId()))
         );
-        if (categoryRepository.checkCategoryExistsWithNameOrSlug(dto.getName(), dto.getSlug())) {
+        if (categoryRepository.checkCategoryExistsWithNameOrSlugExceptId(dto.getName(), dto.getSlug(), dto.getId())) {
             throw new ObjectAlreadyExistsException(CATEGORY_ALREADY_EXITS_MSG);
         }
         loadedCategory = categoryMapper.updateFromDTO(dto, loadedCategory);

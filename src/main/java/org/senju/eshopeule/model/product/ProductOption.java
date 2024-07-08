@@ -6,6 +6,8 @@ import org.senju.eshopeule.model.AbstractAuditEntity;
 
 import java.util.List;
 
+import static jakarta.persistence.CascadeType.*;
+
 @Getter
 @Setter
 @Builder
@@ -27,7 +29,7 @@ public class ProductOption extends AbstractAuditEntity {
 
     @OneToMany(
             mappedBy = "productOption",
-            cascade = CascadeType.REMOVE
+            cascade = {PERSIST, REMOVE}
     )
     private List<ProductAttributeValue> productAttributeValues;
 

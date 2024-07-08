@@ -29,12 +29,7 @@ spring:
       host: localhost
       port: 6379
     mongodb:
-      authentication-database: admin
-      database: eShopEule
-      username: superpech
-      password: 123456789
-      port: 27017
-      host: localhost
+      uri: mongodb://superpech:123456789@localhost:27017/eShopEule
 
 server:
   port: 8080

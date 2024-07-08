@@ -67,5 +67,6 @@ public final class ProductPostDTO implements ProductDTO {
 
     private List<ProductOptionDTO> options;
 
+    @JsonProperty(value = "product_meta")
     private ProductMetaDTO productMeta;
 }

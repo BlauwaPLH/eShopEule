@@ -15,6 +15,6 @@ import java.lang.annotation.Target;
 public @interface ValidPriceConstraint {
 
     String message() default "Price must be greater than 0";
-    Class<?>[] group() default {};
+    Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

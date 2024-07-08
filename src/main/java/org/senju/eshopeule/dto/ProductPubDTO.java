@@ -3,7 +3,6 @@ package org.senju.eshopeule.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.senju.eshopeule.validation.constraints.ValidPriceConstraint;
 
 import java.io.Serial;
 import java.util.List;
@@ -25,7 +24,6 @@ public final class ProductPubDTO implements ProductDTO {
 
     private String slug;
 
-    @ValidPriceConstraint
     private Double price;
 
     private Double discount;

@@ -1,16 +1,10 @@
 package org.senju.eshopeule.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.constant.pagination.ProductPageable;
 import org.senju.eshopeule.dto.ProductPostDTO;
-import org.senju.eshopeule.dto.ProductPubDTO;
 import org.senju.eshopeule.dto.ProductPutDTO;
 import org.senju.eshopeule.dto.response.BaseResponse;
 import org.senju.eshopeule.dto.response.SimpleResponse;
@@ -22,17 +16,10 @@ import org.senju.eshopeule.service.ProductService;
 import org.senju.eshopeule.utils.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-
-import static org.senju.eshopeule.constant.pattern.RegexPattern.ID_PATTERN;
-import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequiredArgsConstructor
@@ -172,7 +159,7 @@ public class ProductController {
     @Operation(summary = "Create new product")
     public ResponseEntity<? extends BaseResponse> createNewProduct(
             @RequestPart(name = "file", required = false) MultipartFile[] files,
-            @RequestPart @Valid ProductPostDTO dto) {
+            @RequestPart(name = "prod") @Valid ProductPostDTO dto) {
         logger.debug("Create new product with name: {}", dto.getName());
         try {
             return ResponseEntity.ok(productService.createNewProduct(dto, files));
