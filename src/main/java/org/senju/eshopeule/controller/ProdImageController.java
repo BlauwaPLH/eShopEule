@@ -12,8 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import static org.senju.eshopeule.constant.pattern.RegexPattern.ID_PATTERN;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/p/v1/img")
@@ -23,7 +21,7 @@ public class ProdImageController {
     private static final Logger logger = LoggerFactory.getLogger(ProdImageController.class);
 
     @GetMapping
-    public ResponseEntity<?> getImageUrlById(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
+    public ResponseEntity<?> getImageUrlById(@RequestParam("id") String id) {
         logger.debug("Get product image url with id: {}", id);
         try {
             return ResponseEntity.ok(productImageService.getImageUrlById(id));
@@ -34,7 +32,7 @@ public class ProdImageController {
     }
 
     @GetMapping(path = "/prod")
-    public ResponseEntity<?> getAllImageUrlByProductId(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String productId) {
+    public ResponseEntity<?> getAllImageUrlByProductId(@RequestParam("id") String productId) {
         logger.debug("Get all product image url with product id: {}", productId);
         return ResponseEntity.ok(productImageService.getAllImageUrlByProductId(productId));
     }
@@ -42,7 +40,7 @@ public class ProdImageController {
     @PostMapping
     public ResponseEntity<?> uploadProductImages(
             @RequestParam("file") MultipartFile[] files,
-            @RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String productId) {
+            @RequestParam("id") String productId) {
         logger.debug("Upload product images");
         try {
             productImageService.uploadImage(files, productId);
@@ -53,7 +51,7 @@ public class ProdImageController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteById(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
+    public ResponseEntity<?> deleteById(@RequestParam("id") String id) {
         logger.debug("Delete product image with id: {}", id);
         try {
             productImageService.deleteById(id);
@@ -65,7 +63,7 @@ public class ProdImageController {
     }
 
     @DeleteMapping(path = "/prod")
-    public ResponseEntity<?> deleteByProductId(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String productId) {
+    public ResponseEntity<?> deleteByProductId(@RequestParam("id") String productId) {
         logger.debug("Delete product image with product id: {}", productId);
         try {
             productImageService.deleteByProductId(productId);

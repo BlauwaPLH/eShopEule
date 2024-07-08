@@ -14,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.senju.eshopeule.constant.pattern.RegexPattern.ID_PATTERN;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/p/v1/pm")
@@ -25,7 +23,7 @@ public class ProdMetaController {
     private static final Logger logger = LoggerFactory.getLogger(ProdMetaController.class);
 
     @GetMapping
-    public ResponseEntity<? extends BaseResponse> getProdMetaById(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String prodMetaId) {
+    public ResponseEntity<? extends BaseResponse> getProdMetaById(@RequestParam("id") String prodMetaId) {
         logger.debug("Get by product meta id: {}", prodMetaId);
         try {
             return ResponseEntity.ok(productMetaService.getByProductId(prodMetaId));
@@ -36,7 +34,7 @@ public class ProdMetaController {
     }
 
     @GetMapping(path = "/prod")
-    public ResponseEntity<? extends BaseResponse> getByProductId(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String productId) {
+    public ResponseEntity<? extends BaseResponse> getByProductId(@RequestParam("id") String productId) {
         logger.debug("Get by product's ID: {}", productId);
         try {
             return ResponseEntity.ok(productMetaService.getByProductId(productId));
@@ -69,13 +67,13 @@ public class ProdMetaController {
     }
 
     @DeleteMapping(path = "/del")
-    public ResponseEntity<?> deleteById(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String prodMetaId) {
+    public ResponseEntity<?> deleteById(@RequestParam("id") String prodMetaId) {
         productMetaService.deleteById(prodMetaId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(path = "/prod/del")
-    public ResponseEntity<?> deleteByProductId(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String productId) {
+    public ResponseEntity<?> deleteByProductId(@RequestParam("id") String productId) {
         productMetaService.deleteByProductId(productId);
         return ResponseEntity.noContent().build();
     }

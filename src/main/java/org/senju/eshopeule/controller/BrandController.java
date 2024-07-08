@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
-import static org.senju.eshopeule.constant.pattern.RegexPattern.ID_PATTERN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
@@ -33,7 +32,7 @@ public class BrandController {
     }
 
     @GetMapping
-    public ResponseEntity<? extends BaseResponse> getBrandWithId(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
+    public ResponseEntity<? extends BaseResponse> getBrandWithId(@RequestParam("id") String id) {
         try {
             logger.debug("Get brand with id: {}", id);
             return ResponseEntity.ok(brandService.getById(id));
@@ -67,7 +66,7 @@ public class BrandController {
     }
 
     @DeleteMapping(path = "/del")
-    public ResponseEntity<?> deleteBrandWithId(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
+    public ResponseEntity<?> deleteBrandWithId(@RequestParam("id") String id) {
         logger.debug("Delete brand with id: {}", id);
         brandService.deleteById(id);
         return ResponseEntity.noContent().build();

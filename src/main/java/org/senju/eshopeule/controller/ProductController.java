@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.constant.pagination.ProductPageable;
 import org.senju.eshopeule.dto.ProductPostDTO;
+import org.senju.eshopeule.dto.ProductPutDTO;
 import org.senju.eshopeule.dto.response.BaseResponse;
 import org.senju.eshopeule.dto.response.SimpleResponse;
 import org.senju.eshopeule.exceptions.NotFoundException;
@@ -16,6 +17,7 @@ import org.senju.eshopeule.utils.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -153,6 +155,29 @@ public class ProductController {
         try {
             return ResponseEntity.ok(productService.createNewProduct(dto));
         } catch (NotFoundException | ObjectAlreadyExistsException | ProductException ex) {
+            logger.error(ex.getMessage());
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
+        }
+    }
+
+    @PutMapping
+    public ResponseEntity<? extends BaseResponse> updateProduct(@Valid @RequestBody ProductPutDTO dto) {
+        logger.debug("Update product with id: {}", dto.getId());
+        try {
+            return ResponseEntity.ok(productService.updateProduct(dto));
+        } catch (NotFoundException | ObjectAlreadyExistsException | ProductException ex) {
+            logger.error(ex.getMessage());
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
+        }
+    }
+
+    @DeleteMapping(path = "/del")
+    public ResponseEntity<?> deleteProductWithId(@RequestParam("id") String productId) {
+        logger.debug("Delete product with id: {}", productId);
+        try {
+            productService.deleteProductWithId(productId);
+            return ResponseEntity.ok(new SimpleResponse("Delete product successfully!"));
+        } catch (NotFoundException ex) {
             logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }

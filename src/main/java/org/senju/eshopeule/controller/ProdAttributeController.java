@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
-import static org.senju.eshopeule.constant.pattern.RegexPattern.ID_PATTERN;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/p/v1/prod-attr")
@@ -27,7 +25,7 @@ public class ProdAttributeController {
     private static final Logger logger = LoggerFactory.getLogger(ProdAttributeController.class);
 
     @GetMapping
-    public ResponseEntity<? extends BaseResponse> getProdAttrById(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
+    public ResponseEntity<? extends BaseResponse> getProdAttrById(@RequestParam("id") String id) {
         try {
             logger.debug("Get product attribute with id: {}", id);
             return ResponseEntity.ok(productAttributeService.getById(id));
@@ -43,7 +41,7 @@ public class ProdAttributeController {
     }
 
     @GetMapping(path = "/cate")
-    public ResponseEntity<Collection<? extends BaseResponse>> getAllProdAttrWithCategoryId(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
+    public ResponseEntity<Collection<? extends BaseResponse>> getAllProdAttrWithCategoryId(@RequestParam("id") String id) {
         logger.debug("Get all product attributes with category id: {}", id);
         return ResponseEntity.ok(productAttributeService.getAllProdAttWithCategoryId(id));
     }
@@ -70,7 +68,7 @@ public class ProdAttributeController {
     }
 
     @DeleteMapping(path = "/del")
-    public ResponseEntity<?> deleteById(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
+    public ResponseEntity<?> deleteById(@RequestParam("id") String id) {
         logger.debug("Delete product attribute with id: {}", id);
         productAttributeService.deleteById(id);
         return ResponseEntity.noContent().build();

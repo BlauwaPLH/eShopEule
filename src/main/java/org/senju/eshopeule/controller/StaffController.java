@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
-import static org.senju.eshopeule.constant.pattern.RegexPattern.ID_PATTERN;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/p/v1/staff")
@@ -34,7 +32,7 @@ public class StaffController {
     }
 
     @GetMapping
-    public ResponseEntity<? extends BaseResponse> getStaffWithId(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
+    public ResponseEntity<? extends BaseResponse> getStaffWithId(@RequestParam("id") String id) {
         logger.debug("Get staff with id: {}", id);
         try {
             return ResponseEntity.ok(staffService.getStaffWithId(id));
@@ -65,7 +63,7 @@ public class StaffController {
     }
 
     @DeleteMapping(path = "/del/{id}")
-    public ResponseEntity<?> deleteStaffWithId(@PathVariable("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
+    public ResponseEntity<?> deleteStaffWithId(@PathVariable("id") String id) {
         staffService.deleteStaffWithId(id);
         return ResponseEntity.noContent().build();
     }

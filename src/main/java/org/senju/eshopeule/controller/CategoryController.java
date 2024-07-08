@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
-import static org.senju.eshopeule.constant.pattern.RegexPattern.ID_PATTERN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
@@ -28,7 +27,7 @@ public class CategoryController {
     private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);
 
     @GetMapping
-    public ResponseEntity<? extends BaseResponse> getCategoryWithId(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
+    public ResponseEntity<? extends BaseResponse> getCategoryWithId(@RequestParam("id") String id) {
         try {
             logger.debug("Get category with id: {}", id);
             return ResponseEntity.ok(categoryService.getById(id));
@@ -44,7 +43,7 @@ public class CategoryController {
     }
 
     @GetMapping(path = "/children")
-    public ResponseEntity<Collection<? extends BaseResponse>> getAllCategoryChildrenWithParentId(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String parentId) {
+    public ResponseEntity<Collection<? extends BaseResponse>> getAllCategoryChildrenWithParentId(@RequestParam("id") String parentId) {
         logger.debug("Get all categories with parent's id : {}", parentId);
         return ResponseEntity.ok(categoryService.getAllCategoryChildren(parentId));
     }
@@ -73,7 +72,7 @@ public class CategoryController {
     }
 
     @DeleteMapping(path = "/del")
-    public ResponseEntity<?> deleteById(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
+    public ResponseEntity<?> deleteById(@RequestParam("id") String id) {
         logger.debug("Delete category with id: {}", id);
         categoryService.deleteById(id);
         return ResponseEntity.noContent().build();
