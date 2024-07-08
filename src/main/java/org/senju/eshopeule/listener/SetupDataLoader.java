@@ -1,6 +1,5 @@
 package org.senju.eshopeule.listener;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.constant.enums.BootstrapPerm;
 import org.senju.eshopeule.constant.enums.BootstrapRole;
@@ -43,7 +42,6 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     private boolean alreadySetup = false;
 
     @Override
-    @Transactional
     public void onApplicationEvent(final ContextRefreshedEvent event) {
         if (alreadySetup) return;
         final Permission cusReadPerm = permissionService.bootstrapPerm(BootstrapPerm.CUS_READ.getPermName());
