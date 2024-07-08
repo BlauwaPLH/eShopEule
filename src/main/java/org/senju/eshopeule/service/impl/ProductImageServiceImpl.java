@@ -12,6 +12,7 @@ import org.senju.eshopeule.service.ProductImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.util.List;
 import static org.senju.eshopeule.constant.exceptionMessage.ProductExceptionMsg.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ProductImageServiceImpl implements ProductImageService {
 
@@ -30,7 +32,7 @@ public class ProductImageServiceImpl implements ProductImageService {
     private static final Logger logger = LoggerFactory.getLogger(ProductImageService.class);
 
     @Override
-    public String getImageUrlById(String id) throws NotFoundException {
+    public String getImageUrlById(String id) {
         return productImageRepository.findById(id)
                 .map(ProductImage::getImageUrl)
                 .orElseThrow(() -> new NotFoundException(String.format(PROD_IMAGE_NOT_FOUND_WITH_ID_MSG, id)));
@@ -42,7 +44,7 @@ public class ProductImageServiceImpl implements ProductImageService {
     }
 
     @Override
-    public void uploadImage(MultipartFile[] images, String productId) throws NotFoundException, ProductException {
+    public void uploadImage(MultipartFile[] images, String productId) {
         Product product = productRepository.findById(productId).orElseThrow(
                 () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, productId))
         );
@@ -64,7 +66,7 @@ public class ProductImageServiceImpl implements ProductImageService {
     }
 
     @Override
-    public void deleteById(String id) throws NotFoundException, ProductException {
+    public void deleteById(String id) {
         String imageName = productImageRepository.getNameById(id)
                 .orElseThrow(() -> new NotFoundException(String.format(PROD_IMAGE_NOT_FOUND_WITH_ID_MSG, id)));
         try {
@@ -76,7 +78,7 @@ public class ProductImageServiceImpl implements ProductImageService {
     }
 
     @Override
-    public void deleteByProductId(String productId) throws NotFoundException, ProductException{
+    public void deleteByProductId(String productId){
         String imageName = productImageRepository.getNameByProductId(productId)
                 .orElseThrow(() -> new NotFoundException(String.format(PROD_IMAGE_NOT_FOUND_WITH_PROD_ID_MSG, productId)));
         try {

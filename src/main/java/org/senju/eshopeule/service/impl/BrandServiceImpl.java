@@ -14,6 +14,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 import static org.senju.eshopeule.constant.exceptionMessage.BrandExceptionMsg.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class BrandServiceImpl implements BrandService {
 
@@ -30,7 +32,7 @@ public class BrandServiceImpl implements BrandService {
     private static final Logger logger = LoggerFactory.getLogger(BrandService.class);
 
     @Override
-    public void createNewBrand(BrandDTO dto) throws ObjectAlreadyExistsException {
+    public void createNewBrand(BrandDTO dto)  {
         Brand newBrand = brandMapper.convertToEntity(dto);
         if (brandRepository.checkBrandExistsWithNameOrSlug(newBrand.getName(), newBrand.getSlug())) {
             throw new ObjectAlreadyExistsException(BRAND_ALREADY_EXISTS_MSG);
@@ -40,7 +42,7 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @CachePut(cacheNames = "brandCache", key = "#dto.id")
-    public BrandDTO updateBrand(BrandDTO dto) throws ObjectAlreadyExistsException, NotFoundException {
+    public BrandDTO updateBrand(BrandDTO dto) {
         Brand loadedBrand = brandRepository.findById(dto.getId()).orElseThrow(
                 () -> new NotFoundException(
                         String.format(BRAND_NOT_FOUND_WITH_ID_MSG, dto.getId())));
@@ -53,7 +55,7 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Cacheable(cacheNames = "brandCache", key = "#id")
-    public BrandDTO getById(String id) throws NotFoundException {
+    public BrandDTO getById(String id)  {
         return brandMapper.convertToDTO(brandRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(
                         String.format(BRAND_NOT_FOUND_WITH_ID_MSG, id)

@@ -7,7 +7,7 @@ import org.senju.eshopeule.model.user.Permission;
 import java.util.List;
 
 public interface PermissionService {
-    PermissionDTO getById(String id) throws NotFoundException;
+    PermissionDTO getById(String id);
 
     List<PermissionDTO> getAllPermission();
 

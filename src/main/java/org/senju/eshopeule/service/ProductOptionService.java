@@ -1,20 +1,18 @@
 package org.senju.eshopeule.service;
 
 import org.senju.eshopeule.dto.ProductOptionDTO;
-import org.senju.eshopeule.exceptions.NotFoundException;
-import org.senju.eshopeule.exceptions.ProductException;
 
 import java.util.List;
 
 public interface ProductOptionService {
 
-    ProductOptionDTO getById(String id) throws NotFoundException;
+    ProductOptionDTO getById(String id);
 
     List<ProductOptionDTO> getAllByProductId(String productId);
 
-    ProductOptionDTO createProductOption(ProductOptionDTO dto) throws NotFoundException, ProductException;
+    ProductOptionDTO createProductOption(ProductOptionDTO dto);
 
-    ProductOptionDTO updateProductOption(ProductOptionDTO dto) throws NotFoundException, ProductException;
+    ProductOptionDTO updateProductOption(ProductOptionDTO dto);
 
     void deleteById(String id);
 

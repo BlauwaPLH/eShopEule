@@ -1,6 +1,5 @@
 package org.senju.eshopeule.service.impl;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.PermissionDTO;
 import org.senju.eshopeule.exceptions.NotFoundException;
@@ -12,12 +11,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.senju.eshopeule.constant.exceptionMessage.PermExceptionMsg.PERMISSION_NON_EXISTS_WITH_ID_MSG;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class PermissionServiceImpl implements PermissionService {
 
@@ -28,7 +29,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     @Cacheable(value = "permissionCache", key = "#id")
-    public PermissionDTO getById(String id) throws NotFoundException {
+    public PermissionDTO getById(String id) {
         return permissionMapper.convertToDTO(
                 permissionRepository.findById(id).orElseThrow(
                         () -> new NotFoundException(
@@ -46,7 +47,6 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    @Transactional
     public Permission bootstrapPerm(String name) {
         Permission perm = permissionRepository.findByName(name).orElse(null);
         if (perm == null) {

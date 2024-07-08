@@ -1,6 +1,5 @@
 package org.senju.eshopeule.service.impl;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.RoleDTO;
 import org.senju.eshopeule.exceptions.NotFoundException;
@@ -15,15 +14,16 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.senju.eshopeule.constant.exceptionMessage.RoleExceptionMsg.ROLE_NOT_EXISTS_WITH_ID_MSG;
-import static org.senju.eshopeule.constant.exceptionMessage.RoleExceptionMsg.ROLE_NOT_EXISTS_WITH_NAME_MSG;
+import static org.senju.eshopeule.constant.exceptionMessage.RoleExceptionMsg.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
@@ -79,7 +79,6 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    @Transactional
     public Role bootstrapRole(String name, Collection<Permission> permissions) {
         var role = roleRepository.findByName(name).orElse(null);
         if (role == null) {

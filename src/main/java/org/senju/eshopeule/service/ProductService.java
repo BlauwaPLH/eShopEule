@@ -2,22 +2,19 @@ package org.senju.eshopeule.service;
 
 import org.senju.eshopeule.dto.ProductDTO;
 import org.senju.eshopeule.dto.ProductPostDTO;
+import org.senju.eshopeule.dto.ProductPutDTO;
 import org.senju.eshopeule.dto.response.ProductPagingResponse;
-import org.senju.eshopeule.exceptions.NotFoundException;
-import org.senju.eshopeule.exceptions.ObjectAlreadyExistsException;
-import org.senju.eshopeule.exceptions.ProductException;
-import org.senju.eshopeule.model.product.Product;
 import org.springframework.data.domain.Pageable;
 
 
 public interface ProductService {
-    ProductDTO getProductById(String id) throws NotFoundException;
+    ProductDTO getProductById(String id);
 
-    ProductDTO getProductDetailById(String id) throws NotFoundException;
+    ProductDTO getProductDetailById(String id);
 
-    ProductDTO getProductBySlug(String slug) throws NotFoundException;
+    ProductDTO getProductBySlug(String slug);
 
-    ProductDTO getProductDetailBySlug(String slug) throws NotFoundException;
+    ProductDTO getProductDetailBySlug(String slug);
 
     ProductPagingResponse getAllProductByBrandId(String brandId, Pageable pageRequest);
 
@@ -27,5 +24,9 @@ public interface ProductService {
 
     ProductPagingResponse getAllProductByCategorySlug(String categorySlug, Pageable pageRequest);
 
-    ProductDTO createNewProduct(ProductPostDTO dto) throws NotFoundException, ObjectAlreadyExistsException, ProductException;
+    ProductDTO createNewProduct(ProductPostDTO dto);
+
+    ProductDTO updateProduct(ProductPutDTO dto);
+
+    void deleteProductWithId(String productId);
 }

@@ -15,6 +15,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 import static org.senju.eshopeule.constant.exceptionMessage.CategoryExceptionMsg.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
@@ -32,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
     private static final Logger logger = LoggerFactory.getLogger(CategoryService.class);
 
     @Override
-    public void createNewCategory(final CategoryDTO dto) throws ObjectAlreadyExistsException, NotFoundException {
+    public void createNewCategory(final CategoryDTO dto) {
         if (categoryRepository.checkCategoryExistsWithNameOrSlug(dto.getName(), dto.getSlug())) {
             throw new ObjectAlreadyExistsException(CATEGORY_ALREADY_EXITS_MSG);
         }
@@ -49,7 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @CachePut(cacheNames = "categoryCache", key = "#dto.id")
-    public CategoryDTO updateCategory(final CategoryDTO dto) throws ObjectAlreadyExistsException, NotFoundException {
+    public CategoryDTO updateCategory(final CategoryDTO dto) {
         Category loadedCategory = categoryRepository.findById(dto.getId()).orElseThrow(
                 () -> new NotFoundException(String.format(CATEGORY_NOT_FOUND_WITH_ID_MSG, dto.getId()))
         );

@@ -14,12 +14,14 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.senju.eshopeule.constant.exceptionMessage.ProductExceptionMsg.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ProductAttributeServiceImpl implements ProductAttributeService {
 
@@ -30,7 +32,7 @@ public class ProductAttributeServiceImpl implements ProductAttributeService {
 
     @Override
     @Cacheable(cacheNames = "productAttributeCache", key = "#id")
-    public ProductAttributeDTO getById(String id) throws NotFoundException {
+    public ProductAttributeDTO getById(String id) {
         return mapper.convertToDTO(productAttributeRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(PROD_ATT_NOT_FOUND_WITH_ID_MSG, id))
         ));
@@ -51,7 +53,7 @@ public class ProductAttributeServiceImpl implements ProductAttributeService {
     }
 
     @Override
-    public void createNewProdAtt(ProductAttributeDTO dto) throws ObjectAlreadyExistsException {
+    public void createNewProdAtt(ProductAttributeDTO dto) {
         if (productAttributeRepository.checkProdAttrExistsWithName(dto.getName())) {
             throw new ObjectAlreadyExistsException(PROD_ATT_ALREADY_EXISTS_MSG);
         }
@@ -60,7 +62,7 @@ public class ProductAttributeServiceImpl implements ProductAttributeService {
 
     @Override
     @CachePut(cacheNames = "productAttributeCache", key = "#dto.id")
-    public ProductAttributeDTO updateProdAtt(ProductAttributeDTO dto) throws ObjectAlreadyExistsException, NotFoundException {
+    public ProductAttributeDTO updateProdAtt(ProductAttributeDTO dto) {
         ProductAttribute loadedEntity = productAttributeRepository.findById(dto.getId()).orElseThrow(
                 () -> new NotFoundException(String.format(PROD_ATT_NOT_FOUND_WITH_ID_MSG, dto.getId()))
         );

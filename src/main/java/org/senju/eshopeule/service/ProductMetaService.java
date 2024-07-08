@@ -1,18 +1,16 @@
 package org.senju.eshopeule.service;
 
 import org.senju.eshopeule.dto.ProductMetaDTO;
-import org.senju.eshopeule.exceptions.NotFoundException;
-import org.senju.eshopeule.exceptions.ObjectAlreadyExistsException;
 
 public interface ProductMetaService {
 
-    ProductMetaDTO getById(String id) throws NotFoundException;
+    ProductMetaDTO getById(String id);
 
-    ProductMetaDTO getByProductId(String productId) throws NotFoundException;
+    ProductMetaDTO getByProductId(String productId);
 
-    ProductMetaDTO createProdMeta(ProductMetaDTO dto) throws NotFoundException, ObjectAlreadyExistsException;
+    ProductMetaDTO createProdMeta(ProductMetaDTO dto);
 
-    ProductMetaDTO updateProdMeta(ProductMetaDTO dto) throws NotFoundException;
+    ProductMetaDTO updateProdMeta(ProductMetaDTO dto);
 
     void deleteById(String id);
 

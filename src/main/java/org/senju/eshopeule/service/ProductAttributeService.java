@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface ProductAttributeService {
 
-    ProductAttributeDTO getById(String id) throws NotFoundException;
+    ProductAttributeDTO getById(String id);
 
     List<ProductAttributeDTO> getAllProdAtt();
 
     List<ProductAttributeDTO> getAllProdAttWithCategoryId(String categoryId);
 
-    void createNewProdAtt(ProductAttributeDTO dto) throws ObjectAlreadyExistsException;
+    void createNewProdAtt(ProductAttributeDTO dto);
 
-    ProductAttributeDTO updateProdAtt(ProductAttributeDTO dto) throws ObjectAlreadyExistsException, NotFoundException;
+    ProductAttributeDTO updateProdAtt(ProductAttributeDTO dto);
 
     void deleteById(String id);
 }

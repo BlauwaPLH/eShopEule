@@ -17,6 +17,7 @@ import org.senju.eshopeule.service.ProductOptionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
 import static org.senju.eshopeule.constant.exceptionMessage.ProductExceptionMsg.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ProductOptionServiceImpl implements ProductOptionService {
 
@@ -36,7 +38,7 @@ public class ProductOptionServiceImpl implements ProductOptionService {
     private static final Logger logger = LoggerFactory.getLogger(ProductOptionService.class);
 
     @Override
-    public ProductOptionDTO getById(String id) throws NotFoundException {
+    public ProductOptionDTO getById(String id) {
         return mapper.convertToDTO(optionRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(PROD_OPTION_NOT_FOUND_WITH_ID_MSG, id))
         ));
@@ -50,7 +52,7 @@ public class ProductOptionServiceImpl implements ProductOptionService {
     }
 
     @Override
-    public ProductOptionDTO createProductOption(ProductOptionDTO dto) throws NotFoundException, ProductException {
+    public ProductOptionDTO createProductOption(ProductOptionDTO dto) {
         if (dto.getProductId() == null) throw new NotFoundException(PRODUCT_NOT_FOUND_MSG);
         final Product product = productRepository.findById(dto.getProductId()).orElseThrow(
                 () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, dto.getProductId()))
@@ -76,7 +78,7 @@ public class ProductOptionServiceImpl implements ProductOptionService {
     }
 
     @Override
-    public ProductOptionDTO updateProductOption(ProductOptionDTO dto) throws NotFoundException, ProductException {
+    public ProductOptionDTO updateProductOption(ProductOptionDTO dto) {
         ProductOption loadedOption = optionRepository.findByOptionIdAndProductId(dto.getId(), dto.getProductId()).orElseThrow(
                 () -> new NotFoundException(PROD_OPTION_NOT_FOUND_MSG)
         );

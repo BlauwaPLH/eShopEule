@@ -6,8 +6,7 @@ import org.senju.eshopeule.dto.response.ProductPagingResponse;
 import org.senju.eshopeule.exceptions.NotFoundException;
 import org.senju.eshopeule.exceptions.ObjectAlreadyExistsException;
 import org.senju.eshopeule.exceptions.ProductException;
-import org.senju.eshopeule.mappers.ProductMapper;
-import org.senju.eshopeule.mappers.ProductMetaMapper;
+import org.senju.eshopeule.mappers.*;
 import org.senju.eshopeule.model.product.*;
 import org.senju.eshopeule.repository.jpa.ProductAttributeRepository;
 import org.senju.eshopeule.repository.jpa.ProductImageRepository;
@@ -20,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import static org.senju.eshopeule.constant.exceptionMessage.ProductExceptionMsg.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
@@ -37,36 +38,37 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMetaRepository productMetaRepository;
     private final ImageService imageService;
     private final ProductMetaMapper productMetaMapper;
-    private final ProductMapper<ProductSimpleDTO> productSimpleMapper;
-    private final ProductMapper<ProductPubDTO> productPubMapper;
-    private final ProductMapper<ProductDetailDTO> productDetailMapper;
-    private final ProductMapper<ProductPostDTO> productPostMapper;
+    private final ProductSimpleMapper productSimpleMapper;
+    private final ProductPubMapper productPubMapper;
+    private final ProductDetailMapper productDetailMapper;
+    private final ProductPostMapper productPostMapper;
+    private final ProductPutMapper productPutMapper;
 
     private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
 
     @Override
-    public ProductDTO getProductById(String id) throws NotFoundException {
+    public ProductDTO getProductById(String id) {
         return productPubMapper.convertToDTO(productRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, id))
         ));
     }
 
     @Override
-    public ProductDTO getProductDetailById(String id) throws NotFoundException {
+    public ProductDTO getProductDetailById(String id) {
         return productDetailMapper.convertToDTO(productRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, id))
         ));
     }
 
     @Override
-    public ProductDTO getProductBySlug(String productSlug) throws NotFoundException {
+    public ProductDTO getProductBySlug(String productSlug) {
         return productPubMapper.convertToDTO(productRepository.findBySlug(productSlug).orElseThrow(
                 () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_SLUG_MSG, productSlug))
         ));
     }
 
     @Override
-    public ProductDTO getProductDetailBySlug(String productSlug) throws NotFoundException {
+    public ProductDTO getProductDetailBySlug(String productSlug) {
         return productDetailMapper.convertToDTO(productRepository.findBySlug(productSlug).orElseThrow(
                 () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_SLUG_MSG, productSlug))
         ));
@@ -108,7 +110,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO createNewProduct(ProductPostDTO dto) throws NotFoundException, ObjectAlreadyExistsException, ProductException {
+    public ProductDTO createNewProduct(ProductPostDTO dto) {
         if (productRepository.checkExistsWithSlug(dto.getSlug())) {
             throw new ObjectAlreadyExistsException(String.format(PRODUCT_ALREADY_EXISTS_WITH_SLUG_MSG, dto.getSlug()));
         }
@@ -125,7 +127,21 @@ public class ProductServiceImpl implements ProductService {
         return productPubMapper.convertToDTO(newProduct);
     }
 
-    private List<ProductOption> createOptions(ProductPostDTO dto) throws ProductException {
+    @Override
+    public ProductDTO updateProduct(ProductPutDTO dto) {
+        Product loadedProduct = productRepository.findById(dto.getId()).orElseThrow(
+                () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, dto.getId()))
+        );
+        productPutMapper.updateProductFromDTO(dto, loadedProduct);
+        return productPubMapper.convertToDTO(loadedProduct);
+    }
+
+    @Override
+    public void deleteProductWithId(String productId) {
+
+    }
+
+    private List<ProductOption> createOptions(ProductPostDTO dto) {
         return dto.getOptions().stream()
                 .map(o -> ProductOption.builder()
                         .name(o.getName())
@@ -134,7 +150,7 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.toList());
     }
 
-    private List<ProductAttributeValue> createAttributeVal(ProductOptionDTO dto) throws ProductException {
+    private List<ProductAttributeValue> createAttributeVal(ProductOptionDTO dto) {
         if (dto.getAttributes() == null || dto.getAttributes().isEmpty()) return null;
         final List<ProductAttributeValue> attributeValues = new ArrayList<>();
         dto.getAttributes().forEach(

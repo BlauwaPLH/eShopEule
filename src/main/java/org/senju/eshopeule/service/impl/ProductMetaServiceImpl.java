@@ -11,10 +11,12 @@ import org.senju.eshopeule.service.ProductMetaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.senju.eshopeule.constant.exceptionMessage.ProductExceptionMsg.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ProductMetaServiceImpl implements ProductMetaService {
 
@@ -25,21 +27,21 @@ public class ProductMetaServiceImpl implements ProductMetaService {
 
 
     @Override
-    public ProductMetaDTO getById(String id) throws NotFoundException {
+    public ProductMetaDTO getById(String id) {
         return mapper.convertToDTO(productMetaRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(PROD_META_NOT_FOUND_WITH_ID_MSG, id))
         ));
     }
 
     @Override
-    public ProductMetaDTO getByProductId(String productId) throws NotFoundException {
+    public ProductMetaDTO getByProductId(String productId) {
         return mapper.convertToDTO(productMetaRepository.findByProductId(productId).orElseThrow(
                 () -> new NotFoundException(String.format(PROD_META_NOT_FOUND_WITH_PRODUCT_ID_MSG, productId))
         ));
     }
 
     @Override
-    public ProductMetaDTO createProdMeta(ProductMetaDTO dto) throws NotFoundException, ObjectAlreadyExistsException {
+    public ProductMetaDTO createProdMeta(ProductMetaDTO dto) {
         if (!productRepository.existsById(dto.getProductId())) {
             throw new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, dto.getProductId()));
         }
@@ -50,7 +52,7 @@ public class ProductMetaServiceImpl implements ProductMetaService {
     }
 
     @Override
-    public ProductMetaDTO updateProdMeta(ProductMetaDTO dto) throws NotFoundException {
+    public ProductMetaDTO updateProdMeta(ProductMetaDTO dto) {
         if (dto.getId() == null || !productMetaRepository.existsById(dto.getId())) {
             throw new NotFoundException(PROD_META_NOT_FOUND_MSG);
         }

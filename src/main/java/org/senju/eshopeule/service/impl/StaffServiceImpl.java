@@ -1,6 +1,5 @@
 package org.senju.eshopeule.service.impl;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.StaffDTO;
 import org.senju.eshopeule.exceptions.*;
@@ -17,6 +16,7 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +26,7 @@ import static org.senju.eshopeule.constant.exceptionMessage.RoleExceptionMsg.ROL
 import static org.senju.eshopeule.constant.exceptionMessage.UserExceptionMsg.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class StaffServiceImpl implements StaffService {
 
@@ -45,7 +46,7 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     @Cacheable(value = "staffCache", key = "#id")
-    public StaffDTO getStaffWithId(String id) throws NotFoundException {
+    public StaffDTO getStaffWithId(String id) {
         final User loadedUser = userRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(USER_NOT_EXISTS_WITH_ID_MSG, id))
         );
@@ -62,8 +63,7 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    @Transactional
-    public void createAccount(String username, String password, String email, Role role)  throws ObjectAlreadyExistsException {
+    public void createAccount(String username, String password, String email, Role role)  {
         var user = userRepository.findByUsername(username).orElse(null);
         if (user == null) {
             user = User.builder()
@@ -82,7 +82,7 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public void createAccount(StaffDTO staff) throws ObjectAlreadyExistsException, NotFoundException {
+    public void createAccount(StaffDTO staff) {
         final User newStaff = staffMapper.convertToEntity(staff);
 
         boolean isExistingUser = userRepository.checkUserExistsWithUsernameOrEmail(newStaff.getUsername(), newStaff.getEmail());
@@ -100,7 +100,7 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     @CachePut(value = "staffCache", key = "#dto.id")
-    public StaffDTO updateAccount(StaffDTO dto) throws NotFoundException, ObjectAlreadyExistsException {
+    public StaffDTO updateAccount(StaffDTO dto) {
         User loadedStaff = userRepository.findById(dto.getId()).orElseThrow(
                 () -> new NotFoundException(USER_NOT_EXISTS_MSG)
         );
