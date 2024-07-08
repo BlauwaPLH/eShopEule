@@ -5,10 +5,12 @@ import org.senju.eshopeule.repository.projection.SimpleProdAttrView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface ProductAttributeRepository extends JpaRepository<ProductAttribute, String> {
 
     @Query(value = "SELECT pa.id, pa.name FROM product_attributes AS pa INNER JOIN product_attribute_category AS pc ON pa.id = pc.product_attribute_id WHERE pc.category_id = :cateId", nativeQuery = true)
