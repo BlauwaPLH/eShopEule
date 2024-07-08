@@ -5,6 +5,7 @@ import org.senju.eshopeule.dto.ProductPostDTO;
 import org.senju.eshopeule.dto.ProductPutDTO;
 import org.senju.eshopeule.dto.response.ProductPagingResponse;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 
 public interface ProductService {
@@ -24,7 +25,7 @@ public interface ProductService {
 
     ProductPagingResponse getAllProductByCategorySlug(String categorySlug, Pageable pageRequest);
 
-    ProductDTO createNewProduct(ProductPostDTO dto);
+    ProductDTO createNewProduct(ProductPostDTO dto, MultipartFile[] images);
 
     ProductDTO updateProduct(ProductPutDTO dto);
 

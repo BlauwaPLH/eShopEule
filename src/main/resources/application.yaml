@@ -45,6 +45,10 @@ logging:
       senju:
         eshopeule: DEBUG
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+
 bootstrap:
   account:
     super-admin:

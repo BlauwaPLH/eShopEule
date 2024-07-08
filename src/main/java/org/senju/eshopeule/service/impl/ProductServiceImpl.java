@@ -20,8 +20,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,64 +37,65 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final ProductAttributeRepository attributeRepository;
-    private final ProductImageRepository productImageRepository;
-    private final ProductMetaRepository productMetaRepository;
+    private final ProductImageRepository prodImgRepository;
+    private final ProductMetaRepository prodMetaRepository;
     private final ImageService imageService;
-    private final ProductMetaMapper productMetaMapper;
-    private final ProductSimpleMapper productSimpleMapper;
-    private final ProductPubMapper productPubMapper;
-    private final ProductDetailMapper productDetailMapper;
-    private final ProductPostMapper productPostMapper;
-    private final ProductPutMapper productPutMapper;
+
+    private final ProductMetaMapper prodMetaMapper;
+    private final ProductSimpleMapper prodSimpleMapper;
+    private final ProductPubMapper prodPubMapper;
+    private final ProductDetailMapper prodDetailMapper;
+    private final ProductPostMapper prodPostMapper;
+    private final ProductPutMapper prodPutMapper;
 
     private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
 
     @Override
     public ProductDTO getProductById(String id) {
-        return productPubMapper.convertToDTO(productRepository.findById(id).orElseThrow(
+        return prodPubMapper.convertToDTO(productRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, id))
         ));
     }
 
     @Override
     public ProductDTO getProductDetailById(String id) {
-        return productDetailMapper.convertToDTO(productRepository.findById(id).orElseThrow(
+        return prodDetailMapper.convertToDTO(productRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, id))
         ));
     }
 
     @Override
     public ProductDTO getProductBySlug(String productSlug) {
-        return productPubMapper.convertToDTO(productRepository.findBySlug(productSlug).orElseThrow(
+        return prodPubMapper.convertToDTO(productRepository.findBySlug(productSlug).orElseThrow(
                 () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_SLUG_MSG, productSlug))
         ));
     }
 
     @Override
     public ProductDTO getProductDetailBySlug(String productSlug) {
-        return productDetailMapper.convertToDTO(productRepository.findBySlug(productSlug).orElseThrow(
+        return prodDetailMapper.convertToDTO(productRepository.findBySlug(productSlug).orElseThrow(
                 () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_SLUG_MSG, productSlug))
         ));
     }
 
     @Override
     public ProductPagingResponse getAllProductByBrandId(String brandId, Pageable pageRequest) {
-        return getProductPaging(productRepository.findAllByBrandId(brandId, pageRequest), productSimpleMapper);
+        return getProductPaging(productRepository.findAllByBrandId(brandId, pageRequest), prodSimpleMapper);
     }
 
     @Override
     public ProductPagingResponse getAllProductByBrandSlug(String brandSlug, Pageable pageRequest) {
-        return getProductPaging(productRepository.findAllByBrandSlug(brandSlug, pageRequest), productSimpleMapper);
+        return getProductPaging(productRepository.findAllByBrandSlug(brandSlug, pageRequest), prodSimpleMapper);
     }
 
     @Override
     public ProductPagingResponse getAllProductByCategoryId(String categoryId, Pageable pageRequest) {
-        return getProductPaging(productRepository.findAllByCategoryId(categoryId, pageRequest), productSimpleMapper);
+        return getProductPaging(productRepository.findAllByCategoryId(categoryId, pageRequest), prodSimpleMapper);
     }
 
     @Override
     public ProductPagingResponse getAllProductByCategorySlug(String categorySlug, Pageable pageRequest) {
-        return getProductPaging(productRepository.findAllByCategorySlug(categorySlug, pageRequest), productSimpleMapper);
+        return getProductPaging(productRepository.findAllByCategorySlug(categorySlug, pageRequest), prodSimpleMapper);
     }
 
     private ProductPagingResponse getProductPaging(Page<Product> productPage, ProductMapper<? extends ProductDTO> mapper) {
@@ -110,11 +114,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO createNewProduct(ProductPostDTO dto) {
+    public ProductDTO createNewProduct(ProductPostDTO dto, MultipartFile[] images) {
         if (productRepository.checkExistsWithSlug(dto.getSlug())) {
             throw new ObjectAlreadyExistsException(String.format(PRODUCT_ALREADY_EXISTS_WITH_SLUG_MSG, dto.getSlug()));
         }
-        Product newProduct = productPostMapper.convertToEntity(dto);
+        Product newProduct = prodPostMapper.convertToEntity(dto);
 
         if (!dto.getHasOptions() || dto.getOptions() == null || dto.getOptions().isEmpty()) {
             newProduct.setHasOptions(false);
@@ -124,7 +128,9 @@ public class ProductServiceImpl implements ProductService {
         }
         newProduct = productRepository.save(newProduct);
         this.createProductMeta(dto, newProduct.getId());
-        return productPubMapper.convertToDTO(newProduct);
+        this.createProductImages(images, newProduct);
+
+        return prodPubMapper.convertToDTO(newProduct);
     }
 
     @Override
@@ -132,13 +138,18 @@ public class ProductServiceImpl implements ProductService {
         Product loadedProduct = productRepository.findById(dto.getId()).orElseThrow(
                 () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, dto.getId()))
         );
-        productPutMapper.updateProductFromDTO(dto, loadedProduct);
-        return productPubMapper.convertToDTO(loadedProduct);
+        prodPutMapper.updateProductFromDTO(dto, loadedProduct);
+        return prodPubMapper.convertToDTO(loadedProduct);
     }
 
     @Override
     public void deleteProductWithId(String productId) {
-
+        Product loadedProduct = productRepository.findById(productId).orElseThrow(
+                () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, productId))
+        );
+        loadedProduct.setIsPublished(false);
+        loadedProduct.setIsAllowedToOrder(false);
+        productRepository.save(loadedProduct);
     }
 
     private List<ProductOption> createOptions(ProductPostDTO dto) {
@@ -168,11 +179,30 @@ public class ProductServiceImpl implements ProductService {
         return attributeValues;
     }
 
+    private void createProductImages(MultipartFile[] images, Product savedProduct) {
+        if (images.length == 0) return;
+        Arrays.stream(images).forEach(
+                img -> {
+                    try {
+                        final String imgName = imageService.save(img);
+                        final ProductImage newProdImg = ProductImage.builder()
+                                .product(savedProduct)
+                                .name(imgName)
+                                .imageUrl(imageService.getImageUrl(imgName))
+                                .build();
+                        prodImgRepository.save(newProdImg);
+                    } catch (IOException ex) {
+                        throw new ProductException("Error upload image");
+                    }
+                }
+        );
+    }
+
 
     private void createProductMeta(ProductPostDTO dto, String productId) {
         if (dto.getProductMeta() == null) return;
         final ProductMetaDTO productMetaDTO = dto.getProductMeta();
         productMetaDTO.setProductId(productId);
-        productMetaRepository.save(productMetaMapper.convertToEntity(productMetaDTO));
+        prodMetaRepository.save(prodMetaMapper.convertToEntity(productMetaDTO));
     }
 }

@@ -32,7 +32,8 @@ ext {
 			jjwt: '0.12.5',
 			twilio: '10.3.0',
 			mapstruct: '1.5.5.Final',
-			firebase: '9.3.0'
+			firebase: '9.3.0',
+			springdoc_openapi: '2.6.0'
 	]
 }
 
@@ -59,6 +60,7 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	implementation "com.twilio.sdk:twilio:${versions.twilio}"
 	implementation "com.google.firebase:firebase-admin:${versions.firebase}"
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${versions.springdoc_openapi}"
 
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

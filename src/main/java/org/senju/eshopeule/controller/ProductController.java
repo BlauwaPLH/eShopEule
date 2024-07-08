@@ -1,10 +1,16 @@
 package org.senju.eshopeule.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.constant.pagination.ProductPageable;
 import org.senju.eshopeule.dto.ProductPostDTO;
+import org.senju.eshopeule.dto.ProductPubDTO;
 import org.senju.eshopeule.dto.ProductPutDTO;
 import org.senju.eshopeule.dto.response.BaseResponse;
 import org.senju.eshopeule.dto.response.SimpleResponse;
@@ -16,12 +22,17 @@ import org.senju.eshopeule.service.ProductService;
 import org.senju.eshopeule.utils.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import static org.senju.eshopeule.constant.pattern.RegexPattern.ID_PATTERN;
+import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +43,8 @@ public class ProductController {
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     @GetMapping
-    public ResponseEntity<? extends BaseResponse> getProductById(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
+    @Operation(summary = "Get product with ID")
+    public ResponseEntity<? extends BaseResponse> getProductById(@RequestParam("id") String id) {
         logger.debug("Get product with id: {}", id);
         try {
             return ResponseEntity.ok(productService.getProductById(id));
@@ -43,6 +55,7 @@ public class ProductController {
     }
 
     @GetMapping(path = "/{prodSlug}")
+    @Operation(summary = "Get product with slug")
     public ResponseEntity<? extends BaseResponse> getProductBySlug(@PathVariable("prodSlug") String productSlug) {
         logger.debug("Get product with slug: {}", productSlug);
         try {
@@ -54,7 +67,8 @@ public class ProductController {
     }
 
     @GetMapping(path = "/detail")
-    public ResponseEntity<? extends BaseResponse> getProductDetailById(@RequestParam("id") @Pattern(regexp = ID_PATTERN, message = "ID is invalid") String id) {
+    @Operation(summary = "Get product detail with ID")
+    public ResponseEntity<? extends BaseResponse> getProductDetailById(@RequestParam("id") String id) {
         logger.debug("Get product detail with id: {}", id);
         try {
             return ResponseEntity.ok(productService.getProductDetailById(id));
@@ -65,6 +79,7 @@ public class ProductController {
     }
 
     @GetMapping(path = "/detail/{prodSlug}")
+    @Operation(summary = "Get product detail with slug")
     public ResponseEntity<? extends BaseResponse> getProductDetailBySlug(@PathVariable("prodSlug") String productSlug) {
         logger.debug("Get product detail with slug: {}", productSlug);
         try {
@@ -76,6 +91,7 @@ public class ProductController {
     }
 
     @GetMapping(path = "/all/brand")
+    @Operation(summary = "Get all product with brand's ID")
     public ResponseEntity<? extends BaseResponse> getAllProductByBrandId(
             @RequestParam("id") String brandId,
             @RequestParam(name = "pageNo", required = false, defaultValue = ProductPageable.DEFAULT_PAGE_NO) int pageNo,
@@ -94,6 +110,7 @@ public class ProductController {
     }
 
     @GetMapping(path = "/all/brand/{brandSlug}")
+    @Operation(summary = "Get all product with brand's slug")
     public ResponseEntity<? extends BaseResponse> getAllProductByBrandSlug(
             @PathVariable("brandSlug") String brandSlug,
             @RequestParam(name = "pageNo", required = false, defaultValue = ProductPageable.DEFAULT_PAGE_NO) int pageNo,
@@ -112,6 +129,7 @@ public class ProductController {
     }
 
     @GetMapping(path = "/all/category")
+    @Operation(summary = "Get all product with category's ID")
     public ResponseEntity<? extends BaseResponse> getAllProductByCategoryId(
             @RequestParam("id") String categoryId,
             @RequestParam(name = "pageNo", required = false, defaultValue = ProductPageable.DEFAULT_PAGE_NO) int pageNo,
@@ -131,6 +149,7 @@ public class ProductController {
     }
 
     @GetMapping(path = "/all/category/{categorySlug}")
+    @Operation(summary = "Get all product with category's slug")
     public ResponseEntity<? extends BaseResponse> getAllProductByCategorySlug(
             @PathVariable("categorySlug") String categorySlug,
             @RequestParam(name = "pageNo", required = false, defaultValue = ProductPageable.DEFAULT_PAGE_NO) int pageNo,
@@ -150,10 +169,13 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<? extends BaseResponse> createNewProduct(@Valid @RequestBody ProductPostDTO dto) {
+    @Operation(summary = "Create new product")
+    public ResponseEntity<? extends BaseResponse> createNewProduct(
+            @RequestPart(name = "file", required = false) MultipartFile[] files,
+            @RequestPart @Valid ProductPostDTO dto) {
         logger.debug("Create new product with name: {}", dto.getName());
         try {
-            return ResponseEntity.ok(productService.createNewProduct(dto));
+            return ResponseEntity.ok(productService.createNewProduct(dto, files));
         } catch (NotFoundException | ObjectAlreadyExistsException | ProductException ex) {
             logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
@@ -161,6 +183,7 @@ public class ProductController {
     }
 
     @PutMapping
+    @Operation(summary = "Update product")
     public ResponseEntity<? extends BaseResponse> updateProduct(@Valid @RequestBody ProductPutDTO dto) {
         logger.debug("Update product with id: {}", dto.getId());
         try {
@@ -172,6 +195,7 @@ public class ProductController {
     }
 
     @DeleteMapping(path = "/del")
+    @Operation(summary = "Delete product with ID")
     public ResponseEntity<?> deleteProductWithId(@RequestParam("id") String productId) {
         logger.debug("Delete product with id: {}", productId);
         try {

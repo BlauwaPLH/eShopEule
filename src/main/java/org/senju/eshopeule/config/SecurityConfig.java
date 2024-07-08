@@ -64,7 +64,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(c -> c
                         .requestMatchers("/api/r/*/role/**").hasAnyAuthority(ADMIN_READ.getPermName(), ADMIN_WRITE.getPermName())
-                        .requestMatchers("/api/p/**").permitAll()
+                        .requestMatchers("/api/p/**", "/swagger-ui/**", "/swagger-ui", "/v3/api-docs/**", "/actuator/health/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();
