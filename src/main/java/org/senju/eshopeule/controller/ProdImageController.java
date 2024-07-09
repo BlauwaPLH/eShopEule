@@ -1,6 +1,5 @@
 package org.senju.eshopeule.controller;
 
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.response.SimpleResponse;
 import org.senju.eshopeule.exceptions.NotFoundException;
@@ -50,7 +49,7 @@ public class ProdImageController {
         }
     }
 
-    @DeleteMapping
+    @DeleteMapping(path = "/del")
     public ResponseEntity<?> deleteById(@RequestParam("id") String id) {
         logger.info("Delete product image with id: {}", id);
         try {
@@ -62,7 +61,7 @@ public class ProdImageController {
         }
     }
 
-    @DeleteMapping(path = "/prod")
+    @DeleteMapping(path = "/prod/del")
     public ResponseEntity<?> deleteByProductId(@RequestParam("id") String productId) {
         logger.info("Delete product image with product id: {}", productId);
         try {

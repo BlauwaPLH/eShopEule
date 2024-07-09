@@ -70,7 +70,9 @@ public class ProductImageServiceImpl implements ProductImageService {
         String imageName = productImageRepository.getNameById(id)
                 .orElseThrow(() -> new NotFoundException(String.format(PROD_IMAGE_NOT_FOUND_WITH_ID_MSG, id)));
         try {
+            logger.debug("Delete image with name: {}", imageName);
             imageService.delete(imageName);
+            productImageRepository.deleteById(id);
         } catch (IOException ex) {
             throw new ProductException(ex.getMessage());
         }
@@ -79,14 +81,16 @@ public class ProductImageServiceImpl implements ProductImageService {
 
     @Override
     public void deleteByProductId(String productId){
-        String imageName = productImageRepository.getNameByProductId(productId)
-                .orElseThrow(() -> new NotFoundException(String.format(PROD_IMAGE_NOT_FOUND_WITH_PROD_ID_MSG, productId)));
-        try {
-            imageService.delete(imageName);
-        } catch (IOException ex) {
-            throw new ProductException(ex.getMessage());
-        }
-
+        List<String> imageNames = productImageRepository.getNameByProductId(productId);
+        imageNames.forEach(
+                name -> {
+                    try {
+                        imageService.delete(name);
+                    } catch (IOException ex) {
+                        throw new ProductException(ex.getMessage());
+                    }
+                }
+        );
         productImageRepository.deleteByProductId(productId);
     }
 }

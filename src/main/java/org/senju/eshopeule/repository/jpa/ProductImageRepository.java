@@ -18,7 +18,7 @@ public interface ProductImageRepository extends JpaRepository<ProductImage, Stri
     Optional<String> getNameById(@Param("id") String id);
 
     @Query(value = "SELECT name FROM product_images WHERE product_id = :prodId", nativeQuery = true)
-    Optional<String> getNameByProductId(@Param("prodId") String productId);
+    List<String> getNameByProductId(@Param("prodId") String productId);
 
     @Query(value = "SELECT image_url FROM product_images WHERE product_id = :prodId", nativeQuery = true)
     List<String> getAllImageUrlByProductId(@Param("prodId") String productId);

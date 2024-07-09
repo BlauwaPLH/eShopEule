@@ -1,5 +1,8 @@
 package org.senju.eshopeule.controller;
 
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.Bucket;
+import com.google.firebase.cloud.StorageClient;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.response.SimpleResponse;
 import org.senju.eshopeule.service.ImageService;
@@ -29,6 +32,14 @@ public class DemoController {
                 logger.error(ex.getMessage());
             }
         });
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(path = "/api/p/v1/demo/deleteImage")
+    public ResponseEntity<?> deleteImage() {
+        Bucket bucket = StorageClient.getInstance().bucket();
+        Blob blob = bucket.get("ef87c5e9-7507-488e-963a-4738d4c9e9f4png");
+        blob.delete();
         return ResponseEntity.noContent().build();
     }
 }
