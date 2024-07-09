@@ -10,6 +10,7 @@ import org.senju.eshopeule.mappers.*;
 import org.senju.eshopeule.model.product.*;
 import org.senju.eshopeule.repository.jpa.*;
 import org.senju.eshopeule.repository.mongodb.ProductMetaRepository;
+import org.senju.eshopeule.repository.projection.SimpleProdAttrView;
 import org.senju.eshopeule.service.ImageService;
 import org.senju.eshopeule.service.ProductService;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.senju.eshopeule.constant.exceptionMessage.BrandExceptionMsg.BRAND_NOT_FOUND_WITH_ID_MSG;
@@ -123,14 +125,15 @@ public class ProductServiceImpl implements ProductService {
         }
         Product newProduct = prodPostMapper.convertToEntity(dto);
 
+        this.createProductBrand(newProduct, dto);
+        this.createProductCategories(newProduct, dto);
+
         if (dto.getOptions() == null || dto.getOptions().isEmpty()) {
             newProduct.setHasOptions(false);
         } else {
             newProduct.setHasOptions(true);
             this.createOptions(newProduct, dto);
         }
-        this.createProductCategories(newProduct, dto);
-        this.createProductBrand(newProduct, dto);
 
         newProduct = productRepository.save(newProduct);
 
@@ -172,24 +175,24 @@ public class ProductServiceImpl implements ProductService {
                                     .name(optionDTO.getName())
                                     .product(newProduct)
                                     .build();
-                            this.createAttributeVal(entity, optionDTO);
+                            this.createAttributeVal(entity, optionDTO, dto.getCategoryIds());
                             return entity;
                         })
                         .collect(Collectors.toList()));
     }
 
-    private void createAttributeVal(ProductOption entity, ProductOptionDTO dto) {
+    private void createAttributeVal(ProductOption entity, ProductOptionDTO dto, List<String> categoryIds) {
         logger.debug("Create attribute values");
         if (dto.getAttributes() == null || dto.getAttributes().isEmpty()) return;
         final List<ProductAttributeValue> attributeValues = new ArrayList<>();
+        Map<String, String> attrMap = attributeRepository.getAllWithCategoryIds(categoryIds)
+                .stream().collect(Collectors.toMap(SimpleProdAttrView::getName, SimpleProdAttrView::getId));
         dto.getAttributes().forEach(
                 (attrName, valDTO) -> {
-                    final ProductAttribute attr = attributeRepository.findByName(attrName).orElseThrow(
-                            () -> new ProductException(String.format(PROD_ATT_NOT_FOUND_WITH_NAME_MSG, attrName))
-                    );
+                    if (!attrMap.containsKey(attrName)) throw new NotFoundException(String.format(PROD_ATT_NOT_FOUND_WITH_NAME_MSG, attrName));
                     final ProductAttributeValue value = ProductAttributeValue.builder()
                             .value(valDTO.getValue())
-                            .productAttribute(attr)
+                            .productAttribute(ProductAttribute.builder().id(attrMap.get(attrName)).build())
                             .productOption(entity)
                             .build();
                     attributeValues.add(value);

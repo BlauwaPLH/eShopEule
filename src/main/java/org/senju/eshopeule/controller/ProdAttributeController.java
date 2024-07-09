@@ -1,7 +1,6 @@
 package org.senju.eshopeule.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.ProductAttributeDTO;
 import org.senju.eshopeule.dto.response.BaseResponse;

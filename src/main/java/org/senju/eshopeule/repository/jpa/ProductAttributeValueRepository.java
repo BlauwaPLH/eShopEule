@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface ProductAttributeValueRepository extends JpaRepository<ProductAttributeValue, String> {
 
+    @Transactional
+    @Modifying
     @Query(value = "DELETE FROM product_attribute_values WHERE product_option_id = :optionId", nativeQuery = true)
     void deleteByOptionId(@Param("optionId") String productOptionId);
 

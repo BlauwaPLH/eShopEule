@@ -13,8 +13,12 @@ import java.util.Optional;
 @Repository
 public interface ProductAttributeRepository extends JpaRepository<ProductAttribute, String> {
 
-    @Query(value = "SELECT pa.id, pa.name FROM product_attributes AS pa INNER JOIN product_attribute_category AS pc ON pa.id = pc.product_attribute_id WHERE pc.category_id = :cateId", nativeQuery = true)
-    List<SimpleProdAttrView> getAllProdAttrWithCategoryId(@Param("cateId") String categoryId);
+    @Query(value = "SELECT DISTINCT pa.id, pa.name " +
+            "FROM product_attributes AS pa " +
+            "INNER JOIN product_attribute_category AS pac " +
+            "ON pa.id = pac.product_attribute_id " +
+            "WHERE pac.category_id = :cateId", nativeQuery = true)
+    List<SimpleProdAttrView> getAllWithCategoryId(@Param("cateId") String categoryId);
 
     @Query(value = "SELECT EXISTS (SELECT 1 FROM product_attributes WHERE name = :name)", nativeQuery = true)
     boolean checkProdAttrExistsWithName(@Param("name") String name);
@@ -24,9 +28,21 @@ public interface ProductAttributeRepository extends JpaRepository<ProductAttribu
 
     Optional<ProductAttribute> findByName(String name);
 
-    @Query(value = "SELECT EXISTS (" +
-            "SELECT 1 FROM product_attribute_category AS pac " +
-            "INNER JOIN product_category AS pc ON pac.category_id = pc.category_id " +
-            "WHERE pac.product_attribute_id = :prodAttrId AND pc.product_id = :prodId)", nativeQuery = true)
-    boolean checkCategoryContainsProductAndAttribute(@Param("prodId") String productId, @Param("prodAttrId") String productAttributeId);
+    @Query(value = "SELECT DISTINCT pa.id, pa.name " +
+            "FROM product_attributes AS pa " +
+            "INNER JOIN product_attribute_category AS pac " +
+            "ON pa.id = pac.product_attribute_id " +
+            "WHERE pac.category_id IN :cateIds", nativeQuery = true)
+    List<SimpleProdAttrView> getAllWithCategoryIds(@Param("cateIds") List<String> categoryIds);
+
+    @Query(value = "SELECT DISTINCT pa.id, pa.name " +
+            "FROM product_attributes AS pa " +
+            "WHERE pa.id IN " +
+            "   (SELECT DISTINCT pac.product_attribute_id " +
+            "   FROM product_attribute_category AS pac " +
+            "   INNER JOIN product_category AS pc " +
+            "   ON pac.category_id = pc.category_id " +
+            "   WHERE pc.product_id = :prodId)", nativeQuery = true)
+    List<SimpleProdAttrView> getAllWithProductId(@Param("prodId") String productId);
+
 }

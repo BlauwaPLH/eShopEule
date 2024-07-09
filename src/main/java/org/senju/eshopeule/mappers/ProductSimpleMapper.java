@@ -16,6 +16,7 @@ public abstract class ProductSimpleMapper implements ProductMapper<ProductSimple
     public abstract ProductSimpleDTO convertToDTO(Product entity);
 
     protected String mappingImageUrl(Product entity) {
+        if (entity.getProductImages() == null || entity.getProductImages().isEmpty()) return null;
         return entity.getProductImages().get(0).getImageUrl();
     }
 }

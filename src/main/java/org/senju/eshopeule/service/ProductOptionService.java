@@ -16,5 +16,4 @@ public interface ProductOptionService {
 
     void deleteById(String id);
 
-    void deleteByProductId(String productId);
 }

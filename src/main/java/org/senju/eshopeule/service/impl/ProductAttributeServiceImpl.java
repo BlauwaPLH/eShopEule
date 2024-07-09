@@ -47,7 +47,7 @@ public class ProductAttributeServiceImpl implements ProductAttributeService {
 
     @Override
     public List<ProductAttributeDTO> getAllProdAttWithCategoryId(String categoryId) {
-        return productAttributeRepository.getAllProdAttrWithCategoryId(categoryId).stream()
+        return productAttributeRepository.getAllWithCategoryId(categoryId).stream()
                 .map(v -> new ProductAttributeDTO(v.getId(), v.getName()))
                 .toList();
     }

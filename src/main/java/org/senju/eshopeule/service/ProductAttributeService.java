@@ -1,8 +1,6 @@
 package org.senju.eshopeule.service;
 
 import org.senju.eshopeule.dto.ProductAttributeDTO;
-import org.senju.eshopeule.exceptions.NotFoundException;
-import org.senju.eshopeule.exceptions.ObjectAlreadyExistsException;
 
 import java.util.List;
 

@@ -17,6 +17,4 @@ public interface ProductOptionRepository extends JpaRepository<ProductOption, St
     @Query(value = "SELECT po FROM ProductOption po WHERE po.id = :optionId AND po.product.id = :prodId")
     Optional<ProductOption> findByOptionIdAndProductId(@Param("optionId") String optionId, @Param("prodId") String productId);
 
-    @Query(value = "DELETE FROM product_options WHERE product_id = :prodId", nativeQuery = true)
-    void deleteByProductId(@Param("prodId") String productId);
 }

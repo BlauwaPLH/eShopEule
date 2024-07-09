@@ -24,7 +24,7 @@ public interface ProductOptionMapper extends BaseMapper<ProductOption, ProductOp
 
     @Override
     @Mapping(target = "product", expression = "java(mappingProduct(dto))")
-    @Mapping(target = "productAttributeValues", expression = "java(mappingAttributes(dto))")
+    @Mapping(target = "productAttributeValues", ignore = true)
     ProductOption convertToEntity(ProductOptionDTO dto);
 
     default Map<String, ProductAttributeValueDTO> mappingAttributes(ProductOption entity) {
@@ -36,22 +36,23 @@ public interface ProductOptionMapper extends BaseMapper<ProductOption, ProductOp
                         pav -> new ProductAttributeValueDTO(pav.getId(), pav.getValue())
                 ));
     }
-
-    default List<ProductAttributeValue> mappingAttributes(ProductOptionDTO dto) {
-        List<ProductAttributeValue> target = new ArrayList<>();
-        dto.getAttributes().forEach(
-                (attr, val) -> {
-                    ProductAttribute pa = ProductAttribute.builder().name(attr).build();
-                    ProductAttributeValue pav = ProductAttributeValue.builder()
-                            .id(val.getId())
-                            .value(val.getValue())
-                            .productAttribute(pa)
-                            .build();
-                    target.add(pav);
-                }
-        );
-        return target;
-    }
+//
+//    default List<ProductAttributeValue> mappingAttributes(ProductOptionDTO dto) {
+//        if (dto.getAttributes() == null || dto.getAttributes().isEmpty()) return null;
+//        List<ProductAttributeValue> target = new ArrayList<>();
+//        dto.getAttributes().forEach(
+//                (attr, val) -> {
+//                    ProductAttribute pa = ProductAttribute.builder().name(attr).build();
+//                    ProductAttributeValue pav = ProductAttributeValue.builder()
+//                            .id(val.getId())
+//                            .value(val.getValue())
+//                            .productAttribute(pa)
+//                            .build();
+//                    target.add(pav);
+//                }
+//        );
+//        return target;
+//    }
 
     default Product mappingProduct(ProductOptionDTO dto) {
         return Product.builder().id(dto.getProductId()).build();

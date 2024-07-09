@@ -62,13 +62,6 @@ public class ProdOptionController {
         }
     }
 
-    @DeleteMapping(path = "/prod/del")
-    public ResponseEntity<?> deleteByProductId(@RequestParam("id") String productId) {
-        logger.info("Delete all product option with product's id: {}", productId);
-        optionService.deleteByProductId(productId);
-        return ResponseEntity.noContent().build();
-    }
-
     @DeleteMapping(path = "/del")
     public ResponseEntity<?> deleteById(@RequestParam("id") String optionId) {
         logger.info("Delete product option with id: {}", optionId);
