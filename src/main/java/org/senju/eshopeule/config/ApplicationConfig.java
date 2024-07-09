@@ -10,6 +10,7 @@ import org.senju.eshopeule.repository.jpa.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
@@ -24,6 +25,7 @@ import java.util.Optional;
 @Configuration
 @EnableJpaRepositories(basePackages = "org.senju.eshopeule.repository.jpa")
 @EnableMongoRepositories(basePackages = "org.senju.eshopeule.repository.mongodb")
+@EnableElasticsearchRepositories(basePackages = "org.senju.eshopeule.repository.es")
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
 public class ApplicationConfig {
 

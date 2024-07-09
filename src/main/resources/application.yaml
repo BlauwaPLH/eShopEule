@@ -34,6 +34,11 @@ spring:
       port: 6379
     mongodb:
       uri: mongodb://superpech:123456789@localhost:27017/eShopEule
+  elasticsearch:
+    uris: http://localhost:9200
+    connection-timeout: 10m
+    socket-timeout: 1h
+    socket-keep-alive: true
 
 server:
   port: 8080
