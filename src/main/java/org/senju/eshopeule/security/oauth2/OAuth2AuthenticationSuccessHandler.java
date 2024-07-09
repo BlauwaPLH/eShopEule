@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.constant.enums.JwtClaims;
 import org.senju.eshopeule.constant.enums.TokenType;
 import org.senju.eshopeule.dto.response.LoginResponse;
-import org.senju.eshopeule.repository.RedisRepository;
+import org.senju.eshopeule.repository.redis.RedisRepository;
 import org.senju.eshopeule.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

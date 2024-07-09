@@ -51,6 +51,24 @@ public class RedisConfig {
                         RedisCacheConfiguration.defaultCacheConfig()
                                 .entryTtl(Duration.ofHours(12))
                                 .disableCachingNullValues()
+                )
+                .withCacheConfiguration(
+                        "brandCache",
+                        RedisCacheConfiguration.defaultCacheConfig()
+                                .entryTtl(Duration.ofHours(2))
+                                .disableCachingNullValues()
+                )
+                .withCacheConfiguration(
+                        "categoryCache",
+                        RedisCacheConfiguration.defaultCacheConfig()
+                                .entryTtl(Duration.ofHours(1))
+                                .disableCachingNullValues()
+                )
+                .withCacheConfiguration(
+                        "productAttributeCache",
+                        RedisCacheConfiguration.defaultCacheConfig()
+                                .entryTtl(Duration.ofHours(2))
+                                .disableCachingNullValues()
                 );
     }
 }

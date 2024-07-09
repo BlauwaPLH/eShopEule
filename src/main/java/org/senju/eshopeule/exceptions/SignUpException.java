@@ -1,6 +1,6 @@
 package org.senju.eshopeule.exceptions;
 
-public class SignUpException extends Exception {
+public class SignUpException extends RuntimeException {
     public SignUpException() {super();}
     public SignUpException(String message) {super(message);}
     public SignUpException(String message, Throwable cause) {super(message, cause);}

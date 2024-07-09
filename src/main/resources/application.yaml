@@ -12,6 +12,14 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 20
+          batch_versioned_data: true
+        order_inserts: true
+        order_updates: true
+
 
   mail:
     host: smtp.gmail.com
@@ -28,6 +36,8 @@ spring:
     redis:
       host: localhost
       port: 6379
+    mongodb:
+      uri: mongodb://superpech:123456789@localhost:27017/eShopEule
 
 server:
   port: 8080
@@ -37,6 +47,10 @@ logging:
     org:
       senju:
         eshopeule: DEBUG
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
 
 bootstrap:
   account:
@@ -72,3 +86,7 @@ twilio:
   account-sid: AC6c18541e060f12cb646a2a50fd49f984
   auth-token: 5b6e5412d576e151b8e2f12627b8d347
   phone-number: +16502678582
+
+firebase:
+  storage-bucket: eshopeule.appspot.com
+  image-url: https://storage.googleapis.com/${firebase.storage-bucket}/%s

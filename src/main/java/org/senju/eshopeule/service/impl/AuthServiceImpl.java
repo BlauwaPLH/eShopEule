@@ -15,9 +15,9 @@ import org.senju.eshopeule.exceptions.*;
 import org.senju.eshopeule.constant.enums.TokenType;
 import org.senju.eshopeule.model.user.Role;
 import org.senju.eshopeule.model.user.User;
-import org.senju.eshopeule.repository.RedisRepository;
-import org.senju.eshopeule.repository.RoleRepository;
-import org.senju.eshopeule.repository.UserRepository;
+import org.senju.eshopeule.repository.redis.RedisRepository;
+import org.senju.eshopeule.repository.jpa.RoleRepository;
+import org.senju.eshopeule.repository.jpa.UserRepository;
 import org.senju.eshopeule.repository.projection.LoginInfoView;
 import org.senju.eshopeule.service.AuthService;
 import org.senju.eshopeule.service.NotificationService;
@@ -34,9 +34,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
-import java.util.Map;
 
 import static org.senju.eshopeule.constant.enums.NotificationType.ContentType.*;
 import static org.senju.eshopeule.constant.enums.NotificationType.SendMethodType.EMAIL;
@@ -44,6 +44,7 @@ import static org.senju.eshopeule.constant.exceptionMessage.UserExceptionMsg.*;
 import static org.senju.eshopeule.constant.exceptionMessage.AuthExceptionMsg.*;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
@@ -62,9 +63,9 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
-    public LoginResponse authenticate(final LoginRequest request) throws UserNotExistsException, LoginException {
+    public LoginResponse authenticate(final LoginRequest request) {
         LoginInfoView loginInfoView = userRepository.getLoginInfoViewByIdentifier(request.getIdentifier())
-                .orElseThrow(() -> new UserNotExistsException(USER_NOT_EXISTS_MSG));
+                .orElseThrow(() -> new NotFoundException(USER_NOT_EXISTS_MSG));
 
         try {
             SecurityContextHolder.getContext().setAuthentication(
@@ -83,7 +84,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public RefreshTokenResponse refreshToken(final RefreshTokenRequest request) throws RefreshTokenException {
+    public RefreshTokenResponse refreshToken(final RefreshTokenRequest request) {
         final String oldRefreshToken = request.getRefreshToken();
         try {
             final String username = jwtUtil.extractUsername(oldRefreshToken);
@@ -105,10 +106,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public RegistrationResponse register(final RegistrationRequest request)
-            throws SignUpException, UserAlreadyExistsException {
+    public RegistrationResponse register(final RegistrationRequest request) {
         boolean isExistingUser = userRepository.checkUserExistsWithUsernameOrEmail(request.getUsername(), request.getEmail());
-        if (isExistingUser) throw new UserAlreadyExistsException(USER_ALREADY_EXISTS_MSG);
+        if (isExistingUser) throw new ObjectAlreadyExistsException(USER_ALREADY_EXISTS_MSG);
 
         tmpUserRedisRepository.save(request.getUsername(), request);
 
@@ -119,7 +119,7 @@ public class AuthServiceImpl implements AuthService {
             NotificationDTO notification = new NotificationDTO(new NotificationType(EMAIL, VERIFY_SIGNUP), verificationCode, request.getEmail());
             emailNotificationService.sendNotification(MessageUtil.buildMessage(notification));
         } catch (SendNotificationException ex) {
-            throw new VerifyException(ex.getMessage());
+            throw new SignUpException(ex.getMessage());
         }
 
         return RegistrationResponse
@@ -130,7 +130,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
-    public VerifyResponse verifyRegister(final VerifyRequest request) throws VerifyException {
+    public VerifyResponse verifyRegister(final VerifyRequest request) {
         final String username = request.getUsername();
         final String verifyCode = request.getVerifyCode();
         final String storedVerifyCode = verificationCodeRepository.getByKey(username);
@@ -167,7 +167,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void resendRegistrationVerifyCode(final ResendVerifyCodeRequest request) throws VerifyException {
+    public void resendRegistrationVerifyCode(final ResendVerifyCodeRequest request) {
         final String username = request.getUsername();
         final String email = request.getEmail();
 
@@ -194,9 +194,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void changePassword(final ChangePasswordRequest request, final UserDetails userDetails) throws ChangePasswordException, UserNotExistsException {
+    public void changePassword(final ChangePasswordRequest request, final UserDetails userDetails) {
         final String principal = userDetails.getUsername();
-        var encodedPassword = userRepository.getEncodedPasswordByUsername(principal).orElseThrow(() -> new UserNotExistsException(USER_NOT_EXISTS_MSG));
+        var encodedPassword = userRepository.getEncodedPasswordByUsername(principal).orElseThrow(() -> new NotFoundException(USER_NOT_EXISTS_MSG));
         if (!passwordEncoder.matches(request.getOldPassword(), encodedPassword)) {
             throw new ChangePasswordException(CHANGE_PASSWORD_ERROR_MSG);
         }
@@ -204,10 +204,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void resetPassword(ResetPasswordRequest request) throws ChangePasswordException, UserNotExistsException {
+    public void resetPassword(ResetPasswordRequest request) {
         final String identifier = request.getIdentifier();
         final String email = userRepository.getEmailByIde(identifier)
-                .orElseThrow(() -> new UserNotExistsException(USER_NOT_EXISTS_MSG));
+                .orElseThrow(() -> new NotFoundException(USER_NOT_EXISTS_MSG));
         final String newPassword = StringGeneratorUtil.generatePassword();
 
         try {

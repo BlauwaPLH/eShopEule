@@ -11,7 +11,7 @@ import org.senju.eshopeule.model.BaseEntity;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User extends BaseEntity {
+public class User implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -40,7 +40,19 @@ public class User extends BaseEntity {
     @Column(nullable = false, name = "enabled")
     private boolean isEnabled;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof User)) return false;
+        return id != null && id.equals(((User) obj).getId());
+    }
 }

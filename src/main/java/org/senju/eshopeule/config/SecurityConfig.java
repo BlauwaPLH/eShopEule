@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -29,6 +30,7 @@ import static org.senju.eshopeule.constant.enums.BootstrapPerm.ADMIN_READ;
 import static org.senju.eshopeule.constant.enums.BootstrapPerm.ADMIN_WRITE;
 
 @Configuration
+@EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -62,7 +64,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(c -> c
                         .requestMatchers("/api/r/*/role/**").hasAnyAuthority(ADMIN_READ.getPermName(), ADMIN_WRITE.getPermName())
-                        .requestMatchers("/api/p/**").permitAll()
+                        .requestMatchers("/api/p/**", "/swagger-ui/**", "/swagger-ui", "/v3/api-docs/**", "/actuator/health/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .build();

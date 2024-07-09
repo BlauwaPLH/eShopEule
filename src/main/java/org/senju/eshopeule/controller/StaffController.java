@@ -2,13 +2,11 @@ package org.senju.eshopeule.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.senju.eshopeule.dto.StaffDTO;
 import org.senju.eshopeule.dto.response.BaseResponse;
 import org.senju.eshopeule.dto.response.SimpleResponse;
-import org.senju.eshopeule.exceptions.RoleNotExistsException;
-import org.senju.eshopeule.exceptions.UserAlreadyExistsException;
-import org.senju.eshopeule.exceptions.UserNotExistsException;
+import org.senju.eshopeule.exceptions.NotFoundException;
+import org.senju.eshopeule.exceptions.ObjectAlreadyExistsException;
 import org.senju.eshopeule.service.StaffService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.Collections;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,38 +26,38 @@ public class StaffController {
 
     @GetMapping(path = "/all")
     public ResponseEntity<Collection<StaffDTO>> getAllStaff() {
-        logger.debug("Get all staff");
+        logger.info("Get all staff");
         return ResponseEntity.ok(staffService.getAllStaff());
     }
 
     @GetMapping
     public ResponseEntity<? extends BaseResponse> getStaffWithId(@RequestParam("id") String id) {
-        logger.debug("Get staff with id: {}", id);
+        logger.info("Get staff with id: {}", id);
         try {
             return ResponseEntity.ok(staffService.getStaffWithId(id));
-        } catch (UserNotExistsException ex) {
-            return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
+        } catch (NotFoundException ex) {
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
 
     @PostMapping
     public ResponseEntity<? extends BaseResponse> createNewStaff(@Valid @RequestBody StaffDTO staffDTO) {
-        logger.debug("Create new staff account");
+        logger.info("Create new staff account");
         try {
             staffService.createAccount(staffDTO);
-            return ResponseEntity.ok(SimpleResponse.builder().message("Create staff account successfully").build());
-        } catch (UserAlreadyExistsException | RoleNotExistsException ex) {
-            return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
+            return ResponseEntity.ok(new SimpleResponse("Create staff account successfully"));
+        } catch (ObjectAlreadyExistsException | NotFoundException ex) {
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
 
     @PutMapping()
     public ResponseEntity<? extends BaseResponse> updateStaffAccount(@Valid @RequestBody StaffDTO staffDTO) {
-        logger.debug("Update staff account");
+        logger.info("Update staff account");
         try {
             return ResponseEntity.ok(staffService.updateAccount(staffDTO));
-        } catch (UserAlreadyExistsException | UserNotExistsException | RoleNotExistsException ex) {
-            return ResponseEntity.badRequest().body(SimpleResponse.builder().message(ex.getMessage()).build());
+        } catch (ObjectAlreadyExistsException | NotFoundException ex) {
+            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
 
