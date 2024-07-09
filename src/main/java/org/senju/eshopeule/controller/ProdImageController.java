@@ -22,7 +22,7 @@ public class ProdImageController {
 
     @GetMapping
     public ResponseEntity<?> getImageUrlById(@RequestParam("id") String id) {
-        logger.debug("Get product image url with id: {}", id);
+        logger.info("Get product image url with id: {}", id);
         try {
             return ResponseEntity.ok(productImageService.getImageUrlById(id));
         } catch (NotFoundException ex) {
@@ -33,7 +33,7 @@ public class ProdImageController {
 
     @GetMapping(path = "/prod")
     public ResponseEntity<?> getAllImageUrlByProductId(@RequestParam("id") String productId) {
-        logger.debug("Get all product image url with product id: {}", productId);
+        logger.info("Get all product image url with product id: {}", productId);
         return ResponseEntity.ok(productImageService.getAllImageUrlByProductId(productId));
     }
 
@@ -41,7 +41,7 @@ public class ProdImageController {
     public ResponseEntity<?> uploadProductImages(
             @RequestParam("file") MultipartFile[] files,
             @RequestParam("id") String productId) {
-        logger.debug("Upload product images");
+        logger.info("Upload product images");
         try {
             productImageService.uploadImage(files, productId);
             return ResponseEntity.ok(new SimpleResponse("Upload product images successfully!"));
@@ -52,7 +52,7 @@ public class ProdImageController {
 
     @DeleteMapping
     public ResponseEntity<?> deleteById(@RequestParam("id") String id) {
-        logger.debug("Delete product image with id: {}", id);
+        logger.info("Delete product image with id: {}", id);
         try {
             productImageService.deleteById(id);
             return ResponseEntity.ok(new SimpleResponse("Delete product image successfully!"));
@@ -64,7 +64,7 @@ public class ProdImageController {
 
     @DeleteMapping(path = "/prod")
     public ResponseEntity<?> deleteByProductId(@RequestParam("id") String productId) {
-        logger.debug("Delete product image with product id: {}", productId);
+        logger.info("Delete product image with product id: {}", productId);
         try {
             productImageService.deleteByProductId(productId);
             return ResponseEntity.ok(new SimpleResponse("Delete product image successfully!"));

@@ -1,7 +1,6 @@
 package org.senju.eshopeule.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.ProductMetaDTO;
 import org.senju.eshopeule.dto.response.BaseResponse;
@@ -24,9 +23,9 @@ public class ProdMetaController {
 
     @GetMapping
     public ResponseEntity<? extends BaseResponse> getProdMetaById(@RequestParam("id") String prodMetaId) {
-        logger.debug("Get by product meta id: {}", prodMetaId);
+        logger.info("Get by product meta id: {}", prodMetaId);
         try {
-            return ResponseEntity.ok(productMetaService.getByProductId(prodMetaId));
+            return ResponseEntity.ok(productMetaService.getById(prodMetaId));
         } catch (NotFoundException ex) {
             logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
@@ -35,7 +34,7 @@ public class ProdMetaController {
 
     @GetMapping(path = "/prod")
     public ResponseEntity<? extends BaseResponse> getByProductId(@RequestParam("id") String productId) {
-        logger.debug("Get by product's ID: {}", productId);
+        logger.info("Get by product's ID: {}", productId);
         try {
             return ResponseEntity.ok(productMetaService.getByProductId(productId));
         } catch (NotFoundException ex) {
@@ -46,7 +45,7 @@ public class ProdMetaController {
 
     @PostMapping
     public ResponseEntity<? extends BaseResponse> createProductMeta(@Valid @RequestBody ProductMetaDTO dto) {
-        logger.debug("Create product meta");
+        logger.info("Create product meta");
         try {
             return ResponseEntity.ok(productMetaService.createProdMeta(dto));
         } catch (NotFoundException | ObjectAlreadyExistsException ex) {
@@ -57,7 +56,7 @@ public class ProdMetaController {
 
     @PutMapping
     public ResponseEntity<? extends BaseResponse> updateProductMeta(@Valid @RequestBody ProductMetaDTO dto) {
-        logger.debug("Update product meta");
+        logger.info("Update product meta with product meta ID: {}", dto.getProductId());
         try {
             return ResponseEntity.ok(productMetaService.updateProdMeta(dto));
         } catch (NotFoundException ex) {
@@ -68,12 +67,14 @@ public class ProdMetaController {
 
     @DeleteMapping(path = "/del")
     public ResponseEntity<?> deleteById(@RequestParam("id") String prodMetaId) {
+        logger.info("Delete with product meta ID: {}", prodMetaId);
         productMetaService.deleteById(prodMetaId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(path = "/prod/del")
     public ResponseEntity<?> deleteByProductId(@RequestParam("id") String productId) {
+        logger.info("Delete with product ID: {}", productId);
         productMetaService.deleteByProductId(productId);
         return ResponseEntity.noContent().build();
     }

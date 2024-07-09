@@ -25,7 +25,7 @@ public class ProdOptionController {
 
     @GetMapping
     public ResponseEntity<? extends BaseResponse> getProductOption(@RequestParam("id") String optionId) {
-        logger.debug("Get product option with id: {}", optionId);
+        logger.info("Get product option with id: {}", optionId);
         try {
             return ResponseEntity.ok(optionService.getById(optionId));
         } catch (NotFoundException ex) {
@@ -36,13 +36,13 @@ public class ProdOptionController {
 
     @GetMapping(path = "/prod")
     public ResponseEntity<Collection<? extends BaseResponse>> getProductOptionByProductId(@RequestParam("id") String prodId) {
-        logger.debug("Get all product option with product id: {}", prodId);
+        logger.info("Get all product option with product id: {}", prodId);
         return ResponseEntity.ok(optionService.getAllByProductId(prodId));
     }
 
     @PostMapping
     public ResponseEntity<? extends BaseResponse> createNewProductOption(@Valid @RequestBody ProductOptionDTO dto) {
-        logger.debug("Create new product option");
+        logger.info("Create new product option");
         try {
             return ResponseEntity.ok(optionService.createProductOption(dto));
         } catch (NotFoundException | ProductException ex) {
@@ -53,7 +53,7 @@ public class ProdOptionController {
 
     @PutMapping
     public ResponseEntity<? extends BaseResponse> updateProductOption(@Valid @RequestBody ProductOptionDTO dto) {
-        logger.debug("Update product option");
+        logger.info("Update product option");
         try {
             return ResponseEntity.ok(optionService.updateProductOption(dto));
         } catch (NotFoundException | ProductException ex) {
@@ -64,14 +64,14 @@ public class ProdOptionController {
 
     @DeleteMapping(path = "/prod/del")
     public ResponseEntity<?> deleteByProductId(@RequestParam("id") String productId) {
-        logger.debug("Delete all product option with product's id: {}", productId);
+        logger.info("Delete all product option with product's id: {}", productId);
         optionService.deleteByProductId(productId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(path = "/del")
     public ResponseEntity<?> deleteById(@RequestParam("id") String optionId) {
-        logger.debug("Delete product option with id: {}", optionId);
+        logger.info("Delete product option with id: {}", optionId);
         optionService.deleteById(optionId);
         return ResponseEntity.noContent().build();
     }

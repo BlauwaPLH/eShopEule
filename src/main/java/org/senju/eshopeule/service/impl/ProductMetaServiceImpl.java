@@ -5,6 +5,7 @@ import org.senju.eshopeule.dto.ProductMetaDTO;
 import org.senju.eshopeule.exceptions.NotFoundException;
 import org.senju.eshopeule.exceptions.ObjectAlreadyExistsException;
 import org.senju.eshopeule.mappers.ProductMetaMapper;
+import org.senju.eshopeule.model.product.ProductMeta;
 import org.senju.eshopeule.repository.jpa.ProductRepository;
 import org.senju.eshopeule.repository.mongodb.ProductMetaRepository;
 import org.senju.eshopeule.service.ProductMetaService;
@@ -53,13 +54,17 @@ public class ProductMetaServiceImpl implements ProductMetaService {
 
     @Override
     public ProductMetaDTO updateProdMeta(ProductMetaDTO dto) {
-        if (dto.getId() == null || !productMetaRepository.existsById(dto.getId())) {
-            throw new NotFoundException(PROD_META_NOT_FOUND_MSG);
-        }
-        if (productRepository.existsById(dto.getProductId())) {
-            throw new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, dto.getProductId()));
-        }
-        return mapper.convertToDTO(productMetaRepository.save(mapper.convertToEntity(dto)));
+        if (dto.getId() != null && !dto.getId().isBlank()) {
+            if (dto.getProductId() == null) throw new NotFoundException(PRODUCT_NOT_FOUND_MSG);
+            final ProductMeta loadedProdMeta = productMetaRepository.findById(dto.getId()).orElseThrow(
+                    () -> new NotFoundException(String.format(PROD_META_NOT_FOUND_WITH_ID_MSG, dto.getId()))
+            );
+            if (!dto.getProductId().equals(loadedProdMeta.getProductId())) {
+                throw new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, dto.getProductId()));
+            }
+            mapper.updateFromDTO(dto, loadedProdMeta);
+            return mapper.convertToDTO(productMetaRepository.save(loadedProdMeta));
+        } else throw new NotFoundException(PROD_META_NOT_FOUND_MSG);
     }
 
     @Override

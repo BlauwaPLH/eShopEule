@@ -1,7 +1,5 @@
 package org.senju.eshopeule.model.product;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 import org.senju.eshopeule.model.AbstractAuditEntity;
@@ -20,7 +18,6 @@ import java.util.Map;
 public class ProductMeta extends AbstractAuditEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @Indexed

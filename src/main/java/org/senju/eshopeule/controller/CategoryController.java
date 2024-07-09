@@ -1,7 +1,6 @@
 package org.senju.eshopeule.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.CategoryDTO;
 import org.senju.eshopeule.dto.response.BaseResponse;
@@ -29,7 +28,7 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<? extends BaseResponse> getCategoryWithId(@RequestParam("id") String id) {
         try {
-            logger.debug("Get category with id: {}", id);
+            logger.info("Get category with id: {}", id);
             return ResponseEntity.ok(categoryService.getById(id));
         } catch (NotFoundException ex) {
             return ResponseEntity.status(NOT_FOUND).body(new SimpleResponse(ex.getMessage()));
@@ -38,19 +37,19 @@ public class CategoryController {
 
     @GetMapping(path = "/all")
     public ResponseEntity<Collection<? extends BaseResponse>> getAllCategories() {
-        logger.debug("Get all categories");
+        logger.info("Get all categories");
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
     @GetMapping(path = "/children")
     public ResponseEntity<Collection<? extends BaseResponse>> getAllCategoryChildrenWithParentId(@RequestParam("id") String parentId) {
-        logger.debug("Get all categories with parent's id : {}", parentId);
+        logger.info("Get all categories with parent's id : {}", parentId);
         return ResponseEntity.ok(categoryService.getAllCategoryChildren(parentId));
     }
 
     @PostMapping
     public ResponseEntity<? extends BaseResponse> createNewCategory(@Valid @RequestBody CategoryDTO dto) {
-        logger.debug("Create new category");
+        logger.info("Create new category");
         try {
             categoryService.createNewCategory(dto);
             return ResponseEntity.ok(new SimpleResponse("Create new category successfully!"));
@@ -62,7 +61,7 @@ public class CategoryController {
 
     @PutMapping
     public ResponseEntity<? extends BaseResponse> updateCategory(@Valid @RequestBody CategoryDTO dto) {
-        logger.debug("Update category");
+        logger.info("Update category");
         try {
             return ResponseEntity.ok(categoryService.updateCategory(dto));
         } catch (ObjectAlreadyExistsException | NotFoundException ex) {
@@ -73,7 +72,7 @@ public class CategoryController {
 
     @DeleteMapping(path = "/del")
     public ResponseEntity<?> deleteById(@RequestParam("id") String id) {
-        logger.debug("Delete category with id: {}", id);
+        logger.info("Delete category with id: {}", id);
         categoryService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

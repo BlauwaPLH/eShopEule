@@ -30,7 +30,7 @@ public class RoleController {
 
     @GetMapping
     public ResponseEntity<? extends BaseResponse> getRoleById(@RequestParam("id") String id) {
-        logger.debug("Get role with id: {}", id);
+        logger.info("Get role with id: {}", id);
         try {
             return ResponseEntity.ok(roleService.getById(id));
         } catch (NotFoundException ex) {
@@ -41,27 +41,27 @@ public class RoleController {
 
     @GetMapping(path = "/all")
     public ResponseEntity<Collection<RoleDTO>> getAllRoles() {
-        logger.debug("Get all roles");
+        logger.info("Get all roles");
         return ResponseEntity.ok(roleService.getAllRole());
     }
 
     @GetMapping(path = "/staff")
     public ResponseEntity<Collection<RoleDTO>> getAllStaffRole() {
-        logger.debug("Get all staff role");
+        logger.info("Get all staff role");
         return ResponseEntity.ok(roleService.getAllStaffRole());
     }
 
 
     @PostMapping
     public ResponseEntity<? extends BaseResponse> createNewRole(@Valid  @RequestBody RoleDTO role) {
-        logger.debug("Create new role");
+        logger.info("Create new role");
         roleService.createNewRole(role);
         return ResponseEntity.ok(new SimpleResponse("Save successfully"));
     }
 
     @PutMapping
     public ResponseEntity<? extends BaseResponse> updateRole(@Valid @RequestBody RoleDTO role) {
-        logger.debug("Update role");
+        logger.info("Update role");
         try {
             return ResponseEntity.ok(roleService.updateRole(role));
         } catch (NotFoundException ex) {
@@ -72,20 +72,20 @@ public class RoleController {
 
     @DeleteMapping(path = "/del/{id}")
     public ResponseEntity<?> deleteRoleById(@PathVariable("id") String id) {
-        logger.debug("Delete role with id: {}", id);
+        logger.info("Delete role with id: {}", id);
         roleService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping(path = "/perm/all")
     public ResponseEntity<Collection<PermissionDTO>> getAllPermission() {
-        logger.debug("Get all permissions");
+        logger.info("Get all permissions");
         return ResponseEntity.ok(permissionService.getAllPermission());
     }
 
     @GetMapping(path = "/perm")
     public ResponseEntity<? extends BaseResponse> getPermissionById(@Valid @RequestParam("id") String id) {
-        logger.debug("Get permission with id: {}", id);
+        logger.info("Get permission with id: {}", id);
         try {
             return ResponseEntity.ok(permissionService.getById(id));
         } catch (NotFoundException ex) {

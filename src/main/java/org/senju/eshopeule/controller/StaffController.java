@@ -1,7 +1,6 @@
 package org.senju.eshopeule.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.StaffDTO;
 import org.senju.eshopeule.dto.response.BaseResponse;
@@ -27,13 +26,13 @@ public class StaffController {
 
     @GetMapping(path = "/all")
     public ResponseEntity<Collection<StaffDTO>> getAllStaff() {
-        logger.debug("Get all staff");
+        logger.info("Get all staff");
         return ResponseEntity.ok(staffService.getAllStaff());
     }
 
     @GetMapping
     public ResponseEntity<? extends BaseResponse> getStaffWithId(@RequestParam("id") String id) {
-        logger.debug("Get staff with id: {}", id);
+        logger.info("Get staff with id: {}", id);
         try {
             return ResponseEntity.ok(staffService.getStaffWithId(id));
         } catch (NotFoundException ex) {
@@ -43,7 +42,7 @@ public class StaffController {
 
     @PostMapping
     public ResponseEntity<? extends BaseResponse> createNewStaff(@Valid @RequestBody StaffDTO staffDTO) {
-        logger.debug("Create new staff account");
+        logger.info("Create new staff account");
         try {
             staffService.createAccount(staffDTO);
             return ResponseEntity.ok(new SimpleResponse("Create staff account successfully"));
@@ -54,7 +53,7 @@ public class StaffController {
 
     @PutMapping()
     public ResponseEntity<? extends BaseResponse> updateStaffAccount(@Valid @RequestBody StaffDTO staffDTO) {
-        logger.debug("Update staff account");
+        logger.info("Update staff account");
         try {
             return ResponseEntity.ok(staffService.updateAccount(staffDTO));
         } catch (ObjectAlreadyExistsException | NotFoundException ex) {

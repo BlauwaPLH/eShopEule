@@ -22,7 +22,6 @@ public final class ProductMetaDTO implements BaseDTO {
     @Serial
     private static final long serialVersionUID = -8120144456443289737L;
 
-    @Pattern(regexp = ID_PATTERN, message = "ID is invalid")
     private String id;
 
     @Pattern(regexp = ID_PATTERN, message = "ID is invalid")

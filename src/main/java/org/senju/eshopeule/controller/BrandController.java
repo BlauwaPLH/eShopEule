@@ -34,7 +34,7 @@ public class BrandController {
     @GetMapping
     public ResponseEntity<? extends BaseResponse> getBrandWithId(@RequestParam("id") String id) {
         try {
-            logger.debug("Get brand with id: {}", id);
+            logger.info("Get brand with id: {}", id);
             return ResponseEntity.ok(brandService.getById(id));
         } catch (NotFoundException ex) {
             logger.error(ex.getMessage());
@@ -45,7 +45,7 @@ public class BrandController {
     @PostMapping
     public ResponseEntity<? extends BaseResponse> createNewBrand(@Valid @RequestBody BrandDTO dto) {
         try {
-            logger.debug("Create new brand..");
+            logger.info("Create new brand..");
             brandService.createNewBrand(dto);
             return ResponseEntity.ok(new SimpleResponse("Create new brand successfully!"));
         } catch (ObjectAlreadyExistsException ex) {
@@ -57,7 +57,7 @@ public class BrandController {
     @PutMapping
     public ResponseEntity<? extends BaseResponse> updateBrand(@Valid @RequestBody BrandDTO dto) {
         try {
-            logger.debug("Update brand with id: {}", dto.getId());
+            logger.info("Update brand with id: {}", dto.getId());
             return ResponseEntity.ok(brandService.updateBrand(dto));
         } catch (ObjectAlreadyExistsException | NotFoundException ex) {
             logger.error(ex.getMessage());
@@ -67,7 +67,7 @@ public class BrandController {
 
     @DeleteMapping(path = "/del")
     public ResponseEntity<?> deleteBrandWithId(@RequestParam("id") String id) {
-        logger.debug("Delete brand with id: {}", id);
+        logger.info("Delete brand with id: {}", id);
         brandService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

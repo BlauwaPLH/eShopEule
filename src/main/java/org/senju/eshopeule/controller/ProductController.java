@@ -32,7 +32,7 @@ public class ProductController {
     @GetMapping
     @Operation(summary = "Get product with ID")
     public ResponseEntity<? extends BaseResponse> getProductById(@RequestParam("id") String id) {
-        logger.debug("Get product with id: {}", id);
+        logger.info("Get product with id: {}", id);
         try {
             return ResponseEntity.ok(productService.getProductById(id));
         } catch (NotFoundException ex) {
@@ -44,7 +44,7 @@ public class ProductController {
     @GetMapping(path = "/{prodSlug}")
     @Operation(summary = "Get product with slug")
     public ResponseEntity<? extends BaseResponse> getProductBySlug(@PathVariable("prodSlug") String productSlug) {
-        logger.debug("Get product with slug: {}", productSlug);
+        logger.info("Get product with slug: {}", productSlug);
         try {
             return ResponseEntity.ok(productService.getProductBySlug(productSlug));
         } catch (NotFoundException ex) {
@@ -56,7 +56,7 @@ public class ProductController {
     @GetMapping(path = "/detail")
     @Operation(summary = "Get product detail with ID")
     public ResponseEntity<? extends BaseResponse> getProductDetailById(@RequestParam("id") String id) {
-        logger.debug("Get product detail with id: {}", id);
+        logger.info("Get product detail with id: {}", id);
         try {
             return ResponseEntity.ok(productService.getProductDetailById(id));
         } catch (NotFoundException ex) {
@@ -68,7 +68,7 @@ public class ProductController {
     @GetMapping(path = "/detail/{prodSlug}")
     @Operation(summary = "Get product detail with slug")
     public ResponseEntity<? extends BaseResponse> getProductDetailBySlug(@PathVariable("prodSlug") String productSlug) {
-        logger.debug("Get product detail with slug: {}", productSlug);
+        logger.info("Get product detail with slug: {}", productSlug);
         try {
             return ResponseEntity.ok(productService.getProductDetailBySlug(productSlug));
         } catch (NotFoundException ex) {
@@ -85,7 +85,7 @@ public class ProductController {
             @RequestParam(name = "pageSize", required = false, defaultValue = ProductPageable.DEFAULT_PAGE_SIZE) int pageSize,
             @RequestParam(name = "sortField", required = false, defaultValue = ProductPageable.DEFAULT_SORT_FIELD) String sortField,
             @RequestParam(name = "sortDir", required = false, defaultValue = ProductPageable.DEFAULT_SORT_DIRECTION) String sortDirection) {
-        logger.debug("Get all product (pageable) with brand id: {}", brandId);
+        logger.info("Get all product (pageable) with brand id: {}", brandId);
         try {
             return ResponseEntity.ok(
                     productService.getAllProductByBrandId(brandId,
@@ -104,7 +104,7 @@ public class ProductController {
             @RequestParam(name = "pageSize", required = false, defaultValue = ProductPageable.DEFAULT_PAGE_SIZE) int pageSize,
             @RequestParam(name = "sortField", required = false, defaultValue = ProductPageable.DEFAULT_SORT_FIELD) String sortField,
             @RequestParam(name = "sortDir", required = false, defaultValue = ProductPageable.DEFAULT_SORT_DIRECTION) String sortDirection) {
-        logger.debug("Get all product (pageable) with brand slug: {}", brandSlug);
+        logger.info("Get all product (pageable) with brand slug: {}", brandSlug);
         try {
             return ResponseEntity.ok(
                     productService.getAllProductByBrandSlug(brandSlug,
@@ -123,7 +123,7 @@ public class ProductController {
             @RequestParam(name = "pageSize", required = false, defaultValue = ProductPageable.DEFAULT_PAGE_SIZE) int pageSize,
             @RequestParam(name = "sortField", required = false, defaultValue = ProductPageable.DEFAULT_SORT_FIELD) String sortField,
             @RequestParam(name = "sortDir", required = false, defaultValue = ProductPageable.DEFAULT_SORT_DIRECTION) String sortDirection) {
-        logger.debug("Get all product (pageable) with category id: {}", categoryId);
+        logger.info("Get all product (pageable) with category id: {}", categoryId);
         try {
             return ResponseEntity.ok(
                     productService.getAllProductByCategoryId(categoryId,
@@ -143,7 +143,7 @@ public class ProductController {
             @RequestParam(name = "pageSize", required = false, defaultValue = ProductPageable.DEFAULT_PAGE_SIZE) int pageSize,
             @RequestParam(name = "sortField", required = false, defaultValue = ProductPageable.DEFAULT_SORT_FIELD) String sortField,
             @RequestParam(name = "sortDir", required = false, defaultValue = ProductPageable.DEFAULT_SORT_DIRECTION) String sortDirection) {
-        logger.debug("Get all product (pageable) with category slug: {}", categorySlug);
+        logger.info("Get all product (pageable) with category slug: {}", categorySlug);
         try {
             return ResponseEntity.ok(
                     productService.getAllProductByCategorySlug(categorySlug,
@@ -160,7 +160,7 @@ public class ProductController {
     public ResponseEntity<? extends BaseResponse> createNewProduct(
             @RequestPart(name = "file", required = false) MultipartFile[] files,
             @RequestPart(name = "prod") @Valid ProductPostDTO dto) {
-        logger.debug("Create new product with name: {}", dto.getName());
+        logger.info("Create new product with name: {}", dto.getName());
         try {
             return ResponseEntity.ok(productService.createNewProduct(dto, files));
         } catch (NotFoundException | ObjectAlreadyExistsException | ProductException ex) {
@@ -172,7 +172,7 @@ public class ProductController {
     @PutMapping
     @Operation(summary = "Update product")
     public ResponseEntity<? extends BaseResponse> updateProduct(@Valid @RequestBody ProductPutDTO dto) {
-        logger.debug("Update product with id: {}", dto.getId());
+        logger.info("Update product with id: {}", dto.getId());
         try {
             return ResponseEntity.ok(productService.updateProduct(dto));
         } catch (NotFoundException | ObjectAlreadyExistsException | ProductException ex) {
@@ -184,7 +184,7 @@ public class ProductController {
     @DeleteMapping(path = "/del")
     @Operation(summary = "Delete product with ID")
     public ResponseEntity<?> deleteProductWithId(@RequestParam("id") String productId) {
-        logger.debug("Delete product with id: {}", productId);
+        logger.info("Delete product with id: {}", productId);
         try {
             productService.deleteProductWithId(productId);
             return ResponseEntity.ok(new SimpleResponse("Delete product successfully!"));
