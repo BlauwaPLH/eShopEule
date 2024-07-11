@@ -46,16 +46,13 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         if (alreadySetup) return;
         final Permission cusReadPerm = permissionService.bootstrapPerm(BootstrapPerm.CUS_READ.getPermName());
         final Permission cusWritePerm = permissionService.bootstrapPerm(BootstrapPerm.CUS_WRITE.getPermName());
-        final Permission venReadPerm = permissionService.bootstrapPerm(BootstrapPerm.VENDOR_READ.getPermName());
-        final Permission venWritePerm = permissionService.bootstrapPerm(BootstrapPerm.VENDOR_WRITE.getPermName());
         final Permission staffReadPerm = permissionService.bootstrapPerm(BootstrapPerm.STAFF_READ.getPermName());
         final Permission staffWritePerm = permissionService.bootstrapPerm(BootstrapPerm.STAFF_WRITE.getPermName());
         final Permission adminReadPerm = permissionService.bootstrapPerm(BootstrapPerm.ADMIN_READ.getPermName());
         final Permission adminWritePerm = permissionService.bootstrapPerm(BootstrapPerm.ADMIN_WRITE.getPermName());
 
-        final Role adminRole = roleService.bootstrapRole(BootstrapRole.ADMIN.getRoleName(), List.of(adminReadPerm, adminWritePerm));
+        final Role adminRole = roleService.bootstrapRole(BootstrapRole.ADMIN.getRoleName(), List.of(adminReadPerm, adminWritePerm, staffReadPerm, staffWritePerm));
         roleService.bootstrapRole(BootstrapRole.STAFF.getRoleName(), List.of(staffReadPerm, staffWritePerm));
-        roleService.bootstrapRole(BootstrapRole.VENDOR.getRoleName(), List.of(venReadPerm, venWritePerm));
         roleService.bootstrapRole(BootstrapRole.CUSTOMER.getRoleName(), List.of(cusReadPerm, cusWritePerm));
 
         try {

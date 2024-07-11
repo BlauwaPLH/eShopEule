@@ -20,16 +20,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import static org.senju.eshopeule.constant.pattern.RoutePattern.*;
+
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/p/v1/prod")
 public class ProductController {
 
     private final ProductService productService;
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
-    @GetMapping
+    @GetMapping(path = PUBLIC_PREFIX + "/v1/prod")
     @Operation(summary = "Get product with ID")
     public ResponseEntity<? extends BaseResponse> getProductById(@RequestParam("id") String id) {
         logger.info("Get product with id: {}", id);
@@ -41,7 +42,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping(path = "/{prodSlug}")
+    @GetMapping(path = PUBLIC_PREFIX + "/v1/prod/{prodSlug}")
     @Operation(summary = "Get product with slug")
     public ResponseEntity<? extends BaseResponse> getProductBySlug(@PathVariable("prodSlug") String productSlug) {
         logger.info("Get product with slug: {}", productSlug);
@@ -53,7 +54,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping(path = "/detail")
+    @GetMapping(path = PRIVATE_PREFIX + "/v1/prod/detail")
     @Operation(summary = "Get product detail with ID")
     public ResponseEntity<? extends BaseResponse> getProductDetailById(@RequestParam("id") String id) {
         logger.info("Get product detail with id: {}", id);
@@ -65,7 +66,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping(path = "/detail/{prodSlug}")
+    @GetMapping(path = PRIVATE_PREFIX + "/v1/prod/detail/{prodSlug}")
     @Operation(summary = "Get product detail with slug")
     public ResponseEntity<? extends BaseResponse> getProductDetailBySlug(@PathVariable("prodSlug") String productSlug) {
         logger.info("Get product detail with slug: {}", productSlug);
@@ -77,7 +78,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping(path = "/all/brand")
+    @GetMapping(path = PUBLIC_PREFIX + "/v1/prod/all/brand")
     @Operation(summary = "Get all product with brand's ID")
     public ResponseEntity<? extends BaseResponse> getAllProductByBrandId(
             @RequestParam("id") String brandId,
@@ -96,7 +97,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping(path = "/all/brand/{brandSlug}")
+    @GetMapping(path = PUBLIC_PREFIX + "/v1/prod/all/brand/{brandSlug}")
     @Operation(summary = "Get all product with brand's slug")
     public ResponseEntity<? extends BaseResponse> getAllProductByBrandSlug(
             @PathVariable("brandSlug") String brandSlug,
@@ -115,7 +116,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping(path = "/all/category")
+    @GetMapping(path = PUBLIC_PREFIX + "/v1/prod/all/category")
     @Operation(summary = "Get all product with category's ID")
     public ResponseEntity<? extends BaseResponse> getAllProductByCategoryId(
             @RequestParam("id") String categoryId,
@@ -135,7 +136,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping(path = "/all/category/{categorySlug}")
+    @GetMapping(path = PUBLIC_PREFIX + "/v1/prod/all/category/{categorySlug}")
     @Operation(summary = "Get all product with category's slug")
     public ResponseEntity<? extends BaseResponse> getAllProductByCategorySlug(
             @PathVariable("categorySlug") String categorySlug,
@@ -155,7 +156,7 @@ public class ProductController {
         }
     }
 
-    @PostMapping
+    @PostMapping(path = PRIVATE_PREFIX + "/v1/prod")
     @Operation(summary = "Create new product")
     public ResponseEntity<? extends BaseResponse> createNewProduct(
             @RequestPart(name = "file", required = false) MultipartFile[] files,
@@ -169,7 +170,7 @@ public class ProductController {
         }
     }
 
-    @PutMapping
+    @PutMapping(path = PRIVATE_PREFIX + "/v1/prod")
     @Operation(summary = "Update product")
     public ResponseEntity<? extends BaseResponse> updateProduct(@Valid @RequestBody ProductPutDTO dto) {
         logger.info("Update product with id: {}", dto.getId());
@@ -181,7 +182,7 @@ public class ProductController {
         }
     }
 
-    @DeleteMapping(path = "/del")
+    @DeleteMapping(path = PRIVATE_PREFIX + "/v1/prod/del")
     @Operation(summary = "Delete product with ID")
     public ResponseEntity<?> deleteProductWithId(@RequestParam("id") String productId) {
         logger.info("Delete product with id: {}", productId);

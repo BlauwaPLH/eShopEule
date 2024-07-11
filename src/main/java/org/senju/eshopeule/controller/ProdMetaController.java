@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/p/v1/pm")
+@RequestMapping(path = "/api/r/v1/pm")
 public class ProdMetaController {
 
     private final ProductMetaService productMetaService;

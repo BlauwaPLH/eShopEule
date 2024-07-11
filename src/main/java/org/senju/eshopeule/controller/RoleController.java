@@ -20,7 +20,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/p/v1/role")
+@RequestMapping(path = "/api/r/v1/role")
 public class RoleController {
 
     private final PermissionService permissionService;

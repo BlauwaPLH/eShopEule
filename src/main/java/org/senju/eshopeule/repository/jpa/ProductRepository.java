@@ -1,6 +1,8 @@
 package org.senju.eshopeule.repository.jpa;
 
 import org.senju.eshopeule.model.product.Product;
+import org.senju.eshopeule.repository.projection.ProductPriceOptionView;
+import org.senju.eshopeule.repository.projection.ProductPriceView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,7 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, String> {
@@ -32,5 +36,15 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     @Query(value = "SELECT EXISTS (SELECT 1 FROM products WHERE slug = :slug AND id != :prodId)", nativeQuery = true)
     boolean checkExistsWithSlugExceptId(@Param("prodId") String productId, @Param("slug") String slug);
+
+    @Query(value = "SELECT DISTINCT id, price, discount FROM products WHERE id IN :prodIds", nativeQuery = true)
+    List<ProductPriceView> getPriceViewByIds(@Param("prodIds") List<String> productIds);
+
+    @Query(value = "SELECT DISTINCT p.id, p.price, p.discount, po.id " +
+            "FROM products AS p " +
+            "LEFT JOIN product_options AS po " +
+            "ON po.product_id = p.id " +
+            "WHERE p.id IN :prodIds", nativeQuery = true)
+    List<ProductPriceOptionView> getPriceOptionViewByIds(@Param("prodIds") Set<String> productIds);
 
 }

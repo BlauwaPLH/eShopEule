@@ -17,7 +17,7 @@ import java.util.Collection;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/p/v1/prod-attr")
+@RequestMapping(path = "/api/r/v1/pa")
 public class ProdAttributeController {
 
     private final ProductAttributeService productAttributeService;

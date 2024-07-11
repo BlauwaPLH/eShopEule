@@ -20,7 +20,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/p/v1/brand")
+@RequestMapping(path = "/api/r/v1/brand")
 public class BrandController {
 
     private final BrandService brandService;

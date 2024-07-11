@@ -10,6 +10,7 @@ import org.senju.eshopeule.listener.CustomAuditingEntityListener;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @Getter
@@ -19,13 +20,13 @@ import java.time.ZonedDateTime;
 public class AbstractAuditEntity implements BaseEntity {
 
     @CreationTimestamp
-    private ZonedDateTime createdOn;
+    private LocalDateTime createdOn;
 
     @CreatedBy
     private String createdBy;
 
     @UpdateTimestamp
-    private ZonedDateTime lastModifiedOn;
+    private LocalDateTime lastModifiedOn;
 
     @LastModifiedBy
     private String lastModifiedBy;

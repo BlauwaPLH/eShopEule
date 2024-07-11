@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/p/v1/img")
+@RequestMapping(path = "/api/r/v1/img")
 public class ProdImageController {
 
     private final ProductImageService productImageService;

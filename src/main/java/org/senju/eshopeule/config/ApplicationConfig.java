@@ -35,11 +35,7 @@ public class ApplicationConfig {
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
-        JavaTimeModule module = new JavaTimeModule();
-        module.addSerializer(ZonedDateTime.class, new ZonedDateTimeSerializer(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
-        mapper.registerModule(module);
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        mapper.registerModule(module);
+        mapper.findAndRegisterModules();
         return mapper;
     }
 

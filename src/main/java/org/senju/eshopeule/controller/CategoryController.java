@@ -19,7 +19,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/p/v1/category")
+@RequestMapping(path = "/api/r/v1/category")
 public class CategoryController {
 
     private final CategoryService categoryService;

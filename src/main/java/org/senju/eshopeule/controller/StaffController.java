@@ -17,7 +17,7 @@ import java.util.Collection;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/p/v1/staff")
+@RequestMapping(path = "/api/r/v1/staff")
 public class StaffController {
 
     private final StaffService staffService;

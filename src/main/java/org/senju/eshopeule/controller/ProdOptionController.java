@@ -17,7 +17,7 @@ import java.util.Collection;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/p/v1/po")
+@RequestMapping(path = "/api/r/v1/po")
 public class ProdOptionController {
 
     private final ProductOptionService optionService;
