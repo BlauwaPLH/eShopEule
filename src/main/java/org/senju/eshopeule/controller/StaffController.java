@@ -1,5 +1,6 @@
 package org.senju.eshopeule.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.StaffDTO;
@@ -25,12 +26,14 @@ public class StaffController {
     private final Logger logger = LoggerFactory.getLogger(StaffController.class);
 
     @GetMapping(path = "/all")
+    @Operation(summary = "Get all staff")
     public ResponseEntity<Collection<StaffDTO>> getAllStaff() {
         logger.info("Get all staff");
         return ResponseEntity.ok(staffService.getAllStaff());
     }
 
     @GetMapping
+    @Operation(summary = "Get staff with ID")
     public ResponseEntity<? extends BaseResponse> getStaffWithId(@RequestParam("id") String id) {
         logger.info("Get staff with id: {}", id);
         try {
@@ -41,6 +44,7 @@ public class StaffController {
     }
 
     @PostMapping
+    @Operation(summary = "Create new staff")
     public ResponseEntity<? extends BaseResponse> createNewStaff(@Valid @RequestBody StaffDTO staffDTO) {
         logger.info("Create new staff account");
         try {
@@ -52,6 +56,7 @@ public class StaffController {
     }
 
     @PutMapping()
+    @Operation(summary = "Update staff")
     public ResponseEntity<? extends BaseResponse> updateStaffAccount(@Valid @RequestBody StaffDTO staffDTO) {
         logger.info("Update staff account");
         try {
@@ -62,6 +67,7 @@ public class StaffController {
     }
 
     @DeleteMapping(path = "/del/{id}")
+    @Operation(summary = "Delete staff with id")
     public ResponseEntity<?> deleteStaffWithId(@PathVariable("id") String id) {
         staffService.deleteStaffWithId(id);
         return ResponseEntity.noContent().build();

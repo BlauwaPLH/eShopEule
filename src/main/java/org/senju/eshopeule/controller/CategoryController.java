@@ -27,7 +27,7 @@ public class CategoryController {
     private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);
 
     @GetMapping
-    @Operation(description = "Get category with ID")
+    @Operation(summary = "Get category with ID")
     public ResponseEntity<? extends BaseResponse> getCategoryWithId(@RequestParam("id") String id) {
         try {
             logger.info("Get category with id: {}", id);
@@ -38,21 +38,21 @@ public class CategoryController {
     }
 
     @GetMapping(path = "/all")
-    @Operation(description = "Get all categories")
+    @Operation(summary = "Get all categories")
     public ResponseEntity<Collection<? extends BaseResponse>> getAllCategories() {
         logger.info("Get all categories");
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
     @GetMapping(path = "/children")
-    @Operation(description = "Get all category children with parent's ID")
+    @Operation(summary = "Get all category children with parent's ID")
     public ResponseEntity<Collection<? extends BaseResponse>> getAllCategoryChildrenWithParentId(@RequestParam("id") String parentId) {
         logger.info("Get all categories with parent's id : {}", parentId);
         return ResponseEntity.ok(categoryService.getAllCategoryChildren(parentId));
     }
 
     @PostMapping
-    @Operation(description = "Create new category")
+    @Operation(summary = "Create new category")
     public ResponseEntity<? extends BaseResponse> createNewCategory(@Valid @RequestBody CategoryDTO dto) {
         logger.info("Create new category");
         try {
@@ -65,7 +65,7 @@ public class CategoryController {
     }
 
     @PutMapping
-    @Operation(description = "Update category")
+    @Operation(summary = "Update category")
     public ResponseEntity<? extends BaseResponse> updateCategory(@Valid @RequestBody CategoryDTO dto) {
         logger.info("Update category");
         try {
@@ -77,7 +77,7 @@ public class CategoryController {
     }
 
     @DeleteMapping(path = "/del")
-    @Operation(description = "Delete category with ID")
+    @Operation(summary = "Delete category with ID")
     public ResponseEntity<?> deleteById(@RequestParam("id") String id) {
         logger.info("Delete category with id: {}", id);
         categoryService.deleteById(id);

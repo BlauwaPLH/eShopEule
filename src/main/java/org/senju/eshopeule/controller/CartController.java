@@ -25,7 +25,7 @@ public class CartController {
     private static final Logger logger = LoggerFactory.getLogger(CartController.class);
 
     @GetMapping
-    @Operation(description = "Get cart of current user (Customer)")
+    @Operation(summary = "Get cart of current user (Customer)")
     public ResponseEntity<? extends BaseResponse> getCartOfCurrentUser() {
         logger.info("Get cart of current user");
         try {
@@ -37,7 +37,7 @@ public class CartController {
     }
 
     @PostMapping
-    @Operation(description = "Update cart with a item")
+    @Operation(summary = "Update cart with a item")
     public ResponseEntity<? extends BaseResponse> updateCartItem(@Valid @RequestBody CartItemDTO dto) {
         logger.info("Update cart item");
         try {
@@ -49,7 +49,7 @@ public class CartController {
     }
 
     @PostMapping(path = "/lst")
-    @Operation(description = "Update cart with item list")
+    @Operation(summary = "Update cart with item list")
     public ResponseEntity<? extends BaseResponse> updateCartItem(@Valid @RequestBody List<CartItemDTO> dtoList) {
         logger.info("Update cart item list");
         try {
@@ -61,7 +61,7 @@ public class CartController {
     }
 
     @DeleteMapping(path = "/del/prod")
-    @Operation(description = "Remove cart item with product ID")
+    @Operation(summary = "Remove cart item with product ID")
     public ResponseEntity<? extends BaseResponse> deleteCartItemWithProductId(@RequestParam("id") String productId) {
         logger.info("Remove cart item with product ID: {}", productId);
         try {
@@ -74,7 +74,7 @@ public class CartController {
     }
 
     @DeleteMapping(path = "/del/opt")
-    @Operation(description = "Remove cart item with option ID")
+    @Operation(summary = "Remove cart item with option ID")
     public ResponseEntity<? extends BaseResponse> deleteCartItemWithOptionId(@RequestParam("id") String optionId) {
         logger.info("Remove cart item with option ID: {}", optionId);
         try {

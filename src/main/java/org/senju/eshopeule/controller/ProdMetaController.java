@@ -23,7 +23,7 @@ public class ProdMetaController {
     private static final Logger logger = LoggerFactory.getLogger(ProdMetaController.class);
 
     @GetMapping
-    @Operation(description = "Get product meta with ID")
+    @Operation(summary = "Get product meta with ID")
     public ResponseEntity<? extends BaseResponse> getProdMetaById(@RequestParam("id") String prodMetaId) {
         logger.info("Get by product meta id: {}", prodMetaId);
         try {
@@ -35,7 +35,7 @@ public class ProdMetaController {
     }
 
     @GetMapping(path = "/prod")
-    @Operation(description = "Get product meta with product ID")
+    @Operation(summary = "Get product meta with product ID")
     public ResponseEntity<? extends BaseResponse> getByProductId(@RequestParam("id") String productId) {
         logger.info("Get by product's ID: {}", productId);
         try {
@@ -47,7 +47,7 @@ public class ProdMetaController {
     }
 
     @PostMapping
-    @Operation(description = "Create new product meta")
+    @Operation(summary = "Create new product meta")
     public ResponseEntity<? extends BaseResponse> createProductMeta(@Valid @RequestBody ProductMetaDTO dto) {
         logger.info("Create product meta");
         try {
@@ -59,7 +59,7 @@ public class ProdMetaController {
     }
 
     @PutMapping
-    @Operation(description = "Update product meta")
+    @Operation(summary = "Update product meta")
     public ResponseEntity<? extends BaseResponse> updateProductMeta(@Valid @RequestBody ProductMetaDTO dto) {
         logger.info("Update product meta with product meta ID: {}", dto.getProductId());
         try {
@@ -71,7 +71,7 @@ public class ProdMetaController {
     }
 
     @DeleteMapping(path = "/del")
-    @Operation(description = "Delete product meta with ID")
+    @Operation(summary = "Delete product meta with ID")
     public ResponseEntity<?> deleteById(@RequestParam("id") String prodMetaId) {
         logger.info("Delete with product meta ID: {}", prodMetaId);
         productMetaService.deleteById(prodMetaId);
@@ -79,7 +79,7 @@ public class ProdMetaController {
     }
 
     @DeleteMapping(path = "/prod/del")
-    @Operation(description = "Delete product meta with product ID")
+    @Operation(summary = "Delete product meta with product ID")
     public ResponseEntity<?> deleteByProductId(@RequestParam("id") String productId) {
         logger.info("Delete with product ID: {}", productId);
         productMetaService.deleteByProductId(productId);

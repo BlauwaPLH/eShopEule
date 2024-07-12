@@ -28,13 +28,13 @@ public class BrandController {
     private static final Logger logger = LoggerFactory.getLogger(BrandController.class);
 
     @GetMapping(path = "/all")
-    @Operation(description = "Get all brand")
+    @Operation(summary = "Get all brand")
     public ResponseEntity<Collection<? extends BaseResponse>> getAllBrand() {
         return ResponseEntity.ok(brandService.getAllBrand());
     }
 
     @GetMapping
-    @Operation(description = "Get brand with id")
+    @Operation(summary = "Get brand with id")
     public ResponseEntity<? extends BaseResponse> getBrandWithId(@RequestParam("id") String id) {
         try {
             logger.info("Get brand with id: {}", id);
@@ -46,7 +46,7 @@ public class BrandController {
     }
 
     @PostMapping
-    @Operation(description = "Create new brand")
+    @Operation(summary = "Create new brand")
     public ResponseEntity<? extends BaseResponse> createNewBrand(@Valid @RequestBody BrandDTO dto) {
         try {
             logger.info("Create new brand..");
@@ -59,7 +59,7 @@ public class BrandController {
     }
 
     @PutMapping
-    @Operation(description = "Update brand")
+    @Operation(summary = "Update brand")
     public ResponseEntity<? extends BaseResponse> updateBrand(@Valid @RequestBody BrandDTO dto) {
         try {
             logger.info("Update brand with id: {}", dto.getId());
@@ -71,7 +71,7 @@ public class BrandController {
     }
 
     @DeleteMapping(path = "/del")
-    @Operation(description = "Delete brand with id")
+    @Operation(summary = "Delete brand with id")
     public ResponseEntity<?> deleteBrandWithId(@RequestParam("id") String id) {
         logger.info("Delete brand with id: {}", id);
         brandService.deleteById(id);

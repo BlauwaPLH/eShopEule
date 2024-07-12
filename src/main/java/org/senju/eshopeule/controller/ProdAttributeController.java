@@ -25,7 +25,7 @@ public class ProdAttributeController {
     private static final Logger logger = LoggerFactory.getLogger(ProdAttributeController.class);
 
     @GetMapping
-    @Operation(description = "Get attribute with ID")
+    @Operation(summary = "Get attribute with ID")
     public ResponseEntity<? extends BaseResponse> getProdAttrById(@RequestParam("id") String id) {
         try {
             logger.info("Get product attribute with id: {}", id);
@@ -36,21 +36,21 @@ public class ProdAttributeController {
     }
 
     @GetMapping(path = "/all")
-    @Operation(description = "Get all product attributes")
+    @Operation(summary = "Get all product attributes")
     public ResponseEntity<Collection<? extends BaseResponse>> getAllProdAttr() {
         logger.info("Get all product attributes");
         return ResponseEntity.ok(productAttributeService.getAllProdAtt());
     }
 
     @GetMapping(path = "/cate")
-    @Operation(description = "Get all attribute with category ID")
+    @Operation(summary = "Get all attribute with category ID")
     public ResponseEntity<Collection<? extends BaseResponse>> getAllProdAttrWithCategoryId(@RequestParam("id") String id) {
         logger.info("Get all product attributes with category id: {}", id);
         return ResponseEntity.ok(productAttributeService.getAllProdAttWithCategoryId(id));
     }
 
     @PostMapping
-    @Operation(description = "Create new attribute")
+    @Operation(summary = "Create new attribute")
     public ResponseEntity<? extends BaseResponse> createNewProdAttr(@Valid @RequestBody ProductAttributeDTO dto) {
         try {
             logger.info("Create new product attribute");
@@ -62,7 +62,7 @@ public class ProdAttributeController {
     }
 
     @PutMapping
-    @Operation(description = "Update attribute")
+    @Operation(summary = "Update attribute")
     public ResponseEntity<? extends BaseResponse> updateProdAttr(@Valid @RequestBody ProductAttributeDTO dto) {
         try {
             logger.info("Update product attribute");
@@ -73,7 +73,7 @@ public class ProdAttributeController {
     }
 
     @DeleteMapping(path = "/del")
-    @Operation(description = "Delete attribute with ID")
+    @Operation(summary = "Delete attribute with ID")
     public ResponseEntity<?> deleteById(@RequestParam("id") String id) {
         logger.info("Delete product attribute with id: {}", id);
         productAttributeService.deleteById(id);

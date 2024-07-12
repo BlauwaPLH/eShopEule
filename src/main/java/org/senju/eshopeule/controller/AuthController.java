@@ -46,7 +46,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/signUp")
-    @Operation(description = "Sign up")
+    @Operation(summary = "Sign up")
     public ResponseEntity<? extends BaseResponse> signUp(@Valid @RequestBody final RegistrationRequest request) {
         try {
             RegistrationResponse response = authService.register(request);
@@ -60,7 +60,7 @@ public class AuthController {
 
 
     @PostMapping(path = "/refreshToken")
-    @Operation(description = "Refresh token")
+    @Operation(summary = "Refresh token")
     public ResponseEntity<? extends BaseResponse> refreshToken(@Valid @RequestBody final RefreshTokenRequest request) {
         try {
             RefreshTokenResponse response = authService.refreshToken(request);
@@ -71,7 +71,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/verifySignUp")
-    @Operation(description = "Verify sign up")
+    @Operation(summary = "Verify sign up")
     public ResponseEntity<? extends BaseResponse> verifySignUp(@Valid @RequestBody final VerifyRequest request) {
         try {
             VerifyResponse response = authService.verifyRegister(request);
@@ -82,7 +82,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/resendVerifyCode")
-    @Operation(description = "Resend verify code to email")
+    @Operation(summary = "Resend verify code to email")
     public ResponseEntity<? extends BaseResponse> resendVerifyCode(@Valid @RequestBody final ResendVerifyCodeRequest request) {
         try {
             authService.resendRegistrationVerifyCode(request);
@@ -93,7 +93,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/resetPassword")
-    @Operation(description = "Reset password")
+    @Operation(summary = "Reset password")
     public ResponseEntity<? extends BaseResponse> resetPassword(@Valid @RequestBody final ResetPasswordRequest request) {
         try {
             authService.resetPassword(request);
