@@ -1,5 +1,6 @@
 package org.senju.eshopeule.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.ProductOptionDTO;
@@ -24,6 +25,7 @@ public class ProdOptionController {
     private static final Logger logger = LoggerFactory.getLogger(ProdOptionController.class);
 
     @GetMapping
+    @Operation(description = "Get product option with ID")
     public ResponseEntity<? extends BaseResponse> getProductOption(@RequestParam("id") String optionId) {
         logger.info("Get product option with id: {}", optionId);
         try {
@@ -35,12 +37,14 @@ public class ProdOptionController {
     }
 
     @GetMapping(path = "/prod")
+    @Operation(description = "Get product option with product ID")
     public ResponseEntity<Collection<? extends BaseResponse>> getProductOptionByProductId(@RequestParam("id") String prodId) {
         logger.info("Get all product option with product id: {}", prodId);
         return ResponseEntity.ok(optionService.getAllByProductId(prodId));
     }
 
     @PostMapping
+    @Operation(description = "Create new product option")
     public ResponseEntity<? extends BaseResponse> createNewProductOption(@Valid @RequestBody ProductOptionDTO dto) {
         logger.info("Create new product option");
         try {
@@ -52,6 +56,7 @@ public class ProdOptionController {
     }
 
     @PutMapping
+    @Operation(description = "Update product option")
     public ResponseEntity<? extends BaseResponse> updateProductOption(@Valid @RequestBody ProductOptionDTO dto) {
         logger.info("Update product option");
         try {
@@ -63,6 +68,7 @@ public class ProdOptionController {
     }
 
     @DeleteMapping(path = "/del")
+    @Operation(description = "Delete with ID")
     public ResponseEntity<?> deleteById(@RequestParam("id") String optionId) {
         logger.info("Delete product option with id: {}", optionId);
         optionService.deleteById(optionId);

@@ -1,5 +1,6 @@
 package org.senju.eshopeule.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.PermissionDTO;
@@ -29,6 +30,7 @@ public class RoleController {
     private static final Logger logger = LoggerFactory.getLogger(RoleController.class);
 
     @GetMapping
+    @Operation(description = "Get role with ID")
     public ResponseEntity<? extends BaseResponse> getRoleById(@RequestParam("id") String id) {
         logger.info("Get role with id: {}", id);
         try {
@@ -40,12 +42,14 @@ public class RoleController {
     }
 
     @GetMapping(path = "/all")
+    @Operation(description = "Get all role")
     public ResponseEntity<Collection<RoleDTO>> getAllRoles() {
         logger.info("Get all roles");
         return ResponseEntity.ok(roleService.getAllRole());
     }
 
     @GetMapping(path = "/staff")
+    @Operation(description = "Get all staff role")
     public ResponseEntity<Collection<RoleDTO>> getAllStaffRole() {
         logger.info("Get all staff role");
         return ResponseEntity.ok(roleService.getAllStaffRole());
@@ -53,6 +57,7 @@ public class RoleController {
 
 
     @PostMapping
+    @Operation(description = "Create new role")
     public ResponseEntity<? extends BaseResponse> createNewRole(@Valid  @RequestBody RoleDTO role) {
         logger.info("Create new role");
         roleService.createNewRole(role);
@@ -60,6 +65,7 @@ public class RoleController {
     }
 
     @PutMapping
+    @Operation(description = "Update role")
     public ResponseEntity<? extends BaseResponse> updateRole(@Valid @RequestBody RoleDTO role) {
         logger.info("Update role");
         try {
@@ -71,6 +77,7 @@ public class RoleController {
     }
 
     @DeleteMapping(path = "/del/{id}")
+    @Operation(description = "Delete role with ID")
     public ResponseEntity<?> deleteRoleById(@PathVariable("id") String id) {
         logger.info("Delete role with id: {}", id);
         roleService.deleteById(id);
@@ -78,12 +85,14 @@ public class RoleController {
     }
 
     @GetMapping(path = "/perm/all")
+    @Operation(description = "Get all permissions")
     public ResponseEntity<Collection<PermissionDTO>> getAllPermission() {
         logger.info("Get all permissions");
         return ResponseEntity.ok(permissionService.getAllPermission());
     }
 
     @GetMapping(path = "/perm")
+    @Operation(description = "Get permission with ID")
     public ResponseEntity<? extends BaseResponse> getPermissionById(@Valid @RequestParam("id") String id) {
         logger.info("Get permission with id: {}", id);
         try {

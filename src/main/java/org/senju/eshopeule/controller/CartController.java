@@ -1,5 +1,6 @@
 package org.senju.eshopeule.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.CartItemDTO;
@@ -24,6 +25,7 @@ public class CartController {
     private static final Logger logger = LoggerFactory.getLogger(CartController.class);
 
     @GetMapping
+    @Operation(description = "Get cart of current user (Customer)")
     public ResponseEntity<? extends BaseResponse> getCartOfCurrentUser() {
         logger.info("Get cart of current user");
         try {
@@ -35,6 +37,7 @@ public class CartController {
     }
 
     @PostMapping
+    @Operation(description = "Update cart with a item")
     public ResponseEntity<? extends BaseResponse> updateCartItem(@Valid @RequestBody CartItemDTO dto) {
         logger.info("Update cart item");
         try {
@@ -46,6 +49,7 @@ public class CartController {
     }
 
     @PostMapping(path = "/lst")
+    @Operation(description = "Update cart with item list")
     public ResponseEntity<? extends BaseResponse> updateCartItem(@Valid @RequestBody List<CartItemDTO> dtoList) {
         logger.info("Update cart item list");
         try {
@@ -57,6 +61,7 @@ public class CartController {
     }
 
     @DeleteMapping(path = "/del/prod")
+    @Operation(description = "Remove cart item with product ID")
     public ResponseEntity<? extends BaseResponse> deleteCartItemWithProductId(@RequestParam("id") String productId) {
         logger.info("Remove cart item with product ID: {}", productId);
         try {
@@ -69,6 +74,7 @@ public class CartController {
     }
 
     @DeleteMapping(path = "/del/opt")
+    @Operation(description = "Remove cart item with option ID")
     public ResponseEntity<? extends BaseResponse> deleteCartItemWithOptionId(@RequestParam("id") String optionId) {
         logger.info("Remove cart item with option ID: {}", optionId);
         try {

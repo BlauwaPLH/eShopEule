@@ -1,5 +1,6 @@
 package org.senju.eshopeule.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.response.SimpleResponse;
 import org.senju.eshopeule.exceptions.NotFoundException;
@@ -20,6 +21,7 @@ public class ProdImageController {
     private static final Logger logger = LoggerFactory.getLogger(ProdImageController.class);
 
     @GetMapping
+    @Operation(description = "Get image URL with ID")
     public ResponseEntity<?> getImageUrlById(@RequestParam("id") String id) {
         logger.info("Get product image url with id: {}", id);
         try {
@@ -31,12 +33,14 @@ public class ProdImageController {
     }
 
     @GetMapping(path = "/prod")
+    @Operation(description = "Get all image URL with product ID")
     public ResponseEntity<?> getAllImageUrlByProductId(@RequestParam("id") String productId) {
         logger.info("Get all product image url with product id: {}", productId);
         return ResponseEntity.ok(productImageService.getAllImageUrlByProductId(productId));
     }
 
     @PostMapping
+    @Operation(description = "Upload product images")
     public ResponseEntity<?> uploadProductImages(
             @RequestParam("file") MultipartFile[] files,
             @RequestParam("id") String productId) {
@@ -50,6 +54,7 @@ public class ProdImageController {
     }
 
     @DeleteMapping(path = "/del")
+    @Operation(description = "Delete image with ID")
     public ResponseEntity<?> deleteById(@RequestParam("id") String id) {
         logger.info("Delete product image with id: {}", id);
         try {
@@ -62,6 +67,7 @@ public class ProdImageController {
     }
 
     @DeleteMapping(path = "/prod/del")
+    @Operation(description = "Delete images with product ID")
     public ResponseEntity<?> deleteByProductId(@RequestParam("id") String productId) {
         logger.info("Delete product image with product id: {}", productId);
         try {

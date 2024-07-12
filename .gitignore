@@ -37,3 +37,4 @@ out/
 .vscode/
 
 eshopeule-firebase-key.json
+secrets.yaml
