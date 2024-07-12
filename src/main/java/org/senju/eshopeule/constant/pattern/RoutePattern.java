@@ -14,4 +14,5 @@ public final class RoutePattern {
     public static final String CATEGORY_API = PRIVATE_PREFIX + "/*/category/**";
     public static final String BRAND_API = PRIVATE_PREFIX + "/*/brand/**";
     public static final String PRODUCT_API = PRIVATE_PREFIX + "/*/prod/**";
+    public static final String CART_API = PRIVATE_PREFIX + "/*/cart/**";
 }

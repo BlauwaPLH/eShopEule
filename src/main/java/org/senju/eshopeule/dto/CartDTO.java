@@ -20,7 +20,6 @@ public final class CartDTO implements BaseDTO {
 
     private String id;
     private String status;
-    private Double total;
     private List<CartItemDTO> items;
 
     @JsonProperty(value = "customer_id")

@@ -23,8 +23,6 @@ public class Cart extends AbstractAuditEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private Double total;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private Customer customer;

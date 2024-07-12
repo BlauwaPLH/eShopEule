@@ -21,12 +21,10 @@ public class Customer implements BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)
     private String firstName;
 
     private String middleName;
 
-    @Column(nullable = false)
     private String lastName;
 
     private LocalDateTime birth;
@@ -34,10 +32,8 @@ public class Customer implements BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(nullable = false)
     private String phoneNumber;
 
-    @Column(nullable = false)
     private String address;
 
     @OneToOne(fetch = FetchType.LAZY)

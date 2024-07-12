@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, String> {
 
-    @Query(value = "SELECT id FROM customers AS c " +
+    @Query(value = "SELECT c.id FROM customers AS c " +
             "INNER JOIN users AS u " +
             "ON c.user_id = u.id " +
             "WHERE u.username = :un", nativeQuery = true)

@@ -51,7 +51,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         final Permission adminReadPerm = permissionService.bootstrapPerm(BootstrapPerm.ADMIN_READ.getPermName());
         final Permission adminWritePerm = permissionService.bootstrapPerm(BootstrapPerm.ADMIN_WRITE.getPermName());
 
-        final Role adminRole = roleService.bootstrapRole(BootstrapRole.ADMIN.getRoleName(), List.of(adminReadPerm, adminWritePerm, staffReadPerm, staffWritePerm));
+        final Role adminRole = roleService.bootstrapRole(BootstrapRole.ADMIN.getRoleName(),
+                List.of(adminReadPerm, adminWritePerm, staffReadPerm, staffWritePerm));
         roleService.bootstrapRole(BootstrapRole.STAFF.getRoleName(), List.of(staffReadPerm, staffWritePerm));
         roleService.bootstrapRole(BootstrapRole.CUSTOMER.getRoleName(), List.of(cusReadPerm, cusWritePerm));
 

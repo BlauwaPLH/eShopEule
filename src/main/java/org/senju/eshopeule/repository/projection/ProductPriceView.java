@@ -4,4 +4,5 @@ public interface ProductPriceView {
     String getId();
     Double getPrice();
     Double getDiscount();
+    Integer getQuantity();
 }

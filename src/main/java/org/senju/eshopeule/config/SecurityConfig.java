@@ -73,6 +73,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, PROD_IMG_API, PROD_ATTR_API, PROD_META_API, PROD_OPTION_API, CATEGORY_API, BRAND_API, PRODUCT_API).hasAuthority(STAFF_WRITE.getPermName())
                         .requestMatchers(HttpMethod.DELETE, PROD_IMG_API, PROD_ATTR_API, PROD_META_API, PROD_OPTION_API, CATEGORY_API, BRAND_API, PRODUCT_API).hasAuthority(STAFF_WRITE.getPermName())
 
+                        .requestMatchers(HttpMethod.GET, CART_API).hasAuthority(CUS_READ.getPermName())
+                        .requestMatchers(HttpMethod.POST, CART_API).hasAuthority(CUS_WRITE.getPermName())
+                        .requestMatchers(HttpMethod.DELETE, CART_API).hasAuthority(CUS_WRITE.getPermName())
+
                         .requestMatchers(PUBLIC_API, "/swagger-ui/**", "/swagger-ui",
                                 "/v3/api-docs/**", "/actuator/health/**").permitAll()
                         .anyRequest().authenticated()

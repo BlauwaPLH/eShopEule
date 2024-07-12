@@ -11,8 +11,6 @@ public interface CartService {
 
     CartDTO addToCart(CartItemDTO item);
 
-    CartDTO addToCart(List<CartItemDTO> items);
-
     void deleteCartItemByProductId(String productId);
 
     void deleteCartItemByOptionId(String optionId);

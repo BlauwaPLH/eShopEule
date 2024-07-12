@@ -14,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/r/v1/cart")
@@ -42,18 +40,6 @@ public class CartController {
         logger.info("Update cart item");
         try {
             return ResponseEntity.ok(cartService.addToCart(dto));
-        } catch (NotFoundException | CartException ex) {
-            logger.error(ex.getMessage());
-            return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
-        }
-    }
-
-    @PostMapping(path = "/lst")
-    @Operation(summary = "Update cart with item list")
-    public ResponseEntity<? extends BaseResponse> updateCartItem(@Valid @RequestBody List<CartItemDTO> dtoList) {
-        logger.info("Update cart item list");
-        try {
-            return ResponseEntity.ok(cartService.addToCart(dtoList));
         } catch (NotFoundException | CartException ex) {
             logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
