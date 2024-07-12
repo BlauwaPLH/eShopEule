@@ -1,5 +1,6 @@
 package org.senju.eshopeule.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -33,6 +34,7 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping(path = "/logout")
+    @Operation(summary = "Logout")
     public ResponseEntity<? extends BaseResponse> logout(HttpServletRequest request, HttpServletResponse response) {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
@@ -43,6 +45,7 @@ public class UserController {
     }
 
     @PostMapping(path = "/changePassword")
+    @Operation(summary = "Change password")
     public ResponseEntity<? extends BaseResponse> changePassword(@Valid @RequestBody ChangePasswordRequest request, @AuthenticationPrincipal UserDetails currUser) {
         try {
             authService.changePassword(request, currUser);

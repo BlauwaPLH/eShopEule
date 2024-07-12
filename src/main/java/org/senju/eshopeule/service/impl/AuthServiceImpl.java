@@ -13,8 +13,10 @@ import org.senju.eshopeule.dto.response.RegistrationResponse;
 import org.senju.eshopeule.dto.response.VerifyResponse;
 import org.senju.eshopeule.exceptions.*;
 import org.senju.eshopeule.constant.enums.TokenType;
+import org.senju.eshopeule.model.user.Customer;
 import org.senju.eshopeule.model.user.Role;
 import org.senju.eshopeule.model.user.User;
+import org.senju.eshopeule.repository.jpa.CustomerRepository;
 import org.senju.eshopeule.repository.redis.RedisRepository;
 import org.senju.eshopeule.repository.jpa.RoleRepository;
 import org.senju.eshopeule.repository.jpa.UserRepository;
@@ -51,6 +53,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
     private final RoleRepository roleRepository;
     private final RedisRepository<String> refreshTokenRepository;
     private final RedisRepository<String> accessTokenRepository;
@@ -157,7 +160,9 @@ public class AuthServiceImpl implements AuthService {
                 .isCredentialsNonExpired(true)
                 .build();
 
-        userRepository.save(newUser);
+        newUser = userRepository.save(newUser);
+        customerRepository.save(new Customer(newUser));
+
         verificationCodeRepository.deleteByKey(username);
         tmpUserRedisRepository.deleteByKey(username);
 

@@ -1,5 +1,6 @@
 package org.senju.eshopeule.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.ProductAttributeDTO;
@@ -17,13 +18,14 @@ import java.util.Collection;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/p/v1/prod-attr")
+@RequestMapping(path = "/api/r/v1/pa")
 public class ProdAttributeController {
 
     private final ProductAttributeService productAttributeService;
     private static final Logger logger = LoggerFactory.getLogger(ProdAttributeController.class);
 
     @GetMapping
+    @Operation(summary = "Get attribute with ID")
     public ResponseEntity<? extends BaseResponse> getProdAttrById(@RequestParam("id") String id) {
         try {
             logger.info("Get product attribute with id: {}", id);
@@ -34,18 +36,21 @@ public class ProdAttributeController {
     }
 
     @GetMapping(path = "/all")
+    @Operation(summary = "Get all product attributes")
     public ResponseEntity<Collection<? extends BaseResponse>> getAllProdAttr() {
         logger.info("Get all product attributes");
         return ResponseEntity.ok(productAttributeService.getAllProdAtt());
     }
 
     @GetMapping(path = "/cate")
+    @Operation(summary = "Get all attribute with category ID")
     public ResponseEntity<Collection<? extends BaseResponse>> getAllProdAttrWithCategoryId(@RequestParam("id") String id) {
         logger.info("Get all product attributes with category id: {}", id);
         return ResponseEntity.ok(productAttributeService.getAllProdAttWithCategoryId(id));
     }
 
     @PostMapping
+    @Operation(summary = "Create new attribute")
     public ResponseEntity<? extends BaseResponse> createNewProdAttr(@Valid @RequestBody ProductAttributeDTO dto) {
         try {
             logger.info("Create new product attribute");
@@ -57,6 +62,7 @@ public class ProdAttributeController {
     }
 
     @PutMapping
+    @Operation(summary = "Update attribute")
     public ResponseEntity<? extends BaseResponse> updateProdAttr(@Valid @RequestBody ProductAttributeDTO dto) {
         try {
             logger.info("Update product attribute");
@@ -67,6 +73,7 @@ public class ProdAttributeController {
     }
 
     @DeleteMapping(path = "/del")
+    @Operation(summary = "Delete attribute with ID")
     public ResponseEntity<?> deleteById(@RequestParam("id") String id) {
         logger.info("Delete product attribute with id: {}", id);
         productAttributeService.deleteById(id);

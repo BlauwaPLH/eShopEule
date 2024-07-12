@@ -1,5 +1,6 @@
 package org.senju.eshopeule.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.response.SimpleResponse;
 import org.senju.eshopeule.exceptions.NotFoundException;
@@ -7,19 +8,21 @@ import org.senju.eshopeule.exceptions.ProductException;
 import org.senju.eshopeule.service.ProductImageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/p/v1/img")
+@RequestMapping(path = "/api/r/v1/img")
 public class ProdImageController {
 
     private final ProductImageService productImageService;
     private static final Logger logger = LoggerFactory.getLogger(ProdImageController.class);
 
     @GetMapping
+    @Operation(summary = "Get image URL with ID")
     public ResponseEntity<?> getImageUrlById(@RequestParam("id") String id) {
         logger.info("Get product image url with id: {}", id);
         try {
@@ -31,12 +34,14 @@ public class ProdImageController {
     }
 
     @GetMapping(path = "/prod")
+    @Operation(summary = "Get all image URL with product ID")
     public ResponseEntity<?> getAllImageUrlByProductId(@RequestParam("id") String productId) {
         logger.info("Get all product image url with product id: {}", productId);
         return ResponseEntity.ok(productImageService.getAllImageUrlByProductId(productId));
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Upload product images")
     public ResponseEntity<?> uploadProductImages(
             @RequestParam("file") MultipartFile[] files,
             @RequestParam("id") String productId) {
@@ -50,6 +55,7 @@ public class ProdImageController {
     }
 
     @DeleteMapping(path = "/del")
+    @Operation(summary = "Delete image with ID")
     public ResponseEntity<?> deleteById(@RequestParam("id") String id) {
         logger.info("Delete product image with id: {}", id);
         try {
@@ -62,6 +68,7 @@ public class ProdImageController {
     }
 
     @DeleteMapping(path = "/prod/del")
+    @Operation(summary = "Delete images with product ID")
     public ResponseEntity<?> deleteByProductId(@RequestParam("id") String productId) {
         logger.info("Delete product image with product id: {}", productId);
         try {

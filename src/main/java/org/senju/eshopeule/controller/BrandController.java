@@ -1,5 +1,6 @@
 package org.senju.eshopeule.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
@@ -20,18 +21,20 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/p/v1/brand")
+@RequestMapping(path = "/api/r/v1/brand")
 public class BrandController {
 
     private final BrandService brandService;
     private static final Logger logger = LoggerFactory.getLogger(BrandController.class);
 
     @GetMapping(path = "/all")
+    @Operation(summary = "Get all brand")
     public ResponseEntity<Collection<? extends BaseResponse>> getAllBrand() {
         return ResponseEntity.ok(brandService.getAllBrand());
     }
 
     @GetMapping
+    @Operation(summary = "Get brand with id")
     public ResponseEntity<? extends BaseResponse> getBrandWithId(@RequestParam("id") String id) {
         try {
             logger.info("Get brand with id: {}", id);
@@ -43,6 +46,7 @@ public class BrandController {
     }
 
     @PostMapping
+    @Operation(summary = "Create new brand")
     public ResponseEntity<? extends BaseResponse> createNewBrand(@Valid @RequestBody BrandDTO dto) {
         try {
             logger.info("Create new brand..");
@@ -55,6 +59,7 @@ public class BrandController {
     }
 
     @PutMapping
+    @Operation(summary = "Update brand")
     public ResponseEntity<? extends BaseResponse> updateBrand(@Valid @RequestBody BrandDTO dto) {
         try {
             logger.info("Update brand with id: {}", dto.getId());
@@ -66,6 +71,7 @@ public class BrandController {
     }
 
     @DeleteMapping(path = "/del")
+    @Operation(summary = "Delete brand with id")
     public ResponseEntity<?> deleteBrandWithId(@RequestParam("id") String id) {
         logger.info("Delete brand with id: {}", id);
         brandService.deleteById(id);

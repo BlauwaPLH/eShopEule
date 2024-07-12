@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.io.Serial;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -46,13 +47,13 @@ public final class CategoryDTO implements BaseDTO {
     private List<ProductAttributeDTO> productAttributes;
 
     @JsonProperty(value = "create_on")
-    private ZonedDateTime createdOn;
+    private LocalDateTime createdOn;
 
     @JsonProperty(value = "created_by")
     private String createdBy;
 
     @JsonProperty(value = "last_modified_on")
-    private ZonedDateTime lastModifiedOn;
+    private LocalDateTime lastModifiedOn;
 
     @JsonProperty(value = "last_modified_by")
     private String lastModifiedBy;

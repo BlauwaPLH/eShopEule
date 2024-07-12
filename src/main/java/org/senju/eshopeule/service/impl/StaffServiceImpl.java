@@ -51,7 +51,7 @@ public class StaffServiceImpl implements StaffService {
                 () -> new NotFoundException(String.format(USER_NOT_EXISTS_WITH_ID_MSG, id))
         );
         String roleName = loadedUser.getRole().getName();
-        if (roleName.equals(CUSTOMER.getRoleName()) || roleName.equals(ADMIN.getRoleName()) || roleName.equals(VENDOR.getRoleName()))
+        if (roleName.equals(CUSTOMER.getRoleName()) || roleName.equals(ADMIN.getRoleName()))
             throw new NotFoundException(USER_NOT_EXISTS_MSG);
         return staffMapper.convertToDTO(loadedUser);
     }

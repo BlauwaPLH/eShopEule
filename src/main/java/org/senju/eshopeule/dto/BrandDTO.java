@@ -7,6 +7,7 @@ import lombok.*;
 import org.springframework.data.repository.query.Param;
 
 import java.io.Serial;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 import static org.senju.eshopeule.constant.pattern.RegexPattern.ID_PATTERN;
@@ -30,13 +31,13 @@ public final class BrandDTO implements BaseDTO {
     private String slug;
 
     @JsonProperty(value = "create_on")
-    private ZonedDateTime createdOn;
+    private LocalDateTime createdOn;
 
     @JsonProperty(value = "created_by")
     private String createdBy;
 
     @JsonProperty(value = "last_modified_on")
-    private ZonedDateTime lastModifiedOn;
+    private LocalDateTime lastModifiedOn;
 
     @JsonProperty(value = "last_modified_by")
     private String lastModifiedBy;
