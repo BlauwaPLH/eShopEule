@@ -1,8 +1,6 @@
 package org.senju.eshopeule.repository.projection;
 
-public interface ProductPriceView {
+public interface ProductQuantityView {
     String getId();
-    Double getPrice();
-    Double getDiscount();
     Integer getQuantity();
 }

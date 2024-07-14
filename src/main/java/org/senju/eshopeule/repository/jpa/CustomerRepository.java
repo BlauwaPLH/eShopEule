@@ -16,4 +16,7 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
             "ON c.user_id = u.id " +
             "WHERE u.username = :un", nativeQuery = true)
     Optional<String> findIdByUsername(@Param("un") String username);
+
+    @Query(value = "SELECT c FROM Customer c WHERE c.user.username = :un")
+    Optional<Customer> findByUsername(@Param("un") String username);
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.senju.eshopeule.model.BaseEntity;
 import org.senju.eshopeule.model.cart.Cart;
+import org.senju.eshopeule.model.order.Order;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,11 +24,9 @@ public class Customer implements BaseEntity {
 
     private String firstName;
 
-    private String middleName;
-
     private String lastName;
 
-    private LocalDateTime birth;
+    private LocalDateTime birthDate;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -42,6 +41,9 @@ public class Customer implements BaseEntity {
 
     @OneToMany(mappedBy = "customer")
     private List<Cart> carts;
+
+    @OneToMany(mappedBy = "customer")
+    private List<Order> orders;
 
     public Customer(User user) {
         this.user = user;
@@ -60,7 +62,7 @@ public class Customer implements BaseEntity {
     }
 
     public String getFullName() {
-        return String.join(" ", firstName, middleName, lastName);
+        return String.join(" ", firstName, lastName);
     }
 
 }

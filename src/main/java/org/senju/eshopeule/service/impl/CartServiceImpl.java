@@ -13,7 +13,7 @@ import org.senju.eshopeule.model.cart.CartStatus;
 import org.senju.eshopeule.model.user.Customer;
 import org.senju.eshopeule.repository.jpa.*;
 import org.senju.eshopeule.repository.projection.CartItemQuantityView;
-import org.senju.eshopeule.repository.projection.ProductPriceView;
+import org.senju.eshopeule.repository.projection.ProductQuantityView;
 import org.senju.eshopeule.service.CartService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +26,7 @@ import java.util.*;
 
 import static org.senju.eshopeule.constant.exceptionMessage.CartExceptionMsg.*;
 import static org.senju.eshopeule.constant.exceptionMessage.CustomerExceptionMsg.CUSTOMER_NOT_FOUND_WITH_USERNAME_MSG;
+import static org.senju.eshopeule.constant.exceptionMessage.OrderExceptionMsg.NOT_ALLOWED_TO_ORDER;
 import static org.senju.eshopeule.constant.exceptionMessage.ProductExceptionMsg.*;
 
 @Service
@@ -53,8 +54,8 @@ public class CartServiceImpl implements CartService {
         if (itemDTO.getProduct() == null || itemDTO.getProduct().getId() == null || itemDTO.getProduct().getId().isBlank()) {
             throw new NotFoundException(PRODUCT_NOT_FOUND_MSG);
         }
-        if (!productRepository.existsById(itemDTO.getProduct().getId())) {
-            throw new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, itemDTO.getProduct().getId()));
+        if (!productRepository.checkAllowedToOrder(itemDTO.getProduct().getId())) {
+            throw new CartException(String.format(NOT_ALLOWED_TO_ORDER, itemDTO.getProduct().getId()));
         }
 
         if (optionRepository.checkHasOptionsWithProductId(itemDTO.getProduct().getId())) {
@@ -68,8 +69,8 @@ public class CartServiceImpl implements CartService {
             itemDTO.setOption(null);
         }
 
-        final ProductPriceView priceView = productRepository.getPriceViewByIds(List.of(itemDTO.getProduct().getId())).get(0);
-        if (itemDTO.getQuantity() > priceView.getQuantity()) {
+        final ProductQuantityView prodQuantityView = productRepository.getQuantityViewById(itemDTO.getProduct().getId());
+        if (itemDTO.getQuantity() > prodQuantityView.getQuantity()) {
             throw new CartException(QUANTITY_EXCEEDED_MSG);
         }
 
@@ -82,18 +83,22 @@ public class CartServiceImpl implements CartService {
         } else {
             final CartItemQuantityView existedItemQuantity;
 
-            if (itemDTO.getOption() != null) {
-                existedItemQuantity = cartItemRepository
-                        .getItemQuantity(activeCart.getId(), itemDTO.getProduct().getId(), itemDTO.getOption().getId())
-                        .orElse(null);
-            } else {
-                existedItemQuantity = cartItemRepository
-                        .getItemQuantity(activeCart.getId(), itemDTO.getProduct().getId())
-                        .orElse(null);
-            }
+//            if (itemDTO.getOption() != null) {
+//                existedItemQuantity = cartItemRepository
+//                        .getItemQuantityView(activeCart.getId(), itemDTO.getProduct().getId(), itemDTO.getOption().getId())
+//                        .orElse(null);
+//            } else {
+//                existedItemQuantity = cartItemRepository
+//                        .getItemQuantityView(activeCart.getId(), itemDTO.getProduct().getId())
+//                        .orElse(null);
+//            }
+
+            existedItemQuantity = cartItemRepository
+                    .getItemQuantityView(activeCart.getId(), itemDTO.getProduct().getId(), itemDTO.getOption().getId())
+                    .orElse(null);
 
             if (existedItemQuantity != null) {
-                if (existedItemQuantity.getQuantity() + itemDTO.getQuantity() > priceView.getQuantity()) {
+                if (existedItemQuantity.getQuantity() + itemDTO.getQuantity() > prodQuantityView.getQuantity()) {
                     throw new CartException(QUANTITY_EXCEEDED_MSG);
                 }
                 cartItemRepository.updateQuantityById(

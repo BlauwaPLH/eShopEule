@@ -19,7 +19,7 @@ public interface CartRepository extends JpaRepository<Cart, String> {
     @Transactional
     @Modifying
     @Query(value = "UPDATE carts SET status = 'COMPLETED' " +
-            "WHERE customer_id = " +
+            "WHERE status = 'ACTIVE' AND customer_id = " +
             "(SELECT cus.id FROM customers AS cus " +
             "INNER JOIN users AS u " +
             "ON cus.user_id = u.id " +

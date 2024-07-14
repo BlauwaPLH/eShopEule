@@ -1,6 +1,6 @@
 package org.senju.eshopeule.model.user;
 
-public enum Gender {
+public enum  Gender {
     MALE,
     FEMALE
 }
