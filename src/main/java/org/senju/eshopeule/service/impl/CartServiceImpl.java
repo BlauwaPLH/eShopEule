@@ -94,7 +94,7 @@ public class CartServiceImpl implements CartService {
 //            }
 
             existedItemQuantity = cartItemRepository
-                    .getItemQuantityView(activeCart.getId(), itemDTO.getProduct().getId(), itemDTO.getOption().getId())
+                    .getItemQuantityView(activeCart.getId(), itemDTO.getProduct().getId(), itemDTO.getOption() != null ? itemDTO.getOption().getId() : null)
                     .orElse(null);
 
             if (existedItemQuantity != null) {

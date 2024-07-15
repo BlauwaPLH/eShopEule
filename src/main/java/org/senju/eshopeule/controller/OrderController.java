@@ -1,11 +1,9 @@
 package org.senju.eshopeule.controller;
 
-import co.elastic.clients.elasticsearch.xpack.usage.Base;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.constant.pagination.OrderPageable;
-import org.senju.eshopeule.constant.pagination.ProductPageable;
 import org.senju.eshopeule.dto.request.CreateOrderRequest;
 import org.senju.eshopeule.dto.response.BaseResponse;
 import org.senju.eshopeule.dto.response.SimpleResponse;
@@ -13,22 +11,20 @@ import org.senju.eshopeule.exceptions.CartException;
 import org.senju.eshopeule.exceptions.NotFoundException;
 import org.senju.eshopeule.exceptions.OrderException;
 import org.senju.eshopeule.exceptions.PagingException;
-import org.senju.eshopeule.model.cart.Cart;
 import org.senju.eshopeule.service.OrderService;
 import org.senju.eshopeule.utils.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import static jakarta.mail.event.FolderEvent.CREATED;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/r/v1/order")
 public class OrderController {
 
-    private OrderService orderService;
+    private final OrderService orderService;
     private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     @GetMapping
@@ -89,14 +85,14 @@ public class OrderController {
         logger.info("Create new order");
         try {
             orderService.createOrder(request);
-            return ResponseEntity.status(CREATED).body(new SimpleResponse("Created order successfully!"));
+            return ResponseEntity.status(HttpStatus.CREATED).body(new SimpleResponse("Created order successfully!"));
         } catch (NotFoundException | OrderException | CartException ex) {
             logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
 
-    @PostMapping(path = "/buy-again")
+    @PostMapping(path = "/ba")
     @Operation(summary = "Buy again a order item")
     public ResponseEntity<? extends BaseResponse> buyAgainOrderItem(@RequestParam("id") String orderItemId) {
         logger.info("Buy again with order {}", orderItemId);

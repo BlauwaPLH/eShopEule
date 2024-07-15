@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.io.Serial;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import static org.senju.eshopeule.constant.pattern.RegexPattern.PHONE_PATTERN;
 
@@ -38,7 +38,7 @@ public final class ProfileDTO implements BaseDTO {
 
     @JsonProperty(value = "birth_date")
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime birthDate;
+    private LocalDate birthDate;
 
     private String gender;
 

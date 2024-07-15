@@ -62,6 +62,7 @@ public class Customer implements BaseEntity {
     }
 
     public String getFullName() {
+        if (firstName == null || firstName.isBlank() || lastName == null || lastName.isBlank()) return null;
         return String.join(" ", firstName, lastName);
     }
 

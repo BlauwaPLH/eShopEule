@@ -1,13 +1,13 @@
 package org.senju.eshopeule.model;
 
+
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.senju.eshopeule.listener.JpaAuditingEntityListener;
+import org.senju.eshopeule.listener.MongoAuditingEntityListener;
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 
 import java.time.LocalDateTime;
@@ -15,16 +15,16 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @MappedSuperclass
-@EntityListeners(JpaAuditingEntityListener.class)
-public class AbstractAuditEntity implements BaseEntity {
+@EntityListeners(MongoAuditingEntityListener.class)
+public class AbstractAuditDocument implements BaseEntity {
 
-    @CreationTimestamp
+    @CreatedDate
     private LocalDateTime createdOn;
 
     @CreatedBy
     private String createdBy;
 
-    @UpdateTimestamp
+    @CreatedDate
     private LocalDateTime lastModifiedOn;
 
     @LastModifiedBy

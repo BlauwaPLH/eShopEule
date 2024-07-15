@@ -1,7 +1,7 @@
 package org.senju.eshopeule.dto.request;
 
 import lombok.*;
-import org.senju.eshopeule.validation.constraints.ValidIdentifierLoginConstraint;
+import org.senju.eshopeule.validation.constraints.IdentifierLoginConstraint;
 
 @Getter
 @Setter
@@ -10,6 +10,6 @@ import org.senju.eshopeule.validation.constraints.ValidIdentifierLoginConstraint
 @NoArgsConstructor
 public class ResetPasswordRequest implements BaseRequest {
 
-    @ValidIdentifierLoginConstraint
+    @IdentifierLoginConstraint
     private String identifier;
 }

@@ -2,9 +2,9 @@ package org.senju.eshopeule.validation.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.senju.eshopeule.validation.constraints.ValidDiscountConstraint;
+import org.senju.eshopeule.validation.constraints.DiscountConstraint;
 
-public class ValidDiscountValidator implements ConstraintValidator<ValidDiscountConstraint, Double> {
+public class DiscountValidator implements ConstraintValidator<DiscountConstraint, Double> {
 
     @Override
     public boolean isValid(Double value, ConstraintValidatorContext context) {

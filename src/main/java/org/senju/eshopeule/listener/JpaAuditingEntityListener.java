@@ -4,13 +4,14 @@ import jakarta.persistence.PrePersist;
 import org.senju.eshopeule.model.AbstractAuditEntity;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.auditing.AuditingHandler;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Configurable
-public class CustomAuditingEntityListener extends AuditingEntityListener {
+public class JpaAuditingEntityListener extends AuditingEntityListener {
 
-    public CustomAuditingEntityListener(ObjectFactory<AuditingHandler> handler) {
+    public JpaAuditingEntityListener(@Qualifier("jpaAuditingHandler") ObjectFactory<AuditingHandler> handler) {
         super.setAuditingHandler(handler);
     }
 

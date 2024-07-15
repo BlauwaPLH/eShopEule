@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,17 +20,14 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, String> {
             "WHERE u.username = :un AND oi.id = :oiId)", nativeQuery = true)
     boolean checkExistsByUsername(@Param("oiId") String oderItemId, @Param("un") String username);
 
-
-    @Query(value = "SELECT oi.id, oi.product_id, p.quantity, p.price, p.discount, p.option_id " +
+    @Query(value = "SELECT oi.id, oi.product_id, p.quantity AS productQuantity, p.price, p.discount, oi.option_id " +
             "FROM order_items AS oi " +
             "INNER JOIN products AS p ON oi.product_id = p.id " +
             "WHERE oi.id = :oiId", nativeQuery = true)
     Optional<OrderItemView> getItemViewById(@Param("oiId") String orderItemId);
 
-    @Query(value = "SELECT oi.id, oi.product_id, p.quantity, p.price, p.discount, p.option_id " +
-            "FROM order_items AS oi " +
-            "INNER JOIN orders AS o ON oi.order_id = o.id " +
-            "INNER JOIN products AS p ON oi.product_id = p.id " +
-            "WHERE o.id = :oId", nativeQuery = true)
-    List<OrderItemView> getItemViewByOrderId(@Param("oId") String orderId);
+    @Query(value = "SELECT EXISTS (SELECT 1 FROM order_items AS oi " +
+            "INNER JOIN order AS o ON oi.order_id = o.id " +
+            "WHERE oi.product_id = :productId AND o.customer_id = :customerId AND o.status = 'COMPLETED')", nativeQuery = true)
+    boolean checkOrderedProduct(@Param("productId") String productId, @Param("customerId") String customerId);
 }

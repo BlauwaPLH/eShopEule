@@ -24,7 +24,7 @@ public class Cart extends AbstractAuditEntity {
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
     @OneToMany(mappedBy = "cart", cascade = {PERSIST, REMOVE})

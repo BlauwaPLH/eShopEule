@@ -2,7 +2,7 @@ package org.senju.eshopeule.model.product;
 
 import jakarta.persistence.Id;
 import lombok.*;
-import org.senju.eshopeule.model.AbstractAuditEntity;
+import org.senju.eshopeule.model.AbstractAuditDocument;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,7 +15,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "product_meta")
-public class ProductMeta extends AbstractAuditEntity {
+public class ProductMeta extends AbstractAuditDocument {
 
     @Id
     private String id;

@@ -14,7 +14,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     @Query(value = "SELECT EXISTS (SELECT 1 FROM orders AS o " +
             "INNER JOIN customers AS c ON o.customer_id = c.id " +
             "INNER JOIN users AS u ON c.user_id = u.id " +
-            "WHERE c.username = :un AND o.id = :oId)", nativeQuery = true)
+            "WHERE u.username = :un AND o.id = :oId)", nativeQuery = true)
     boolean checkExistsByUsername(@Param("oId") String orderId, @Param("un") String username);
 
     @Query(value = "SELECT o FROM Order o WHERE o.customer.user.username = :username")

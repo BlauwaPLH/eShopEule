@@ -43,12 +43,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
-            IllegalArgumentException.class,
+//            IllegalArgumentException.class,
             DataAccessException.class,
             ExpressionException.class,
-            InvalidDefinitionException.class,
-            HttpMessageNotReadableException.class,
-            HttpRequestMethodNotSupportedException.class,
+//            InvalidDefinitionException.class,
+//            HttpMessageNotReadableException.class,
+//            HttpRequestMethodNotSupportedException.class,
             StorageException.class,
             FileUploadException.class
     })

@@ -1,6 +1,5 @@
 package org.senju.eshopeule.service.impl;
 
-import io.swagger.v3.oas.annotations.servers.Server;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.OrderDTO;
 import org.senju.eshopeule.dto.request.CreateOrderRequest;
@@ -25,11 +24,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import static org.senju.eshopeule.constant.enums.BootstrapPerm.CUS_WRITE;
+import static org.senju.eshopeule.constant.enums.BootstrapPerm.STAFF_WRITE;
 import static org.senju.eshopeule.constant.exceptionMessage.CartExceptionMsg.ONLY_ONE_ACTIVE_CART_MSG;
 import static org.senju.eshopeule.constant.exceptionMessage.CartExceptionMsg.QUANTITY_EXCEEDED_MSG;
 import static org.senju.eshopeule.constant.exceptionMessage.CustomerExceptionMsg.CUSTOMER_NOT_FOUND_WITH_USERNAME_MSG;
@@ -38,7 +46,7 @@ import static org.senju.eshopeule.model.order.DeliveryMethod.*;
 import static org.senju.eshopeule.model.order.OrderStatus.*;
 import static org.senju.eshopeule.model.order.TransactionType.*;
 
-@Server
+@Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
@@ -89,21 +97,19 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void createOrder(CreateOrderRequest request) {
+        final Map<String, TransactionType> transactionTypeMap = Arrays.stream(TransactionType.values())
+                .collect(Collectors.toMap(TransactionType::name, Function.identity()));
+        final Map<String, DeliveryMethod> deliveryMethodMap = Arrays.stream(DeliveryMethod.values())
+                .collect(Collectors.toMap(DeliveryMethod::name, Function.identity()));
+
         final TransactionType transactionType;
         final DeliveryMethod deliveryMethod;
 
-        switch (TransactionType.valueOf(request.getTransactionType())) {
-            case COD -> transactionType = COD;
-            case BANKING -> transactionType = BANKING;
-            default -> throw new OrderException(String.format(UNSUPPORTED_TRANSACTION_TYPE_MSG, request.getTransactionType()));
-        }
+        if (transactionTypeMap.containsKey(request.getTransactionType())) transactionType = transactionTypeMap.get(request.getTransactionType());
+        else throw new OrderException(String.format(UNSUPPORTED_TRANSACTION_TYPE_MSG, request.getTransactionType()));
 
-        switch (DeliveryMethod.valueOf(request.getDeliveryMethod())) {
-            case SHOPPE_EXPRESS -> deliveryMethod = SHOPPE_EXPRESS;
-            case GRAB_EXPRESS -> deliveryMethod = GRAB_EXPRESS;
-            case YAS_EXPRESS -> deliveryMethod = YAS_EXPRESS;
-            default -> throw new OrderException(String.format(UNSUPPORTED_DELIVERY_METHOD_MSG, request.getDeliveryMethod()));
-        }
+        if (deliveryMethodMap.containsKey(request.getDeliveryMethod())) deliveryMethod = deliveryMethodMap.get(request.getDeliveryMethod());
+        else throw new OrderException(String.format(UNSUPPORTED_DELIVERY_METHOD_MSG, request.getDeliveryMethod()));
 
         List<Cart> activeCartList = this.getActiveCartsOfCurrentUser();
         if (activeCartList.isEmpty())
@@ -137,6 +143,8 @@ public class OrderServiceImpl implements OrderService {
         final List<OrderItem> orderItemList = cartItemRepository.getItemViewByCartId(activeCart.getId())
                 .stream()
                 .map(civ -> {
+                    logger.debug("Cart item: [ID={}, ItemQuantity={}, ProductID={}, OptionId={}, ProductPrice={}, ProductDiscount={}, ProductQuantity={}]",
+                            civ.getId(), civ.getItemQuantity(), civ.getProductId(), civ.getOptionId(), civ.getPrice(), civ.getDiscount(), civ.getProductQuantity());
                     if (!productRepository.checkAllowedToOrder(civ.getProductId())) {
                         throw new OrderException(String.format(NOT_ALLOWED_TO_ORDER, civ.getProductId()));
                     }
@@ -221,7 +229,7 @@ public class OrderServiceImpl implements OrderService {
     private CartItem createCartItem(Cart activeCart, String productId, String optionId) {
         return CartItem.builder()
                 .quantity(1)
-                .option(ProductOption.builder().id(optionId).build())
+                .option(optionId != null ? ProductOption.builder().id(optionId).build() : null)
                 .product(Product.builder().id(productId).build())
                 .cart(activeCart)
                 .build();
@@ -279,6 +287,17 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId).orElseThrow(
                 () -> new NotFoundException(String.format(ORDER_NOT_FOUND_WITH_ID_MSG, orderId))
         );
+
+        List<String> permissions = this.getCurrentPermission();
+        if (permissions.contains(CUS_WRITE.getPermName())) {
+            final String username = this.getCurrentUsername();
+            if (!orderRepository.checkExistsByUsername(orderId, username)) {
+                throw new NotFoundException(String.format(ORDER_NOT_FOUND_WITH_ID_AND_USERNAME_MSG, orderId, username));
+            }
+        } else if (!permissions.contains(STAFF_WRITE.getPermName())) {
+            throw new OrderException(NOT_ALLOWED_TO_CANCEL_ORDER);
+        }
+
         Transaction transaction = order.getTransaction();
         switch (order.getStatus()) {
             case PROCESSING -> {
@@ -320,5 +339,14 @@ public class OrderServiceImpl implements OrderService {
     private String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> getCurrentPermission() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>) authentication.getAuthorities();
+        return authorities.stream()
+                .map(SimpleGrantedAuthority::getAuthority)
+                .toList();
     }
 }

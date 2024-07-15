@@ -24,7 +24,6 @@ public final class ProductMetaDTO implements BaseDTO {
 
     private String id;
 
-    @Pattern(regexp = ID_PATTERN, message = "ID is invalid")
     @JsonProperty(value = "product_id")
     private String productId;
 

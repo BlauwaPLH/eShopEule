@@ -73,9 +73,17 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, PROD_IMG_API, PROD_ATTR_API, PROD_META_API, PROD_OPTION_API, CATEGORY_API, BRAND_API, PRODUCT_API).hasAuthority(STAFF_WRITE.getPermName())
                         .requestMatchers(HttpMethod.DELETE, PROD_IMG_API, PROD_ATTR_API, PROD_META_API, PROD_OPTION_API, CATEGORY_API, BRAND_API, PRODUCT_API).hasAuthority(STAFF_WRITE.getPermName())
 
-                        .requestMatchers(HttpMethod.GET, CART_API).hasAuthority(CUS_READ.getPermName())
-                        .requestMatchers(HttpMethod.POST, CART_API).hasAuthority(CUS_WRITE.getPermName())
+                        .requestMatchers(HttpMethod.GET, CART_API, "/api/r/*/cm/**").hasAuthority(CUS_READ.getPermName())
+                        .requestMatchers(HttpMethod.POST, CART_API, "/api/r/*/cm/**").hasAuthority(CUS_WRITE.getPermName())
                         .requestMatchers(HttpMethod.DELETE, CART_API).hasAuthority(CUS_WRITE.getPermName())
+
+                        .requestMatchers("/api/r/*/order").hasAnyAuthority(CUS_READ.getPermName(), STAFF_READ.getPermName())
+                        .requestMatchers("/api/r/*/order/cancel").hasAnyAuthority(CUS_WRITE.getPermName(), STAFF_WRITE.getPermName())
+                        .requestMatchers("/api/r/*/order/m/all").hasAuthority(STAFF_READ.getPermName())
+                        .requestMatchers("/api/r/*/order/history").hasAuthority(CUS_READ.getPermName())
+                        .requestMatchers("/api/r/*/order/crt", "/api/r/*/order/ba", "api/r/*/cm").hasAuthority(CUS_WRITE.getPermName())
+                        .requestMatchers("/api/r/*/order/m/complete", "/api/r/*/order/m/ship").hasAuthority(STAFF_WRITE.getPermName())
+
 
                         .requestMatchers(PUBLIC_API, "/swagger-ui/**", "/swagger-ui",
                                 "/v3/api-docs/**", "/actuator/health/**").permitAll()

@@ -32,11 +32,15 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public ProfileDTO updateProfile(ProfileDTO dto) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        String profileId = customerRepository.findIdByUsername(username).orElseThrow(
+        Customer loadedCustomer = customerRepository.findByUsername(username).orElseThrow(
                 () -> new NotFoundException(String.format(CUSTOMER_NOT_FOUND_WITH_USERNAME_MSG, username))
         );
-        dto.setId(profileId);
-        return mapper.convertToDTO(customerRepository.save(mapper.convertToEntity(dto)));
+
+        Customer updatedProfile = mapper.convertToEntity(dto);
+        updatedProfile.setId(loadedCustomer.getId());
+        updatedProfile.setUser(loadedCustomer.getUser());
+
+        return mapper.convertToDTO(customerRepository.save(updatedProfile));
     }
 
     private Customer getCustomerMetaOfCurrentUser() {

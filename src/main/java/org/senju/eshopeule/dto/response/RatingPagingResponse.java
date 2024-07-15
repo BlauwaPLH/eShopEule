@@ -1,9 +1,10 @@
 package org.senju.eshopeule.dto.response;
 
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.senju.eshopeule.dto.OrderDTO;
+import org.senju.eshopeule.dto.RatingDTO;
 
 import java.io.Serial;
 import java.util.List;
@@ -14,10 +15,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public final class OrderPagingResponse implements BaseResponse {
+public final class RatingPagingResponse implements BaseResponse {
 
     @Serial
-    private static final long serialVersionUID = 947042839835701175L;
+    private static final long serialVersionUID = 5021655509179084967L;
 
     @JsonProperty(value = "total_elements")
     private long totalElements;
@@ -34,5 +35,5 @@ public final class OrderPagingResponse implements BaseResponse {
     @JsonProperty(value = "is_last")
     private boolean isLast;
 
-    private List<OrderDTO> orders;
+    private List<RatingDTO> ratings;
 }

@@ -22,7 +22,7 @@ public interface CartItemRepository extends JpaRepository<CartItem, String> {
     Optional<CartItemQuantityView> getItemQuantityView(@Param("cartId") String cartId, @Param("prodId") String productId, @Param("opId") String optionId);
 
 
-    @Query(value = "SELECT DISTINCT ci.id, ci.quantity, ci.product_id, ci.option_id, p.price, p.discount, p.quantity " +
+    @Query(value = "SELECT DISTINCT ci.id, ci.quantity AS itemQuantity, ci.product_id, ci.option_id, p.price, p.discount, p.quantity AS productQuantity " +
             "FROM cart_items AS ci INNER JOIN products AS p ON ci.product_id = p.id WHERE ci.cart_id = :cartId", nativeQuery = true)
     List<CartItemView> getItemViewByCartId(@Param("cartId") String cartItemId);
 
