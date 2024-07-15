@@ -13,6 +13,7 @@ import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +28,7 @@ import java.util.Optional;
 @EnableMongoRepositories(basePackages = "org.senju.eshopeule.repository.mongodb")
 @EnableElasticsearchRepositories(basePackages = "org.senju.eshopeule.repository.es")
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
+@EnableMongoAuditing(auditorAwareRef = "auditorAware")
 public class ApplicationConfig {
 
     @Bean
@@ -37,11 +39,8 @@ public class ApplicationConfig {
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
-        JavaTimeModule module = new JavaTimeModule();
-        module.addSerializer(ZonedDateTime.class, new ZonedDateTimeSerializer(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
-        mapper.registerModule(module);
+        mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        mapper.registerModule(module);
         return mapper;
     }
 

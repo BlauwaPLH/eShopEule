@@ -5,8 +5,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.senju.eshopeule.validation.constraints.ValidDiscountConstraint;
-import org.senju.eshopeule.validation.constraints.ValidPriceConstraint;
+import org.senju.eshopeule.validation.constraints.DiscountConstraint;
+import org.senju.eshopeule.validation.constraints.PriceConstraint;
 
 import java.io.Serial;
 import java.util.List;
@@ -35,10 +35,10 @@ public final class ProductPutDTO implements ProductDTO {
 
     private String gtin;
 
-    @ValidPriceConstraint
+    @PriceConstraint
     private Double price;
 
-    @ValidDiscountConstraint
+    @DiscountConstraint
     private Double discount;
 
     @Min(value = 0, message = "Product's quantity must be greater than 0")

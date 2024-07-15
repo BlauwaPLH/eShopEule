@@ -25,5 +25,4 @@ public class ProductCategory implements BaseEntity {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    private boolean isFeaturedProduct;
 }

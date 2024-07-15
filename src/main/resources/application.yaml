@@ -1,10 +1,12 @@
 spring:
   application:
     name: eShopEule
+  config:
+    import: optional:file:secrets.yaml
   datasource:
     url: jdbc:postgresql://localhost:5432/eShopEule
     username: postgres
-    password: 123456789
+    password: ${postgresql.password}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -20,8 +22,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: eshop27test@gmail.com
-    password: vgjzmzepofhxuqjw
+    username: ${mail.username}
+    password: ${mail.password}
     properties:
       mail:
         smtp:
@@ -33,7 +35,7 @@ spring:
       host: localhost
       port: 6379
     mongodb:
-      uri: mongodb://superpech:123456789@localhost:27017/eShopEule
+    uri: ${mongodb.uri}
   elasticsearch:
     uris: http://localhost:9200
     connection-timeout: 10m
@@ -65,7 +67,7 @@ security:
   verify-code:
     expiration: 300
   jwt:
-    secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    secret-key: ${jwt.sk}
     access-token:
       expiration: 86400000
     refresh-token:
@@ -74,20 +76,20 @@ security:
     client:
       registration:
         google:
-          client-id: 353684858508-di8dg1ilh3ee6h1vmbo7gmb1hou22l52.apps.googleusercontent.com
-          client-secret: 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
+          client-id: ${google.client-id}
+          client-secret: ${google.client-secret}
         github:
-          client-id: Ov23liAImsFOfFwbp9X8
-          client-secret: bdf2665263f92d96a2b88923ed08d772e68915e2
+          client-id: ${github.client-id}
+          client-secret: ${github.client-secret}
         discord:
-          client-id: 1220756198157189151
-          client-secret: PNhWDeeFTSmqm0dfSS0O_-qV4UP5JJ08
+          client-id: ${discord.client-id}
+          client-secret: ${discord.client-secret}
 
 twilio:
-  account-sid: AC6c18541e060f12cb646a2a50fd49f984
-  auth-token: 5b6e5412d576e151b8e2f12627b8d347
+  account-sid: ${twilio.acc-sid}
+  auth-token: ${twilio.auth-token}
   phone-number: +16502678582
 
 firebase:
-  storage-bucket: eshopeule.appspot.com
+  storage-bucket: ${firebase.sb}
   image-url: https://storage.googleapis.com/${firebase.storage-bucket}/%s

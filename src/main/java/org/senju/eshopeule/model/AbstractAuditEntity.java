@@ -6,26 +6,26 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.senju.eshopeule.listener.CustomAuditingEntityListener;
+import org.senju.eshopeule.listener.JpaAuditingEntityListener;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @MappedSuperclass
-@EntityListeners(CustomAuditingEntityListener.class)
+@EntityListeners(JpaAuditingEntityListener.class)
 public class AbstractAuditEntity implements BaseEntity {
 
     @CreationTimestamp
-    private ZonedDateTime createdOn;
+    private LocalDateTime createdOn;
 
     @CreatedBy
     private String createdBy;
 
     @UpdateTimestamp
-    private ZonedDateTime lastModifiedOn;
+    private LocalDateTime lastModifiedOn;
 
     @LastModifiedBy
     private String lastModifiedBy;

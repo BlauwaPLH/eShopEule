@@ -1,6 +1,7 @@
 package org.senju.eshopeule.repository.jpa;
 
 import org.senju.eshopeule.model.product.Product;
+import org.senju.eshopeule.repository.projection.ProductQuantityView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,4 +34,12 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query(value = "SELECT EXISTS (SELECT 1 FROM products WHERE slug = :slug AND id != :prodId)", nativeQuery = true)
     boolean checkExistsWithSlugExceptId(@Param("prodId") String productId, @Param("slug") String slug);
 
+    @Query(value = "SELECT id, quantity FROM products WHERE id = :prodId", nativeQuery = true)
+    ProductQuantityView getQuantityViewById(@Param("prodId") String productId);
+
+    @Query(value = "SELECT EXISTS " +
+            "(SELECT 1 FROM products " +
+            "WHERE is_published = TRUE AND is_allowed_to_order = TRUE " +
+            "AND quantity > 0 AND id = :prodId)", nativeQuery = true)
+    boolean checkAllowedToOrder(@Param("prodId") String productId);
 }

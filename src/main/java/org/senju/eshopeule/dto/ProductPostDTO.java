@@ -6,8 +6,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.senju.eshopeule.validation.constraints.ValidDiscountConstraint;
-import org.senju.eshopeule.validation.constraints.ValidPriceConstraint;
+import org.senju.eshopeule.validation.constraints.DiscountConstraint;
+import org.senju.eshopeule.validation.constraints.PriceConstraint;
 
 import java.io.Serial;
 import java.util.List;
@@ -33,10 +33,10 @@ public final class ProductPostDTO implements ProductDTO {
     private String gtin;
 
     @NotNull(message = "Product's price is required")
-    @ValidPriceConstraint
+    @PriceConstraint
     private Double price;
 
-    @ValidDiscountConstraint
+    @DiscountConstraint
     private Double discount;
 
     @NotNull(message = "Product's quantity is required")

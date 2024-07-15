@@ -2,6 +2,7 @@ package org.senju.eshopeule.exceptions.handler;
 
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.google.cloud.storage.StorageException;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.senju.eshopeule.dto.response.BaseResponse;
 import org.senju.eshopeule.dto.response.SimpleResponse;
 import org.slf4j.Logger;
@@ -42,13 +43,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
-            IllegalArgumentException.class,
+//            IllegalArgumentException.class,
             DataAccessException.class,
             ExpressionException.class,
-            InvalidDefinitionException.class,
-            HttpMessageNotReadableException.class,
-            HttpRequestMethodNotSupportedException.class,
-            StorageException.class
+//            InvalidDefinitionException.class,
+//            HttpMessageNotReadableException.class,
+//            HttpRequestMethodNotSupportedException.class,
+            StorageException.class,
+            FileUploadException.class
     })
     public ResponseEntity<? extends BaseResponse> handleBadRequest(Exception ex) {
         logger.error(ex.getMessage());
