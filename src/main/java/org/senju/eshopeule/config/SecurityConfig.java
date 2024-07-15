@@ -59,9 +59,7 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 //                .addFilterAfter(csrfTokenLoggingFilter, CsrfFilter.class)
                 .addFilterBefore(new JwtAuthenticationFilter(authenticationManager(http), restAuthenticationEntryPoint), UsernamePasswordAuthenticationFilter.class)
-                .oauth2Login(c -> c
-                        .successHandler(oauth2AuthenticationSuccessHandler)
-                )
+                .oauth2Login(c -> c.successHandler(oauth2AuthenticationSuccessHandler))
                 .authorizeHttpRequests(c -> c
                         .requestMatchers(HttpMethod.GET, STAFF_API, ROLE_API).hasAuthority(ADMIN_READ.getPermName())
                         .requestMatchers(HttpMethod.POST, STAFF_API, ROLE_API).hasAuthority(ADMIN_WRITE.getPermName())
@@ -81,7 +79,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/r/*/order/cancel").hasAnyAuthority(CUS_WRITE.getPermName(), STAFF_WRITE.getPermName())
                         .requestMatchers("/api/r/*/order/m/all").hasAuthority(STAFF_READ.getPermName())
                         .requestMatchers("/api/r/*/order/history").hasAuthority(CUS_READ.getPermName())
-                        .requestMatchers("/api/r/*/order/crt", "/api/r/*/order/ba", "api/r/*/cm").hasAuthority(CUS_WRITE.getPermName())
+                        .requestMatchers("/api/r/*/order/crt", "/api/r/*/order/ba", "/api/r/*/cm", "/api/r/*/rating/**").hasAuthority(CUS_WRITE.getPermName())
                         .requestMatchers("/api/r/*/order/m/complete", "/api/r/*/order/m/ship").hasAuthority(STAFF_WRITE.getPermName())
 
 

@@ -27,7 +27,7 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, String> {
     Optional<OrderItemView> getItemViewById(@Param("oiId") String orderItemId);
 
     @Query(value = "SELECT EXISTS (SELECT 1 FROM order_items AS oi " +
-            "INNER JOIN order AS o ON oi.order_id = o.id " +
+            "INNER JOIN orders AS o ON oi.order_id = o.id " +
             "WHERE oi.product_id = :productId AND o.customer_id = :customerId AND o.status = 'COMPLETED')", nativeQuery = true)
     boolean checkOrderedProduct(@Param("productId") String productId, @Param("customerId") String customerId);
 }

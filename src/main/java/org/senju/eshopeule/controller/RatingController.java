@@ -10,7 +10,6 @@ import org.senju.eshopeule.dto.response.SimpleResponse;
 import org.senju.eshopeule.exceptions.NotFoundException;
 import org.senju.eshopeule.exceptions.ObjectAlreadyExistsException;
 import org.senju.eshopeule.exceptions.PagingException;
-import org.senju.eshopeule.model.rating.Rating;
 import org.senju.eshopeule.service.RatingService;
 import org.senju.eshopeule.utils.PaginationUtil;
 import org.slf4j.Logger;
@@ -18,15 +17,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static org.senju.eshopeule.constant.pattern.RoutePattern.PRIVATE_PREFIX;
+import static org.senju.eshopeule.constant.pattern.RoutePattern.PUBLIC_PREFIX;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/r/v1/rating")
 public class RatingController {
 
     private final RatingService ratingService;
     private static final Logger logger = LoggerFactory.getLogger(RatingController.class);
 
-    @GetMapping
+    @GetMapping(path = PUBLIC_PREFIX + "/v1/rating")
     @Operation(summary = "Get rating by ID")
     public ResponseEntity<? extends BaseResponse> getRatingById(@RequestParam("id") String ratingId) {
         logger.info("Get rating with ID: {}", ratingId);
@@ -38,7 +39,7 @@ public class RatingController {
         }
     }
 
-    @GetMapping(path = "/prod")
+    @GetMapping(path = PUBLIC_PREFIX + "/v1/rating/prod")
     @Operation(summary = "Get all ratings by product ID")
     public ResponseEntity<? extends BaseResponse> getAllRatingByProductId(
             @RequestParam("id") String productId,
@@ -59,7 +60,7 @@ public class RatingController {
         }
     }
 
-    @PostMapping
+    @PostMapping(path = PRIVATE_PREFIX + "/v1/rating")
     @Operation(summary = "Create new rating")
     public ResponseEntity<? extends BaseResponse> createNewRating(@Valid @RequestBody RatingDTO dto) {
         logger.info("Create new rating");
@@ -71,7 +72,7 @@ public class RatingController {
         }
     }
 
-    @PutMapping
+    @PutMapping(path = PRIVATE_PREFIX + "/v1/rating")
     @Operation(summary = "Update rating")
     public ResponseEntity<? extends BaseResponse> updateRating(@Valid @RequestBody RatingDTO dto) {
         logger.info("Update rating with ID: {}", dto.getId());
@@ -83,7 +84,7 @@ public class RatingController {
         }
     }
 
-    @DeleteMapping(path = "/del")
+    @DeleteMapping(path = PRIVATE_PREFIX + "/v1/rating/del")
     @Operation(summary = "Delete rating by ID")
     public ResponseEntity<? extends BaseResponse> deleteById(@RequestParam("id") String ratingId) {
         logger.info("Delete rating with ID: {}", ratingId);
