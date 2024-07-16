@@ -60,6 +60,7 @@ dependencies {
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.1'
 
 	runtimeOnly 'org.postgresql:postgresql'
+	implementation 'org.elasticsearch:elasticsearch:8.14.3'
 	implementation "com.twilio.sdk:twilio:${versions.twilio}"
 	implementation "com.google.firebase:firebase-admin:${versions.firebase}"
 	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${versions.springdoc_openapi}"

@@ -2,6 +2,7 @@ package org.senju.eshopeule.model.product;
 
 import jakarta.persistence.Id;
 import lombok.*;
+import org.senju.eshopeule.model.BaseEntity;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -16,10 +17,13 @@ import java.util.List;
 @NoArgsConstructor
 @Document(indexName = "products")
 @Setting(settingPath = "es_config/elastic-analyzer.json")
-public class ProductESDoc {
+public class ProductESDoc implements BaseEntity {
 
     @Id
     private String id;
+
+    @Field(type = FieldType.Keyword)
+    private String productId;
 
     @Field(type = FieldType.Text, analyzer = "autocomplete_index", searchAnalyzer = "autocomplete_search")
     private String name;
@@ -38,12 +42,9 @@ public class ProductESDoc {
 
     private String imageUrl;
 
-    @Field(type = FieldType.Text, fielddata = true)
+    @Field(type = FieldType.Keyword)
     private String brand;
 
     @Field(type = FieldType.Keyword)
     private List<String> categories;
-
-    @Field(type = FieldType.Keyword)
-    private List<String> tags;
 }

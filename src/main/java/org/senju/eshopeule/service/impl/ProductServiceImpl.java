@@ -8,11 +8,13 @@ import org.senju.eshopeule.exceptions.ObjectAlreadyExistsException;
 import org.senju.eshopeule.exceptions.ProductException;
 import org.senju.eshopeule.mappers.*;
 import org.senju.eshopeule.model.product.*;
+import org.senju.eshopeule.repository.es.ProductESRepository;
 import org.senju.eshopeule.repository.jpa.*;
 import org.senju.eshopeule.repository.mongodb.ProductMetaRepository;
 import org.senju.eshopeule.repository.projection.SimpleProdAttrView;
 import org.senju.eshopeule.service.ImageService;
 import org.senju.eshopeule.service.ProductService;
+import org.senju.eshopeule.service.ProductSyncDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -45,6 +47,7 @@ public class ProductServiceImpl implements ProductService {
     private final ImageService imageService;
     private final CategoryRepository categoryRepository;
     private final BrandRepository brandRepository;
+    private final ProductSyncDataService productSyncDataService;
 
     private final ProductMetaMapper prodMetaMapper;
     private final ProductSimpleMapper prodSimpleMapper;
@@ -140,6 +143,7 @@ public class ProductServiceImpl implements ProductService {
         this.createProductMeta(dto, newProduct.getId());
         this.createProductImages(images, newProduct);
 
+        productSyncDataService.syncData(newProduct, dto.getCategoryIds(), dto.getBrandId());
         return prodSimpleMapper.convertToDTO(newProduct);
     }
 
@@ -242,6 +246,7 @@ public class ProductServiceImpl implements ProductService {
         this.updateProductCategories(loadedProduct, dto);
         loadedProduct = productRepository.save(loadedProduct);
 
+        productSyncDataService.syncData(loadedProduct, dto.getCategoryIds(), dto.getBrandId());
         return prodSimpleMapper.convertToDTO(loadedProduct);
     }
 

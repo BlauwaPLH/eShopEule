@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, String> {
@@ -25,6 +26,9 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
 
     @Query(value = "SELECT id, name, slug FROM categories WHERE parent_id = :parentId", nativeQuery = true)
     List<SimpleCategoryView> getAllCategoryChildrenByParentId(@Param("parentId") String parentId);
+
+    @Query(value = "SELECT DISTINCT name FROM categories WHERE id IN :IDs", nativeQuery = true)
+    List<String> getAllNamesWithIdList(@Param("IDs") List<String> categoryIds);
 
     @Transactional
     @Modifying
