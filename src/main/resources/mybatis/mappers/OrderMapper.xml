@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.senju.mybatis.OrderXmlMapper">
+
+    <select id="getOrderStatusStatistics" statementType="STATEMENT" timeout="30" resultMap="orderStatusStatResultMap">
+        SELECT
+            status,
+            COUNT(id) AS count_orders,
+            SUM(total) AS total_value
+        FROM
+            orders
+        GROUP BY status
+    </select>
+
+    <resultMap id="orderStatusStatResultMap" type="org.senju.eshopeule.dto.OrderStatusStatDTO">
+        <result property="orderStatus" column="status"/>
+        <result property="countOrders" column="count_orders"/>
+        <result property="totalValue" column="total_value"/>
+    </resultMap>
+</mapper>

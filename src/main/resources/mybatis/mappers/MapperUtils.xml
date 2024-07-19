@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.senju.mybatis.XmlMapperUtils">
+    <sql id="orderByClauseSetting">
+        ORDER BY
+            <choose>
+                <when test="orderByClause != null and orderByClause != ''">
+                    ${orderByClause}
+                </when>
+                <otherwise>
+                    ${orderByClauseDefault}
+                </otherwise>
+            </choose>
+    </sql>
+
+    <sql id="paginationSetting">
+        <choose>
+            <when test="pageSize != null and pageNo != null">
+                LIMIT ${pageSize}
+                OFFSET ${pageSize} * ${pageNo}
+            </when>
+            <otherwise>
+                LIMIT 100
+                OFFSET 1
+            </otherwise>
+        </choose>
+    </sql>
+</mapper>

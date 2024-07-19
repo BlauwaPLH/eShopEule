@@ -4,10 +4,6 @@ import lombok.*;
 import org.senju.eshopeule.validation.constraints.IdentifierLoginConstraint;
 
 @Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class ResetPasswordRequest implements BaseRequest {
 
     @IdentifierLoginConstraint

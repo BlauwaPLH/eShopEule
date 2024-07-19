@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.senju.mybatis.ProductXmlMapper">
+
+    <select id="getProductOrderStatusStatistics"
+            statementType="PREPARED"
+            timeout="30"
+            parameterType="map"
+            resultMap="productOrderStatusStatResultMap">
+        SELECT
+            o.status,
+            SUM(oi.total) AS total_item_value,
+            SUM(oi.quantity) AS total_item_quantity
+        FROM
+            order_items AS oi
+            INNER JOIN orders AS o ON oi.order_id = o.id
+        WHERE
+            oi.product_id = #{productId}
+            AND o.last_modified_on BETWEEN #{startDate} AND #{endDate}
+        GROUP BY
+            o.status
+    </select>
+
+    <resultMap id="productOrderStatusStatResultMap"
+               type="org.senju.eshopeule.dto.ProdOrderStatusStatDTO">
+        <result property="orderStatus" column="status"/>
+        <result property="totalValue" column="total_item_value"/>
+        <result property="totalQuantity" column="total_item_quantity"/>
+    </resultMap>
+
+    <select id="orderedProductStatistics"
+            statementType="PREPARED"
+            timeout="30"
+            parameterType="map"
+            resultMap="orderedProductResultMap">
+        WITH ordered_items AS (
+            SELECT
+                oi.product_id AS product_id,
+                oi.total AS item_total,
+                oi.quantity AS item_quantity
+            FROM
+                order_items AS oi
+                INNER JOIN orders AS o ON oi.order_id = o.id
+            WHERE o.status = 'COMPLETED'
+        )
+        SELECT
+            p.id,
+            p.name,
+            COALESCE(SUM(oi.item_total), 0) AS total_revenue,
+            COALESCE(SUM(oi.item_quantity), 0) AS total_ordered_quantity
+        FROM
+            products AS p
+            LEFT JOIN ordered_items AS oi ON p.id = oi.product_id
+        GROUP BY
+            p.id,
+            p.name
+        <include refid="org.senju.mybatis.XmlMapperUtils.orderByClauseSetting">
+            <property name="orderByClause" value="${orderByClause}"/>
+            <property name="orderByClauseDefault" value="total_revenue DESC, total_ordered_quantity DESC"/>
+        </include>
+        <include refid="org.senju.mybatis.XmlMapperUtils.paginationSetting">
+            <property name="pageNo" value="${pageNo}"/>
+            <property name="pageSize" value="${pageSize}"/>
+        </include>
+    </select>
+
+    <resultMap id="orderedProductResultMap"
+               type="org.senju.eshopeule.dto.OrderedProductStatDTO">
+        <result column="id" property="productId"/>
+        <result column="name" property="productName"/>
+        <result column="total_revenue" property="totalRevenue"/>
+        <result column="total_ordered_quantity" property="totalOrderedQuantity"/>
+    </resultMap>
+
+    <select id="repeatPurchaseRate" 
+            statementType="PREPARED" 
+            timeout="30" 
+            parameterType="map"
+            resultMap="repeatPurchaseRateResultMap">
+        WITH unique_buyers_count AS (
+            SELECT
+                oi.product_id,
+                COUNT(DISTINCT o.customer_id) AS count_orders
+            FROM
+                order_items AS oi
+                INNER JOIN orders AS o ON oi.order_id = o.id
+            WHERE
+                o.status = 'COMPLETED'
+            GROUP BY
+                oi.product_id
+        ),
+        customer_product_purchase_counts AS (
+            SELECT
+                oi.product_id,
+                o.customer_id,
+                COUNT(oi.id) AS count_orders
+            FROM
+                order_items AS oi
+                INNER JOIN orders AS o ON oi.order_id = o.id
+            WHERE
+                o.status = 'COMPLETED'
+            GROUP BY
+                oi.product_id,
+                o.customer_id
+        ),
+        frequent_buyers_count AS (
+            SELECT
+                cp.product_id,
+                COUNT(cp.customer_id) AS count_customers
+            FROM
+                customer_product_purchase_counts AS cp
+            WHERE
+                cp.count_orders >= 2
+            GROUP BY
+                cp.product_id
+        )
+        SELECT
+            ub.product_id,
+            ub.count_orders AS count_unique_buyers,
+            COALESCE(fb.count_customers, 0) AS count_frequent_buyers,
+            COALESCE(fb.count_customers, 0) / ub.count_orders::float AS repeat_purchase_rate
+        FROM
+            unique_buyers_count AS ub
+            LEFT JOIN frequent_buyers_count AS fb ON ub.product_id = fb.product_id
+        <include refid="org.senju.mybatis.XmlMapperUtils.orderByClauseSetting">
+            <property name="orderByClause" value="${orderByClause}"/>
+            <property name="orderByClauseDefault" value="count_frequent_buyers DESC, repeat_purchase_rate DESC"/>
+        </include>
+        <include refid="org.senju.mybatis.XmlMapperUtils.paginationSetting">
+            <property name="pageNo" value="${pageNo}"/>
+            <property name="pageSize" value="${pageSize}"/>
+        </include>
+    </select>
+
+    <resultMap id="repeatPurchaseRateResultMap" type="org.senju.eshopeule.dto.ProdRepeatPurchaseRateDTO">
+        <result property="productId" column="product_id"/>
+        <result property="countUniqueBuyers" column="count_unique_buyers"/>
+        <result property="countFrequentBuyers" column="count_frequent_buyers"/>
+        <result property="repeatPurchaseRate" column="repeat_purchase_rate"/>
+    </resultMap>
+</mapper>

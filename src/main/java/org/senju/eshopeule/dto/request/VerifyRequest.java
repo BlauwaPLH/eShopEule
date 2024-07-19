@@ -11,10 +11,6 @@ import static org.senju.eshopeule.constant.pattern.RegexPattern.USERNAME_PATTERN
 import static org.senju.eshopeule.constant.pattern.RegexPattern.VERIFICATION_CODE_PATTERN;
 
 @Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public final class VerifyRequest implements BaseRequest {
 
     @Serial

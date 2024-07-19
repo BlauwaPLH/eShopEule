@@ -8,10 +8,6 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public final class RefreshTokenRequest implements BaseRequest {
 
     @Serial

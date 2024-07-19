@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.senju.mybatis.BrandXmlMapper">
+
+    <select id="getBrandStat" statementType="PREPARED" timeout="30" parameterType="map" resultMap="brandStatResultMap">
+        WITH ordered_products AS (
+            SELECT
+                oi.product_id,
+                SUM(oi.total) AS total_order_value
+            FROM
+                order_items AS oi
+                INNER JOIN orders AS o ON oi.order_id = o.id
+            WHERE
+                o.status = 'COMPLETED'
+            GROUP BY
+                oi.product_id
+        ),
+        brand_product_order AS (
+            SELECT
+                p.brand_id,
+                COUNT(p.id) AS count_products,
+                SUM(op.total_order_value) AS total_brand_order
+            FROM
+                products AS p
+                LEFT JOIN ordered_products AS op ON p.id = op.product_id
+            GROUP BY
+                p.brand_id
+        )
+        SELECT
+            b.id AS brand_id,
+            b.name AS brand_name,
+            COALESCE(bpo.count_products,0) AS count_products,
+            COALESCE(bpo.total_brand_order,0) AS total_brand_order
+        FROM brands AS b
+            LEFT JOIN brand_product_order AS bpo ON b.id = bpo.brand_id
+        <include refid="org.senju.mybatis.XmlMapperUtils.orderByClauseSetting">
+            <property name="orderByClause" value="${orderByClause}"/>
+            <property name="orderByClauseDefault" value="brand_name ASC"/>
+        </include>
+        <include refid="org.senju.mybatis.XmlMapperUtils.paginationSetting">
+            <property name="pageNo" value="${pageNo}"/>
+            <property name="pageSize" value="${pageSize}"/>
+        </include>
+    </select>
+    
+    <resultMap id="brandStatResultMap" type="org.senju.eshopeule.dto.BrandStatDTO">
+        <id property="brandId" column="brand_id"/>
+        <result property="brandName" column="brand_name"/>
+        <result property="countProducts" column="count_products"/>
+        <result property="totalBrandOrder" column="total_brand_order"/>
+    </resultMap>
+</mapper>

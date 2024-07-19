@@ -8,7 +8,6 @@ import lombok.Setter;
 import java.io.Serial;
 
 @Getter
-@Setter
 public final class CreateOrderRequest implements BaseRequest {
 
     @Serial

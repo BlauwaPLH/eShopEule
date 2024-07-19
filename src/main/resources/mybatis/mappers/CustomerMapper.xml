@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.senju.mybatis.CustomerXmlMapper">
+<!--    <select id="" statementType="PREPARED" parameterType="map" timeout="30">-->
+<!--        SELECT-->
+<!--            COUNT(id) AS count_of_customer-->
+<!--        FROM-->
+<!--            customers-->
+<!--        WHERE-->
+<!--            birth_date IS NOT NULL-->
+<!--            AND EXTRACT(YEAR FROM AGE(birth_date)) BETWEEN #{minAge} AND #{maxAge}-->
+<!--    </select>-->
+
+<!--    <select id="" statementType="STATEMENT" timeout="30">-->
+<!--        SELECT-->
+<!--            EXTRACT(YEAR FROM AGE(birth_date)) AS age,-->
+<!--            COUNT(id) AS count_of_customer-->
+<!--        FROM-->
+<!--            customers-->
+<!--        WHERE-->
+<!--            birth_date IS NOT NULL-->
+<!--        GROUP BY-->
+<!--            age-->
+<!--        ORDER BY-->
+<!--            age DESC-->
+<!--    </select>-->
+
+<!--    <select id="" statementType="STATEMENT" timeout="30">-->
+<!--        SELECT-->
+<!--            COUNT(id) AS count_of_customer-->
+<!--        FROM-->
+<!--            customers-->
+<!--        WHERE-->
+<!--            first_name IS NOT NULL-->
+<!--            AND last_name IS NOT NULL-->
+<!--            AND phone_number IS NOT NULL-->
+<!--            AND address IS NOT NULL-->
+<!--    </select>-->
+
+<!--    <select id="" statementType="STATEMENT" timeout="30">-->
+<!--        SELECT-->
+<!--            gender,-->
+<!--            COUNT(id) AS count_of_customer-->
+<!--        FROM-->
+<!--            customers-->
+<!--        WHERE-->
+<!--            gender IS NOT NULL-->
+<!--        GROUP BY-->
+<!--            gender-->
+<!--    </select>-->
+
+<!--    <select id="" statementType="PREPARED" parameterType="String" timeout="30">-->
+<!--        SELECT-->
+<!--            o.status,-->
+<!--            COUNT(o.id) AS count_of_order-->
+<!--        FROM-->
+<!--            customers AS c-->
+<!--            INNER JOIN orders AS o ON c.id = o.customer_id-->
+<!--            INNER JOIN users AS u ON u.id = c.user_id-->
+<!--        WHERE-->
+<!--            u.username = #{customerName}-->
+<!--        GROUP BY-->
+<!--            o.status-->
+<!--    </select>-->
+
+<!--    <select id="" statementType="PREPARED" parameterType="String" timeout="30">-->
+<!--        SELECT-->
+<!--            SUM(o.total) AS total_completed_order-->
+<!--        FROM-->
+<!--            customers AS c-->
+<!--            INNER JOIN orders AS o ON c.id = o.customer_id-->
+<!--            INNER JOIN users AS u ON u.id = c.user_id-->
+<!--        WHERE-->
+<!--            u.username = #{customerName}-->
+<!--            AND o.status = 'COMPLETED'-->
+<!--    </select>-->
+
+<!--    <select id="" statementType="PREPARED" parameterType="map" timeout="30">-->
+<!--        SELECT-->
+<!--            c.id AS customer_id,-->
+<!--            c.first_name,-->
+<!--            c.last_name,-->
+<!--            c.phone_number,-->
+<!--            SUM(o.total) AS total_order_value-->
+<!--        FROM-->
+<!--            customers AS c-->
+<!--            INNER JOIN orders AS o ON c.id = o.customer_id-->
+<!--        WHERE-->
+<!--            o.status = 'COMPLETED'-->
+<!--        GROUP BY-->
+<!--            c.id,-->
+<!--            c.first_name,-->
+<!--            c.last_name,-->
+<!--            c.phone_number-->
+<!--        <include refid="org.senju.mybatis.XmlMapperUtils.orderByClauseSetting">-->
+<!--            <property name="orderByClause" value="${orderByClause}"/>-->
+<!--            <property name="orderByClauseDefault" value="total_order_value DESC"/>-->
+<!--        </include>-->
+<!--        <include refid="org.senju.mybatis.XmlMapperUtils.paginationSetting">-->
+<!--            <property name="pageNo" value="${pageNo}"/>-->
+<!--            <property name="pageSize" value="${pageSize}"/>-->
+<!--        </include>-->
+<!--    </select>-->
+
+<!--    <select id="" statementType="PREPARED" parameterType="map" timeout="30">-->
+<!--        SELECT-->
+<!--            p.id AS product_id,-->
+<!--            p.name AS product_name,-->
+<!--            p.slug AS product_slug,-->
+<!--            po.id AS option_id,-->
+<!--            po.name AS option_name,-->
+<!--            SUM(oi.total) AS total_order_item_value-->
+<!--        FROM-->
+<!--            customers AS c-->
+<!--            INNER JOIN users AS u ON u.id = c.user_id-->
+<!--            INNER JOIN orders AS o ON c.id = o.customer_id-->
+<!--            INNER JOIN order_items AS oi ON o.id = oi.order_id-->
+<!--            INNER JOIN products AS p ON p.id = oi.product_id-->
+<!--            LEFT JOIN product_options AS po ON oi.option_id = po.id-->
+<!--        WHERE-->
+<!--            u.username = #{username}-->
+<!--            AND o.status = 'COMPLETED'-->
+<!--        GROUP BY-->
+<!--            p.id,-->
+<!--            p.name,-->
+<!--            p.slug,-->
+<!--            po.id,-->
+<!--            po.name,-->
+<!--        <include refid="org.senju.mybatis.XmlMapperUtils.orderByClauseSetting">-->
+<!--            <property name="orderByClause" value="${orderByClause}"/>-->
+<!--            <property name="orderByClauseDefault" value="total_order_item_value DESC"/>-->
+<!--        </include>-->
+<!--        <include refid="org.senju.mybatis.XmlMapperUtils.paginationSetting">-->
+<!--            <property name="pageNo" value="${pageNo}"/>-->
+<!--            <property name="pageSize" value="${pageSize}"/>-->
+<!--        </include>-->
+<!--    </select>-->
+</mapper>

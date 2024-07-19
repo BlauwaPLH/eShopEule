@@ -37,6 +37,9 @@ spring:
     mongodb:
       uri: ${mongodb.uri}
 
+mybatis:
+  mapper-locations: classpath:mybatis/mappers/*.xml
+
 server:
   port: 8080
 

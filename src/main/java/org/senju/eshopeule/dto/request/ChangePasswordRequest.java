@@ -11,10 +11,6 @@ import java.io.Serial;
 import static org.senju.eshopeule.constant.pattern.RegexPattern.PASSWORD_PATTERN;
 
 @Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @ChangePasswordConstraint
 public final class ChangePasswordRequest implements BaseRequest {
 

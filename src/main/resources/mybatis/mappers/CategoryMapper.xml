@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.senju.mybatis.CategoryXmlMapper">
+
+    <sql id="productCategoryHierarchy">
+        RECURSIVE category_hierarchy AS (
+            SELECT
+                c.id AS category_id,
+                c.id AS root_id
+            FROM categories AS c
+
+            UNION ALL
+
+            SELECT
+                c.id AS category_id,
+                ch.root_id
+            FROM categories AS c
+                INNER JOIN category_hierarchy AS ch ON c.parent_id = ch.category_id
+        ),
+        product_in_categories AS (
+            SELECT
+                pc.product_id,
+                ch.root_id AS category_id
+            FROM product_category AS pc
+                INNER JOIN category_hierarchy AS ch ON pc.category_id = ch.category_id
+            GROUP BY pc.product_id, ch.root_id
+        )
+    </sql>
+
+    <select id="categoryOrderedStatistics" 
+            statementType="PREPARED" 
+            timeout="30" 
+            parameterType="map" 
+            resultMap="categoryOrderedResultMap">
+        WITH
+        <include refid="productCategoryHierarchy"/>,
+        ordered_product AS (
+            SELECT
+                oi.product_id,
+                SUM(oi.quantity) AS item_quantity,
+                SUM(oi.total) AS ordered_value,
+            FROM order_items AS oi
+                INNER JOIN orders AS o ON oi.order_id = o.id
+            WHERE o.status = 'COMPLETED'
+            GROUP BY oi.product_id
+        ),
+        category_stat AS (
+            SELECT
+                pic.category_id,
+                COUNT(pic.product_id) AS total_quantity,
+                SUM(op.item_quantity) AS total_ordered_quantity,
+                SUM(op.ordered_value) AS total_revenue
+            FROM product_in_categories AS pic
+                LEFT JOIN ordered_product AS op ON pic.product_id = op.product_id
+            GROUP BY pic.category_id
+        )
+        SELECT
+            c.id AS category_id,
+            c.name AS category_name,
+            cs.total_quantity,
+            cs.total_ordered_quantity,
+            cs.total_revenue
+        FROM categories AS c
+            INNER JOIN category_stat AS cs ON c.id = cs.category_id
+        <include refid="org.senju.mybatis.XmlMapperUtils.orderByClauseSetting">
+            <property name="orderByClause" value="${orderByClause}"/>
+            <property name="orderByClauseDefault" value="cs.total_revenue DESC"/>
+        </include>
+        <include refid="org.senju.mybatis.XmlMapperUtils.paginationSetting">
+            <property name="pageNo" value="${pageNo}"/>
+            <property name="pageSize" value="${pageSize}"/>
+        </include>
+    </select>
+    
+    <resultMap id="categoryOrderedResultMap" type="org.senju.eshopeule.dto.CategoryOrderedStatDTO">
+        <result column="category_id" property="categoryId"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="total_quantity" property="countProducts"/>
+        <result column="total_ordered_quantity" property="countOrderedQuantity"/>
+        <result column="total_revenue" property="revenue"/>
+    </resultMap>
+
+    <select id="categoryOrderStatusDetailStatistics"
+            statementType="PREPARED"
+            timeout="30"
+            parameterType="String"
+            resultMap="categoryOrderStatusDetailResultMap">
+        WITH
+        <include refid="productCategoryHierarchy"/>,
+        product_order_status AS (
+            SELECT
+                oi.product_id,
+                o.status AS order_status,
+                SUM(oi.total) AS total_value,
+                SUM(oi.quantity) AS total_quantity
+            FROM order_items AS oi
+                INNER JOIN orders AS o ON oi.order_id = o.id
+            GROUP BY oi.product_id, o.status
+        ),
+        category_order_status AS (
+            SELECT
+                pic.category_id,
+                pos.order_status,
+                SUM(pos.total_value) AS total_value,
+                SUM(pos.total_quantity) AS total_quantity
+            FROM product_in_categories AS pic
+                LEFT JOIN product_order_status AS pos ON pic.product_id = pos.product_id
+            GROUP BY pic.category_id, pos.order_status
+        )
+        SELECT
+            cos.order_status,
+            cos.total_value,
+            cos.total_quantity
+        FROM categories AS c
+            INNER JOIN category_order_status AS cos ON  c.id = cos.category_id
+        WHERE c.id = #{categoryId}
+    </select>
+
+    <resultMap id="categoryOrderStatusDetailResultMap"
+               type="org.senju.eshopeule.dto.CategoryOrderStatusStatDTO">
+        <result column="order_status" property="orderStatus"/>
+        <result column="total_value" property="totalOrderValue"/>
+        <result column="total_quantity" property="totalQuantity"/>
+    </resultMap>
+</mapper>

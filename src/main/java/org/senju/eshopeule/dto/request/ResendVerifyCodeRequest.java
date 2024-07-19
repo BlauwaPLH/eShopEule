@@ -10,10 +10,6 @@ import static org.senju.eshopeule.constant.pattern.RegexPattern.EMAIL_PATTERN;
 import static org.senju.eshopeule.constant.pattern.RegexPattern.USERNAME_PATTERN;
 
 @Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public final class ResendVerifyCodeRequest implements BaseRequest{
 
     @Serial

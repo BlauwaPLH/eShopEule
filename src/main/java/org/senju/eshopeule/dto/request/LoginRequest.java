@@ -10,10 +10,6 @@ import java.io.Serial;
 import static org.senju.eshopeule.constant.pattern.RegexPattern.*;
 
 @Getter
-@Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public final class LoginRequest implements BaseRequest {
 
     @Serial

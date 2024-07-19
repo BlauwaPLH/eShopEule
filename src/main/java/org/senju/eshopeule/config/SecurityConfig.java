@@ -61,8 +61,8 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtAuthenticationFilter(authenticationManager(http), restAuthenticationEntryPoint), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(c -> c.successHandler(oauth2AuthenticationSuccessHandler))
                 .authorizeHttpRequests(c -> c
-                        .requestMatchers(HttpMethod.GET, STAFF_API, ROLE_API).hasAuthority(ADMIN_READ.getPermName())
-                        .requestMatchers(HttpMethod.POST, STAFF_API, ROLE_API).hasAuthority(ADMIN_WRITE.getPermName())
+                        .requestMatchers(HttpMethod.GET, STAFF_API, ROLE_API, "/api/r/*/stat/brand", "/api/r/*/stat/order", "/api/r/*/stat/prod/**").hasAuthority(ADMIN_READ.getPermName())
+                        .requestMatchers(HttpMethod.POST, STAFF_API, ROLE_API, "/api/r/*/stat/prod/**").hasAuthority(ADMIN_WRITE.getPermName())
                         .requestMatchers(HttpMethod.PUT, STAFF_API, ROLE_API).hasAuthority(ADMIN_WRITE.getPermName())
                         .requestMatchers(HttpMethod.DELETE, STAFF_API, ROLE_API).hasAuthority(ADMIN_WRITE.getPermName())
 
