@@ -9,6 +9,7 @@ import org.senju.eshopeule.repository.jpa.ProductImageRepository;
 import org.senju.eshopeule.repository.jpa.ProductRepository;
 import org.senju.eshopeule.service.ImageService;
 import org.senju.eshopeule.service.ProductImageService;
+import org.senju.eshopeule.service.ProductSyncDataService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,13 +21,13 @@ import java.util.List;
 import static org.senju.eshopeule.constant.exceptionMessage.ProductExceptionMsg.*;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class ProductImageServiceImpl implements ProductImageService {
 
     private final ProductImageRepository productImageRepository;
     private final ProductRepository productRepository;
     private final ImageService imageService;
+    private final ProductSyncDataService productSyncDataService;
 
     @Override
     public String getImageUrlById(String id) {
@@ -41,6 +42,7 @@ public class ProductImageServiceImpl implements ProductImageService {
     }
 
     @Override
+    @Transactional
     public void uploadImage(MultipartFile[] images, String productId) {
         Product product = productRepository.findById(productId).orElseThrow(
                 () -> new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, productId))
@@ -60,9 +62,11 @@ public class ProductImageServiceImpl implements ProductImageService {
                     }
                 }
         );
+        productSyncDataService.syncImageData(productId);
     }
 
     @Override
+    @Transactional
     public void deleteById(String id) {
         String imageName = productImageRepository.getNameById(id)
                 .orElseThrow(() -> new NotFoundException(String.format(PROD_IMAGE_NOT_FOUND_WITH_ID_MSG, id)));
@@ -76,8 +80,9 @@ public class ProductImageServiceImpl implements ProductImageService {
     }
 
     @Override
+    @Transactional
     public void deleteByProductId(String productId){
-        List<String> imageNames = productImageRepository.getNameByProductId(productId);
+        List<String> imageNames = productImageRepository.getNamesByProductId(productId);
         imageNames.forEach(
                 name -> {
                     try {
@@ -88,5 +93,6 @@ public class ProductImageServiceImpl implements ProductImageService {
                 }
         );
         productImageRepository.deleteByProductId(productId);
+        productSyncDataService.syncImageData(productId);
     }
 }

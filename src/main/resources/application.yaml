@@ -35,7 +35,12 @@ spring:
       host: localhost
       port: 6379
     mongodb:
-      uri: ${mongodb.uri}
+    uri: ${mongodb.uri}
+  elasticsearch:
+    uris: http://localhost:9200
+    connection-timeout: 10m
+    socket-timeout: 1h
+    socket-keep-alive: true
 
 mybatis:
   mapper-locations: classpath:mybatis/mappers/*.xml
