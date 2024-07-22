@@ -1,6 +1,5 @@
 package org.senju.eshopeule.service;
 
-import org.senju.eshopeule.dto.request.QueryByDateRangeRequest;
 import org.senju.eshopeule.dto.response.OrderedProdOptionStatPagingResponse;
 import org.springframework.data.domain.Pageable;
 
@@ -9,7 +8,7 @@ import java.util.Map;
 
 public interface CustomerStatisticsService {
 
-    Integer countCustomersByAgeRange(QueryByDateRangeRequest request);
+    Integer countCustomersByAgeRange(int minAge, int maxAge);
 
     List<Map<String, Integer>> countCustomersByAgeGroup();
 

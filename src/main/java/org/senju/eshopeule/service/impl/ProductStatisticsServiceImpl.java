@@ -5,7 +5,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.senju.eshopeule.dto.OrderedProductStatDTO;
 import org.senju.eshopeule.dto.ProdOrderStatusStatDTO;
 import org.senju.eshopeule.dto.ProdRepeatPurchaseRateDTO;
-import org.senju.eshopeule.dto.request.ProductOrderStatusStatRequest;
 import org.senju.eshopeule.dto.response.OrderedProductStatPagingResponse;
 import org.senju.eshopeule.dto.response.ProductRepeatPurchaseRatePagingResponse;
 import org.senju.eshopeule.exceptions.NotFoundException;
@@ -31,16 +30,14 @@ public class ProductStatisticsServiceImpl implements ProductStatisticsService {
     private static final String NAMESPACE = "org.senju.mybatis.ProductXmlMapper";
 
     @Override
-    public List<ProdOrderStatusStatDTO> getProductOrderStatusStatistics(ProductOrderStatusStatRequest request) {
-        if (!productRepository.existsById(request.getProductId())) {
-            throw new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, request.getProductId()));
+    public List<ProdOrderStatusStatDTO> getProductOrderStatusStatistics(String productId, LocalDateTime startDate, LocalDateTime endDate) {
+        if (!productRepository.existsById(productId)) {
+            throw new NotFoundException(String.format(PRODUCT_NOT_FOUND_WITH_ID_MSG, productId));
         }
-        if (request.getEndDate() == null) request.setEndDate(LocalDateTime.now());
-        if (request.getStartDate() == null) request.setStartDate(request.getEndDate().minusWeeks(1));
         Map<String, Object> sqlParameters = Map.of(
-                "productId", request.getProductId(),
-                "startDate", request.getStartDate(),
-                "endDate", request.getEndDate()
+                "productId", productId,
+                "startDate", startDate,
+                "endDate", endDate
         );
         return sqlSession.selectList(NAMESPACE + ".getProductOrderStatusStatistics", sqlParameters);
     }

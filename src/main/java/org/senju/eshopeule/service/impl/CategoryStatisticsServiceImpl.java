@@ -45,11 +45,11 @@ public class CategoryStatisticsServiceImpl implements CategoryStatisticsService 
     }
 
     @Override
-    public CategoryOrderStatusStatDTO getCategoryOrderStatusStat(String categoryId) {
+    public List<CategoryOrderStatusStatDTO> getCategoryOrderStatusStat(String categoryId) {
         if (categoryId == null || categoryId.isBlank()) throw new NotFoundException(CATEGORY_NOT_FOUND_MSG);
         if (!categoryRepository.existsById(categoryId)) throw new NotFoundException(
                 String.format(CATEGORY_NOT_FOUND_WITH_ID_MSG, categoryId)
         );
-        return sqlSession.selectOne(NAMESPACE + ".categoryOrderStatusStat", categoryId);
+        return sqlSession.selectList(NAMESPACE + ".categoryOrderStatusStat", categoryId);
     }
 }

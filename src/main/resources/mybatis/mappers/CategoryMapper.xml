@@ -38,7 +38,7 @@
             SELECT
                 oi.product_id,
                 SUM(oi.quantity) AS item_quantity,
-                SUM(oi.total) AS ordered_value,
+                SUM(oi.total) AS ordered_value
             FROM order_items AS oi
                 INNER JOIN orders AS o ON oi.order_id = o.id
             WHERE o.status = 'COMPLETED'
@@ -83,7 +83,7 @@
     <select id="categoryOrderStatusStat"
             statementType="PREPARED"
             timeout="30"
-            parameterType="String"
+            parameterType="java.lang.String"
             resultMap="categoryOrderStatusDetailResultMap">
         WITH
         <include refid="productCategoryHierarchy"/>,
@@ -104,7 +104,7 @@
                 SUM(pos.total_value) AS total_value,
                 SUM(pos.total_quantity) AS total_quantity
             FROM product_in_categories AS pic
-                LEFT JOIN product_order_status AS pos ON pic.product_id = pos.product_id
+                INNER JOIN product_order_status AS pos ON pic.product_id = pos.product_id
             GROUP BY pic.category_id, pos.order_status
         )
         SELECT

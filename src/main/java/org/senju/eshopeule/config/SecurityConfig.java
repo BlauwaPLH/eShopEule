@@ -60,8 +60,11 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtAuthenticationFilter(authenticationManager(http), restAuthenticationEntryPoint), UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(c -> c.successHandler(oauth2AuthenticationSuccessHandler))
                 .authorizeHttpRequests(c -> c
-                        .requestMatchers(HttpMethod.GET, STAFF_API, ROLE_API, "/api/r/*/stat/brand", "/api/r/*/stat/order", "/api/r/*/stat/prod/**").hasAuthority(ADMIN_READ.getPermName())
-                        .requestMatchers(HttpMethod.POST, STAFF_API, ROLE_API, "/api/r/*/stat/prod/**").hasAuthority(ADMIN_WRITE.getPermName())
+                        .requestMatchers(HttpMethod.GET, STAFF_API, ROLE_API, "/api/r/*/stat/brand", "/api/r/*/stat/order",
+                                "/api/r/*/stat/prod/**", "/api/r/*/stat/cate/**",
+                                "/api/r/*/stat/cus/age-range", "/api/r/*/stat/cus/age-group",
+                                "/api/r/*/stat/cus/gender", "/api/r/*/stat/cus/active").hasAuthority(ADMIN_READ.getPermName())
+                        .requestMatchers(HttpMethod.POST, STAFF_API, ROLE_API).hasAuthority(ADMIN_WRITE.getPermName())
                         .requestMatchers(HttpMethod.PUT, STAFF_API, ROLE_API).hasAuthority(ADMIN_WRITE.getPermName())
                         .requestMatchers(HttpMethod.DELETE, STAFF_API, ROLE_API).hasAuthority(ADMIN_WRITE.getPermName())
 
@@ -70,7 +73,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, PROD_IMG_API, PROD_ATTR_API, PROD_META_API, PROD_OPTION_API, CATEGORY_API, BRAND_API, PRODUCT_API).hasAuthority(STAFF_WRITE.getPermName())
                         .requestMatchers(HttpMethod.DELETE, PROD_IMG_API, PROD_ATTR_API, PROD_META_API, PROD_OPTION_API, CATEGORY_API, BRAND_API, PRODUCT_API).hasAuthority(STAFF_WRITE.getPermName())
 
-                        .requestMatchers(HttpMethod.GET, CART_API, "/api/r/*/cm/**").hasAuthority(CUS_READ.getPermName())
+                        .requestMatchers(HttpMethod.GET, CART_API, "/api/r/*/cm/**", "/api/r/v1/stat/cus/os",
+                                "/api/r/v1/stat/cus/oi", "/api/r/v1/stat/cus/completed").hasAuthority(CUS_READ.getPermName())
                         .requestMatchers(HttpMethod.POST, CART_API, "/api/r/*/cm/**").hasAuthority(CUS_WRITE.getPermName())
                         .requestMatchers(HttpMethod.DELETE, CART_API).hasAuthority(CUS_WRITE.getPermName())
 

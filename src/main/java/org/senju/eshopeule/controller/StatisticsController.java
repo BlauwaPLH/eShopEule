@@ -1,10 +1,7 @@
 package org.senju.eshopeule.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.senju.eshopeule.dto.request.ProductOrderStatusStatRequest;
-import org.senju.eshopeule.dto.request.QueryByDateRangeRequest;
 import org.senju.eshopeule.dto.response.BaseResponse;
 import org.senju.eshopeule.dto.response.SimpleResponse;
 import org.senju.eshopeule.exceptions.NotFoundException;
@@ -13,9 +10,11 @@ import org.senju.eshopeule.service.*;
 import org.senju.eshopeule.utils.PaginationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 import static org.senju.eshopeule.constant.pattern.RoutePattern.PRIVATE_PREFIX;
@@ -57,12 +56,16 @@ public class StatisticsController {
         return ResponseEntity.ok(orderStatisticsService.getOrderStatusStatistics());
     }
 
-    @PostMapping(path = PRIVATE_PREFIX + "/v1/stat/prod/status")
+    @GetMapping(path = PRIVATE_PREFIX + "/v1/stat/prod/status")
     @Operation(summary = "Get Product (order status) statistics")
-    public ResponseEntity<?> getProductOrderStatusStatistics(@Valid @RequestBody ProductOrderStatusStatRequest request) {
+    public ResponseEntity<?> getProductOrderStatusStatistics(
+            @RequestParam(name = "product_id") String productId,
+            @RequestParam(name = "start_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(name = "end_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
+    ) {
         logger.info("Get Product (order status) statistics");
         try {
-            return ResponseEntity.ok(productStatisticsService.getProductOrderStatusStatistics(request));
+            return ResponseEntity.ok(productStatisticsService.getProductOrderStatusStatistics(productId, startDate, endDate));
         } catch (NotFoundException ex) {
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
@@ -125,7 +128,7 @@ public class StatisticsController {
 
     @GetMapping(path = PRIVATE_PREFIX + "/v1/stat/cate/{categoryId}")
     @Operation(summary = "Get category order status statistics")
-    public ResponseEntity<? extends BaseResponse> getCategoryOrderStatusStatistics(@PathVariable("categoryId") String categoryId) {
+    public ResponseEntity<?> getCategoryOrderStatusStatistics(@PathVariable("categoryId") String categoryId) {
         logger.info("Get category order status statistics");
         try {
             return ResponseEntity.ok(categoryStatisticsService.getCategoryOrderStatusStat(categoryId));
@@ -134,11 +137,11 @@ public class StatisticsController {
         }
     }
 
-    @PostMapping(path = PRIVATE_PREFIX + "/v1/stat/cus/age-range")
+    @GetMapping(path = PRIVATE_PREFIX + "/v1/stat/cus/age-range")
     @Operation(summary = "Count Customers By Age Range")
-    public ResponseEntity<?> getAgeRangeStatistics(@Valid @RequestBody QueryByDateRangeRequest request) {
+    public ResponseEntity<?> getAgeRangeStatistics(@RequestParam(name = "min") int minAge, @RequestParam(name = "max") int maxAge) {
         logger.info("Count Customers By Age Range");
-        return ResponseEntity.ok(customerStatisticsService.countCustomersByAgeRange(request));
+        return ResponseEntity.ok(customerStatisticsService.countCustomersByAgeRange(minAge, maxAge));
     }
 
     @GetMapping(path = PRIVATE_PREFIX + "/v1/stat/cus/age-group")
@@ -148,7 +151,7 @@ public class StatisticsController {
         return ResponseEntity.ok(customerStatisticsService.countCustomersByAgeGroup());
     }
 
-    @GetMapping(path = PRIVATE_PREFIX + "/v1/stat/cus/actived")
+    @GetMapping(path = PRIVATE_PREFIX + "/v1/stat/cus/active")
     @Operation(summary = "Count Complete Customer Profiles")
     public ResponseEntity<?> countActiveCustomerProfiles() {
         logger.info("Count Complete Customer Profiles");
@@ -162,7 +165,7 @@ public class StatisticsController {
         return ResponseEntity.ok(customerStatisticsService.countCustomersByGender());
     }
 
-    @GetMapping(path = PRIVATE_PREFIX + "/c1/stat/cus/os")
+    @GetMapping(path = PRIVATE_PREFIX + "/v1/stat/cus/os")
     @Operation(summary = "Count orders by status for current customer")
     public ResponseEntity<?> countOrdersByStatusForCustomer() {
         logger.info("Count Orders By Status For Current Customer");

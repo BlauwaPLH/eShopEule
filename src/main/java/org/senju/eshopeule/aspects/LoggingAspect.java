@@ -66,7 +66,7 @@ public class LoggingAspect {
         } finally {
             long endTime = System.currentTimeMillis();
             long duration = endTime - startTime;
-            logger.info("Execution time of method {} : {}ms", methodName, duration);
+            logger.info("Execution time of method {} [class: {}] : {}ms", methodName, className, duration);
         }
     }
 }

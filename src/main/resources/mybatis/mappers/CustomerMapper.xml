@@ -35,7 +35,8 @@
 
     <select id="countCompleteCustomerProfiles"
             statementType="STATEMENT"
-            timeout="30">
+            timeout="30"
+            resultType="java.lang.Integer">
         SELECT
             COUNT(id) AS count_of_customer
         FROM
@@ -136,7 +137,7 @@
 
     <resultMap id="orderedProdOptionResultMap" type="org.senju.eshopeule.dto.OrderedProdOptionStatDTO">
         <result column="product_id" property="productId"/>
-        <result column="product_name" property="product_name"/>
+        <result column="product_name" property="productName"/>
         <result column="option_id" property="optionId"/>
         <result column="option_name" property="optionName"/>
         <result column="total_order_item_value" property="totalValue"/>

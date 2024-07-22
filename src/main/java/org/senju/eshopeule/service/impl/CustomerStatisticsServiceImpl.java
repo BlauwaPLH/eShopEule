@@ -3,7 +3,6 @@ package org.senju.eshopeule.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.SqlSession;
 import org.senju.eshopeule.dto.OrderedProdOptionStatDTO;
-import org.senju.eshopeule.dto.request.QueryByDateRangeRequest;
 import org.senju.eshopeule.dto.response.OrderedProdOptionStatPagingResponse;
 import org.senju.eshopeule.service.CustomerStatisticsService;
 import org.senju.eshopeule.utils.PaginationUtil;
@@ -24,8 +23,12 @@ public class CustomerStatisticsServiceImpl implements CustomerStatisticsService 
     private static final String NAMESPACE = "org.senju.mybatis.CustomerXmlMapper";
 
     @Override
-    public Integer countCustomersByAgeRange(QueryByDateRangeRequest request) {
-        return sqlSession.selectOne(NAMESPACE + ".countCustomersByAgeRange", request);
+    public Integer countCustomersByAgeRange(int minAge, int maxAge) {
+        Map<String, Object> params = Map.of(
+                "minAge", minAge,
+                "maxAge", maxAge
+        );
+        return sqlSession.selectOne(NAMESPACE + ".countCustomersByAgeRange", params);
     }
 
     @Override
