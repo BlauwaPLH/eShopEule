@@ -27,7 +27,7 @@
         )
     </sql>
 
-    <select id="categoryOrderedStatistics" 
+    <select id="categoryOrderedStat"
             statementType="PREPARED" 
             timeout="30" 
             parameterType="map" 
@@ -80,7 +80,7 @@
         <result column="total_revenue" property="revenue"/>
     </resultMap>
 
-    <select id="categoryOrderStatusDetailStatistics"
+    <select id="categoryOrderStatusStat"
             statementType="PREPARED"
             timeout="30"
             parameterType="String"
