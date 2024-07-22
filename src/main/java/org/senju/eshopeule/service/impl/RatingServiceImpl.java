@@ -47,19 +47,17 @@ public class RatingServiceImpl implements RatingService {
         return getOrderPaging(ratingRepository.findAllByProductId(productId, pageRequest), mapper);
     }
 
-    private RatingPagingResponse getOrderPaging(Page<Rating> orderPage, RatingMapper mapper) {
-        return RatingPagingResponse.builder()
-                .totalPages(orderPage.getTotalPages())
-                .totalElements(orderPage.getTotalElements())
-                .isLast(orderPage.isLast())
-                .pageNo(orderPage.getPageable().getPageNumber() + 1)
-                .pageSize(orderPage.getPageable().getPageSize())
-                .ratings(
-                        orderPage.getContent().stream()
-                                .map(mapper::convertToDTO)
-                                .toList()
-                )
-                .build();
+    private RatingPagingResponse getOrderPaging(Page<Rating> ratingPage, RatingMapper mapper) {
+        return new RatingPagingResponse(
+                ratingPage.getTotalElements(),
+                ratingPage.getTotalPages(),
+                ratingPage.getPageable().getPageNumber() + 1,
+                ratingPage.getPageable().getPageSize(),
+                ratingPage.isLast(),
+                ratingPage.getContent().stream()
+                        .map(mapper::convertToDTO)
+                        .toList()
+        );
     }
 
     @Override

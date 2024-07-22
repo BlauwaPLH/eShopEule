@@ -100,18 +100,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private ProductPagingResponse getProductPaging(Page<Product> productPage, ProductMapper<? extends ProductDTO> mapper) {
-        return ProductPagingResponse.builder()
-                .totalPages(productPage.getTotalPages())
-                .totalElements(productPage.getTotalElements())
-                .isLast(productPage.isLast())
-                .pageNo(productPage.getPageable().getPageNumber() + 1)
-                .pageSize(productPage.getPageable().getPageSize())
-                .products(
-                        productPage.getContent().stream()
-                                .map(mapper::convertToDTO)
-                                .toList()
-                )
-                .build();
+        return new ProductPagingResponse(
+                productPage.getTotalElements(),
+                productPage.getTotalPages(),
+                productPage.getPageable().getPageNumber() + 1,
+                productPage.getPageable().getPageSize(),
+                productPage.isLast(),
+                productPage.getContent().stream()
+                        .map(mapper::convertToDTO)
+                        .toList());
     }
 
     @Override

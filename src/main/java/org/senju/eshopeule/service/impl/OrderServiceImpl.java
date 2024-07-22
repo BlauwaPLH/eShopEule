@@ -75,18 +75,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private OrderPagingResponse getOrderPaging(Page<Order> orderPage, OrderMapper mapper) {
-        return OrderPagingResponse.builder()
-                .totalPages(orderPage.getTotalPages())
-                .totalElements(orderPage.getTotalElements())
-                .isLast(orderPage.isLast())
-                .pageNo(orderPage.getPageable().getPageNumber() + 1)
-                .pageSize(orderPage.getPageable().getPageSize())
-                .orders(
-                        orderPage.getContent().stream()
-                                .map(mapper::convertToDTO)
-                                .toList()
-                )
-                .build();
+        return new OrderPagingResponse(
+                orderPage.getTotalElements(),
+                orderPage.getTotalPages(),
+                orderPage.getPageable().getPageNumber() + 1,
+                orderPage.getPageable().getPageSize(),
+                orderPage.isLast(),
+                orderPage.getContent().stream()
+                        .map(mapper::convertToDTO)
+                        .toList()
+        );
     }
 
     @Override
