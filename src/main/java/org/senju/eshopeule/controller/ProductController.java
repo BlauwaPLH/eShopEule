@@ -75,7 +75,7 @@ public class ProductController {
     }
 
     @GetMapping(path = PUBLIC_PREFIX + "/v1/prod/all/brand")
-    @Operation(summary = "Get all product with brand's ID")
+    @Operation(summary = "Get all product with brand's ID ")
     public ResponseEntity<? extends BaseResponse> getAllProductByBrandId(
             @RequestParam("id") String brandId,
             @RequestParam(name = "pageNo", required = false, defaultValue = ProductPageable.DEFAULT_PAGE_NO) int pageNo,
