@@ -36,7 +36,6 @@ public class RoleController {
         try {
             return ResponseEntity.ok(roleService.getById(id));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.status(NOT_FOUND).body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -71,7 +70,6 @@ public class RoleController {
         try {
             return ResponseEntity.ok(roleService.updateRole(role));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -98,7 +96,6 @@ public class RoleController {
         try {
             return ResponseEntity.ok(permissionService.getById(id));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.status(NOT_FOUND).body(new SimpleResponse(ex.getMessage()));
         }
     }

@@ -7,10 +7,7 @@ import org.senju.eshopeule.exceptions.ObjectAlreadyExistsException;
 import org.senju.eshopeule.mappers.CategoryMapper;
 import org.senju.eshopeule.model.product.Category;
 import org.senju.eshopeule.repository.jpa.CategoryRepository;
-import org.senju.eshopeule.repository.jpa.ProductAttributeRepository;
 import org.senju.eshopeule.service.CategoryService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,9 +26,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryMapper categoryMapper;
     private final CategoryRepository categoryRepository;
-    private final ProductAttributeRepository productAttributeRepository;
-
-    private static final Logger logger = LoggerFactory.getLogger(CategoryService.class);
 
     @Override
     public void createNewCategory(final CategoryDTO dto) {
@@ -40,7 +34,6 @@ public class CategoryServiceImpl implements CategoryService {
         }
         Category newCategory = categoryMapper.convertToEntity(dto);
         if (newCategory.getParent() != null) {
-            logger.debug("Parent category id: {}", newCategory.getParent().getId());
             Category parentCategory = categoryRepository.findById(newCategory.getParent().getId()).orElseThrow(
                     () -> new NotFoundException(String.format(PARENT_CATEGORY_NOT_FOUND_WITH_ID_MSG, newCategory.getParent().getId()))
             );

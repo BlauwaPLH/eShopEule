@@ -15,8 +15,6 @@ import org.senju.eshopeule.repository.jpa.*;
 import org.senju.eshopeule.repository.projection.CartItemQuantityView;
 import org.senju.eshopeule.repository.projection.ProductQuantityView;
 import org.senju.eshopeule.service.CartService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -39,9 +37,6 @@ public class CartServiceImpl implements CartService {
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
     private final ProductOptionRepository optionRepository;
-
-    private static final Logger logger = LoggerFactory.getLogger(CartService.class);
-
 
     @Override
     public CartDTO getCartOfCurrentUser() {

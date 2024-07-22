@@ -37,7 +37,6 @@ public class ProductController {
         try {
             return ResponseEntity.ok(productService.getProductById(id));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -49,7 +48,6 @@ public class ProductController {
         try {
             return ResponseEntity.ok(productService.getProductBySlug(productSlug));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -61,7 +59,6 @@ public class ProductController {
         try {
             return ResponseEntity.ok(productService.getProductDetailById(id));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -73,7 +70,6 @@ public class ProductController {
         try {
             return ResponseEntity.ok(productService.getProductDetailBySlug(productSlug));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -92,7 +88,6 @@ public class ProductController {
                     productService.getAllProductByBrandId(brandId,
                             PaginationUtil.findPaginated(pageNo, pageSize, sortField, sortDirection)));
         } catch (PagingException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -111,7 +106,6 @@ public class ProductController {
                     productService.getAllProductByBrandSlug(brandSlug,
                             PaginationUtil.findPaginated(pageNo, pageSize, sortField, sortDirection)));
         } catch (PagingException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -131,7 +125,6 @@ public class ProductController {
                             PaginationUtil.findPaginated(pageNo, pageSize, sortField, sortDirection))
             );
         } catch (PagingException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -151,7 +144,6 @@ public class ProductController {
                             PaginationUtil.findPaginated(pageNo, pageSize, sortField, sortDirection))
             );
         } catch (PagingException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -165,7 +157,6 @@ public class ProductController {
         try {
             return ResponseEntity.ok(productService.createNewProduct(dto, files));
         } catch (NotFoundException | ObjectAlreadyExistsException | ProductException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -177,7 +168,6 @@ public class ProductController {
         try {
             return ResponseEntity.ok(productService.updateProduct(dto));
         } catch (NotFoundException | ObjectAlreadyExistsException | ProductException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -190,7 +180,6 @@ public class ProductController {
             productService.deleteProductWithId(productId);
             return ResponseEntity.ok(new SimpleResponse("Delete product successfully!"));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }

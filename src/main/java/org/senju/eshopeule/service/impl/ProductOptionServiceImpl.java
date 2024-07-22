@@ -13,8 +13,6 @@ import org.senju.eshopeule.repository.jpa.ProductOptionRepository;
 import org.senju.eshopeule.repository.jpa.ProductRepository;
 import org.senju.eshopeule.repository.projection.SimpleProdAttrView;
 import org.senju.eshopeule.service.ProductOptionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,8 +33,6 @@ public class ProductOptionServiceImpl implements ProductOptionService {
     private final ProductOptionRepository optionRepository;
     private final ProductAttributeRepository attributeRepository;
     private final ProductAttributeValueRepository attributeValueRepository;
-
-    private static final Logger logger = LoggerFactory.getLogger(ProductOptionService.class);
 
     @Override
     public ProductOptionDTO getById(String id) {

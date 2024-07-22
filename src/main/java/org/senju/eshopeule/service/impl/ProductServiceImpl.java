@@ -13,8 +13,6 @@ import org.senju.eshopeule.repository.mongodb.ProductMetaRepository;
 import org.senju.eshopeule.repository.projection.SimpleProdAttrView;
 import org.senju.eshopeule.service.ImageService;
 import org.senju.eshopeule.service.ProductService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,8 +50,6 @@ public class ProductServiceImpl implements ProductService {
     private final ProductDetailMapper prodDetailMapper;
     private final ProductPostMapper prodPostMapper;
     private final ProductPutMapper prodPutMapper;
-
-    private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
 
     @Override
     public ProductDTO getProductById(String id) {
@@ -182,7 +178,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private void createAttributeVal(ProductOption entity, ProductOptionDTO dto, List<String> categoryIds) {
-        logger.debug("Create attribute values");
         if (dto.getAttributes() == null || dto.getAttributes().isEmpty()) return;
         final List<ProductAttributeValue> attributeValues = new ArrayList<>();
         Map<String, String> attrMap = attributeRepository.getAllWithCategoryIds(categoryIds)

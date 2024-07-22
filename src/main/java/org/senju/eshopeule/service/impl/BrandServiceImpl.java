@@ -8,8 +8,6 @@ import org.senju.eshopeule.mappers.BrandMapper;
 import org.senju.eshopeule.model.product.Brand;
 import org.senju.eshopeule.repository.jpa.BrandRepository;
 import org.senju.eshopeule.service.BrandService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -28,8 +26,6 @@ public class BrandServiceImpl implements BrandService {
 
     private final BrandRepository brandRepository;
     private final BrandMapper brandMapper;
-
-    private static final Logger logger = LoggerFactory.getLogger(BrandService.class);
 
     @Override
     public void createNewBrand(BrandDTO dto)  {

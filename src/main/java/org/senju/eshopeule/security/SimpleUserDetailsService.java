@@ -5,7 +5,6 @@ import org.senju.eshopeule.model.user.Permission;
 import org.senju.eshopeule.model.user.Role;
 import org.senju.eshopeule.model.user.User;
 import org.senju.eshopeule.repository.jpa.UserRepository;
-import org.senju.eshopeule.service.impl.UserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,7 +29,7 @@ public final class SimpleUserDetailsService {
     private static final Logger logger = LoggerFactory.getLogger(UserDetailsService.class);
 
     public UserDetails loadUserDetailsByUsername(String username) throws UsernameNotFoundException {
-        logger.debug("loadUserDetailsByUsername in {}", UserServiceImpl.class.getName());
+        logger.info("Load UserDetails by username");
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(
                         String.format(USER_NOT_EXISTS_WITH_USERNAME_MSG, username)

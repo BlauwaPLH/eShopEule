@@ -2,7 +2,6 @@ package org.senju.eshopeule.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.dto.BrandDTO;
 import org.senju.eshopeule.dto.response.BaseResponse;
@@ -40,7 +39,6 @@ public class BrandController {
             logger.info("Get brand with id: {}", id);
             return ResponseEntity.ok(brandService.getById(id));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.status(NOT_FOUND).body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -53,7 +51,6 @@ public class BrandController {
             brandService.createNewBrand(dto);
             return ResponseEntity.ok(new SimpleResponse("Create new brand successfully!"));
         } catch (ObjectAlreadyExistsException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -65,7 +62,6 @@ public class BrandController {
             logger.info("Update brand with id: {}", dto.getId());
             return ResponseEntity.ok(brandService.updateBrand(dto));
         } catch (ObjectAlreadyExistsException | NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }

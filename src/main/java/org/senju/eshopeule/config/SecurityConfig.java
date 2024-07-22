@@ -1,7 +1,6 @@
 package org.senju.eshopeule.config;
 
 import lombok.RequiredArgsConstructor;
-import org.senju.eshopeule.constant.enums.BootstrapPerm;
 import org.senju.eshopeule.security.SimpleUserDetailsService;
 import org.senju.eshopeule.security.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;

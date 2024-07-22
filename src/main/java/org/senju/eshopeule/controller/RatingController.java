@@ -34,7 +34,6 @@ public class RatingController {
         try {
             return ResponseEntity.ok(ratingService.getById(ratingId));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -55,7 +54,6 @@ public class RatingController {
                     PaginationUtil.findPaginated(pageNo, pageSize, sortField, sortDirection)
             ));
         } catch (PagingException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -67,7 +65,6 @@ public class RatingController {
         try {
             return ResponseEntity.ok(ratingService.createNewRating(dto));
         } catch (NotFoundException | ObjectAlreadyExistsException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -79,7 +76,6 @@ public class RatingController {
         try {
             return ResponseEntity.ok(ratingService.updateRating(dto));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -92,7 +88,6 @@ public class RatingController {
             ratingService.deleteById(ratingId);
             return ResponseEntity.ok(new SimpleResponse("Delete rating successfully!"));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }

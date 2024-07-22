@@ -7,8 +7,6 @@ import org.senju.eshopeule.dto.request.QueryByDateRangeRequest;
 import org.senju.eshopeule.dto.response.OrderedProdOptionStatPagingResponse;
 import org.senju.eshopeule.service.CustomerStatisticsService;
 import org.senju.eshopeule.utils.PaginationUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +22,6 @@ public class CustomerStatisticsServiceImpl implements CustomerStatisticsService 
     private final SqlSession sqlSession;
 
     private static final String NAMESPACE = "org.senju.mybatis.CustomerXmlMapper";
-    private static final Logger logger = LoggerFactory.getLogger(CustomerStatisticsService.class);
 
     @Override
     public Integer countCustomersByAgeRange(QueryByDateRangeRequest request) {

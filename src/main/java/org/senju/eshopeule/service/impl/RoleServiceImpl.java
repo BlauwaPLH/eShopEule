@@ -8,8 +8,6 @@ import org.senju.eshopeule.model.user.Permission;
 import org.senju.eshopeule.model.user.Role;
 import org.senju.eshopeule.repository.jpa.RoleRepository;
 import org.senju.eshopeule.service.RoleService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -28,9 +26,6 @@ import static org.senju.eshopeule.constant.exceptionMessage.RoleExceptionMsg.*;
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
     private final RoleMapper roleMapper;
-
-    private static final Logger logger = LoggerFactory.getLogger(RoleService.class);
-
 
     @Override
     @Cacheable(value = "roleCache", key = "#id")

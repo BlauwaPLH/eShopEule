@@ -28,7 +28,6 @@ public class ProdImageController {
         try {
             return ResponseEntity.ok(productImageService.getImageUrlById(id));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -62,7 +61,6 @@ public class ProdImageController {
             productImageService.deleteById(id);
             return ResponseEntity.ok(new SimpleResponse("Delete product image successfully!"));
         } catch (NotFoundException | ProductException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -75,7 +73,6 @@ public class ProdImageController {
             productImageService.deleteByProductId(productId);
             return ResponseEntity.ok(new SimpleResponse("Delete product image successfully!"));
         } catch (NotFoundException | ProductException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }

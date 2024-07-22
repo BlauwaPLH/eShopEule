@@ -50,8 +50,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 
 	implementation "io.jsonwebtoken:jjwt-api:${versions.jjwt}"
-	runtimeOnly "io.jsonwebtoken:jjwt-impl:${versions.jjwt}"
-	runtimeOnly "io.jsonwebtoken:jjwt-jackson:${versions.jjwt}"
+	implementation "io.jsonwebtoken:jjwt-impl:${versions.jjwt}"
+	implementation "io.jsonwebtoken:jjwt-jackson:${versions.jjwt}"
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

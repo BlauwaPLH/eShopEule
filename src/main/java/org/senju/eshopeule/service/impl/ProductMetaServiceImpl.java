@@ -9,8 +9,6 @@ import org.senju.eshopeule.model.product.ProductMeta;
 import org.senju.eshopeule.repository.jpa.ProductRepository;
 import org.senju.eshopeule.repository.mongodb.ProductMetaRepository;
 import org.senju.eshopeule.service.ProductMetaService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +22,6 @@ public class ProductMetaServiceImpl implements ProductMetaService {
     private final ProductMetaMapper mapper;
     private final ProductMetaRepository productMetaRepository;
     private final ProductRepository productRepository;
-    private static final Logger logger = LoggerFactory.getLogger(ProductMetaService.class);
 
 
     @Override

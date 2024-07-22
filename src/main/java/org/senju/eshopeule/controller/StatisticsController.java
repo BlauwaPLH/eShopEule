@@ -9,7 +9,6 @@ import org.senju.eshopeule.dto.response.BaseResponse;
 import org.senju.eshopeule.dto.response.SimpleResponse;
 import org.senju.eshopeule.exceptions.NotFoundException;
 import org.senju.eshopeule.exceptions.PagingException;
-import org.senju.eshopeule.model.user.Customer;
 import org.senju.eshopeule.service.*;
 import org.senju.eshopeule.utils.PaginationUtil;
 import org.slf4j.Logger;
@@ -47,7 +46,6 @@ public class StatisticsController {
                     PaginationUtil.findPaginated(pageNo, pageSize, sortFields, sortDirections)
             ));
         } catch (PagingException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -66,7 +64,6 @@ public class StatisticsController {
         try {
             return ResponseEntity.ok(productStatisticsService.getProductOrderStatusStatistics(request));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -85,7 +82,6 @@ public class StatisticsController {
                     PaginationUtil.findPaginated(pageNo, pageSize, sortFields, sortDirections)
             ));
         } catch (PagingException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -104,7 +100,6 @@ public class StatisticsController {
                     PaginationUtil.findPaginated(pageNo, pageSize, sortFields, sortDirections)
             ));
         } catch (PagingException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -124,7 +119,6 @@ public class StatisticsController {
                     PaginationUtil.findPaginated(pageNo, pageSize, sortFields, sortDirections)
             ));
         } catch (PagingException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -136,7 +130,6 @@ public class StatisticsController {
         try {
             return ResponseEntity.ok(categoryStatisticsService.getCategoryOrderStatusStat(categoryId));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -197,7 +190,6 @@ public class StatisticsController {
                     PaginationUtil.findPaginated(pageNo, pageSize, sortFields, sortDirections)
             ));
         } catch (PagingException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }

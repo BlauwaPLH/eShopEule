@@ -8,8 +8,6 @@ import org.senju.eshopeule.mappers.ProductAttributeMapper;
 import org.senju.eshopeule.model.product.ProductAttribute;
 import org.senju.eshopeule.repository.jpa.ProductAttributeRepository;
 import org.senju.eshopeule.service.ProductAttributeService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -27,8 +25,6 @@ public class ProductAttributeServiceImpl implements ProductAttributeService {
 
     private final ProductAttributeMapper mapper;
     private final ProductAttributeRepository productAttributeRepository;
-
-    private static final Logger logger = LoggerFactory.getLogger(ProductAttributeService.class);
 
     @Override
     @Cacheable(cacheNames = "productAttributeCache", key = "#id")

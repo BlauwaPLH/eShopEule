@@ -7,8 +7,6 @@ import org.senju.eshopeule.mappers.PermissionMapper;
 import org.senju.eshopeule.model.user.Permission;
 import org.senju.eshopeule.repository.jpa.PermissionRepository;
 import org.senju.eshopeule.service.PermissionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +22,6 @@ public class PermissionServiceImpl implements PermissionService {
 
     private final PermissionRepository permissionRepository;
     private final PermissionMapper permissionMapper;
-
-    private static final Logger logger = LoggerFactory.getLogger(PermissionService.class);
 
     @Override
     @Cacheable(value = "permissionCache", key = "#id")

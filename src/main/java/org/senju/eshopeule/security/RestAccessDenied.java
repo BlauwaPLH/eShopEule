@@ -16,7 +16,6 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class RestAccessDenied implements AccessDeniedHandler {
 
-
     private final ObjectMapper objectMapper;
 
     @Override

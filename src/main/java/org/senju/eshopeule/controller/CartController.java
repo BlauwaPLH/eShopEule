@@ -29,7 +29,6 @@ public class CartController {
         try {
             return ResponseEntity.ok(cartService.getCartOfCurrentUser());
         } catch (NotFoundException | CartException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -41,7 +40,6 @@ public class CartController {
         try {
             return ResponseEntity.ok(cartService.addToCart(dto));
         } catch (NotFoundException | CartException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -54,7 +52,6 @@ public class CartController {
             cartService.deleteCartItemByProductId(productId);
             return ResponseEntity.ok(new SimpleResponse("Remove cart item successfully"));
         } catch (NotFoundException | CartException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -67,7 +64,6 @@ public class CartController {
             cartService.deleteCartItemByOptionId(optionId);
             return ResponseEntity.ok(new SimpleResponse("Remove cart item successfully"));
         } catch (NotFoundException | CartException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }

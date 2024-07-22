@@ -6,8 +6,6 @@ import org.senju.eshopeule.dto.BrandStatDTO;
 import org.senju.eshopeule.dto.response.BrandStatPagingResponse;
 import org.senju.eshopeule.service.BrandStatisticService;
 import org.senju.eshopeule.utils.PaginationUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +20,6 @@ public class BrandStatisticServiceImpl implements BrandStatisticService {
     private final SqlSession sqlSession;
     private static final Map<String, String> sortableAttributesMap;
     private static final String NAMESPACE = "org.senju.mybatis.BrandXmlMapper";
-
-    private static final Logger logger = LoggerFactory.getLogger(BrandStatisticService.class);
 
     static {
         sortableAttributesMap = Map.of(

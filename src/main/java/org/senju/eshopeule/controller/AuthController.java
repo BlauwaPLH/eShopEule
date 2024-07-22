@@ -11,8 +11,6 @@ import org.senju.eshopeule.dto.request.*;
 import org.senju.eshopeule.dto.response.*;
 import org.senju.eshopeule.exceptions.*;
 import org.senju.eshopeule.service.AuthService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +24,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class AuthController {
 
     private final AuthService authService;
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping(path = "/signIn")
     @Operation(summary = "Log In")
@@ -40,7 +37,6 @@ public class AuthController {
         try {
             return ResponseEntity.ok(authService.authenticate(request));
         } catch (NotFoundException | LoginException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.status(UNAUTHORIZED).body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -53,7 +49,6 @@ public class AuthController {
             response.setMessage("Register successful!");
             return ResponseEntity.ok(response);
         } catch (ObjectAlreadyExistsException | SignUpException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }

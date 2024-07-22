@@ -26,8 +26,6 @@ import org.senju.eshopeule.service.NotificationService;
 import org.senju.eshopeule.utils.JwtUtil;
 import org.senju.eshopeule.utils.MessageUtil;
 import org.senju.eshopeule.utils.StringGeneratorUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.util.Pair;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -61,9 +59,6 @@ public class AuthServiceImpl implements AuthService {
     private final RedisRepository<RegistrationRequest> tmpUserRedisRepository;
     private final NotificationService emailNotificationService;
     private final JwtUtil jwtUtil;
-
-    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
-
 
     @Override
     public LoginResponse authenticate(final LoginRequest request) {
@@ -193,7 +188,6 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void logout(String identifier) {
-        logger.debug("LOGOUT.... {}", identifier);
         accessTokenRepository.deleteByKey(identifier);
         refreshTokenRepository.deleteByKey(identifier);
     }

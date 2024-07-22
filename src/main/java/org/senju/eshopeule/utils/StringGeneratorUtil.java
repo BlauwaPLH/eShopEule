@@ -1,7 +1,6 @@
 package org.senju.eshopeule.utils;
 
 import java.security.SecureRandom;
-import java.util.Random;
 
 import static org.senju.eshopeule.constant.pattern.RegexPattern.PASSWORD_PATTERN;
 

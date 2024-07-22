@@ -19,8 +19,6 @@ import org.senju.eshopeule.repository.jpa.*;
 import org.senju.eshopeule.repository.projection.CartItemQuantityView;
 import org.senju.eshopeule.repository.projection.OrderItemView;
 import org.senju.eshopeule.service.OrderService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -42,7 +40,6 @@ import static org.senju.eshopeule.constant.exceptionMessage.CartExceptionMsg.ONL
 import static org.senju.eshopeule.constant.exceptionMessage.CartExceptionMsg.QUANTITY_EXCEEDED_MSG;
 import static org.senju.eshopeule.constant.exceptionMessage.CustomerExceptionMsg.CUSTOMER_NOT_FOUND_WITH_USERNAME_MSG;
 import static org.senju.eshopeule.constant.exceptionMessage.OrderExceptionMsg.*;
-import static org.senju.eshopeule.model.order.DeliveryMethod.*;
 import static org.senju.eshopeule.model.order.OrderStatus.*;
 import static org.senju.eshopeule.model.order.TransactionType.*;
 
@@ -58,8 +55,6 @@ public class OrderServiceImpl implements OrderService {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final CustomerRepository customerRepository;
-
-    private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
 
     @Override
     public OrderDTO getOrderDetail(String orderId) {
@@ -143,8 +138,6 @@ public class OrderServiceImpl implements OrderService {
         final List<OrderItem> orderItemList = cartItemRepository.getItemViewByCartId(activeCart.getId())
                 .stream()
                 .map(civ -> {
-                    logger.debug("Cart item: [ID={}, ItemQuantity={}, ProductID={}, OptionId={}, ProductPrice={}, ProductDiscount={}, ProductQuantity={}]",
-                            civ.getId(), civ.getItemQuantity(), civ.getProductId(), civ.getOptionId(), civ.getPrice(), civ.getDiscount(), civ.getProductQuantity());
                     if (!productRepository.checkAllowedToOrder(civ.getProductId())) {
                         throw new OrderException(String.format(NOT_ALLOWED_TO_ORDER, civ.getProductId()));
                     }

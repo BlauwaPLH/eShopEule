@@ -59,7 +59,6 @@ public class CategoryController {
             categoryService.createNewCategory(dto);
             return ResponseEntity.ok(new SimpleResponse("Create new category successfully!"));
         } catch (ObjectAlreadyExistsException | NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -71,7 +70,6 @@ public class CategoryController {
         try {
             return ResponseEntity.ok(categoryService.updateCategory(dto));
         } catch (ObjectAlreadyExistsException | NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }

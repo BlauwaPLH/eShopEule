@@ -29,7 +29,6 @@ public class ProdMetaController {
         try {
             return ResponseEntity.ok(productMetaService.getById(prodMetaId));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -41,7 +40,6 @@ public class ProdMetaController {
         try {
             return ResponseEntity.ok(productMetaService.getByProductId(productId));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -53,7 +51,6 @@ public class ProdMetaController {
         try {
             return ResponseEntity.ok(productMetaService.createProdMeta(dto));
         } catch (NotFoundException | ObjectAlreadyExistsException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -65,7 +62,6 @@ public class ProdMetaController {
         try {
             return ResponseEntity.ok(productMetaService.updateProdMeta(dto));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }

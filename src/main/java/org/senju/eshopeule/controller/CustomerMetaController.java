@@ -26,7 +26,6 @@ public class CustomerMetaController {
         try {
             return ResponseEntity.ok(customerService.getProfileOfCurrentUser());
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -37,7 +36,6 @@ public class CustomerMetaController {
         try {
             return ResponseEntity.ok(customerService.updateProfile(dto));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }

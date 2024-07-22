@@ -9,8 +9,6 @@ import org.senju.eshopeule.model.user.User;
 import org.senju.eshopeule.repository.jpa.RoleRepository;
 import org.senju.eshopeule.repository.jpa.UserRepository;
 import org.senju.eshopeule.service.StaffService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -33,8 +31,6 @@ public class StaffServiceImpl implements StaffService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-
-    private static final Logger logger = LoggerFactory.getLogger(StaffService.class);
     private final StaffMapper staffMapper;
 
     @Override
@@ -77,7 +73,6 @@ public class StaffServiceImpl implements StaffService {
                     .role(role)
                     .build();
             userRepository.save(user);
-            logger.debug("SAVED new staff-admin account: {}", username);
         } else throw new ObjectAlreadyExistsException(USER_ALREADY_EXISTS_MSG);
     }
 

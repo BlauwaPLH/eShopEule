@@ -10,8 +10,6 @@ import org.senju.eshopeule.constant.enums.NotificationType;
 import org.senju.eshopeule.dto.NotificationDTO;
 import org.senju.eshopeule.exceptions.SendNotificationException;
 import org.senju.eshopeule.service.NotificationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -29,9 +27,6 @@ public class SMSNotificationService implements NotificationService {
 
     @Value("${twilio.phone-number}")
     private String twilioPhoneNumber;
-
-    private static final Logger logger = LoggerFactory.getLogger(SMSNotificationService.class);
-
 
     @Override
     public void sendNotification(NotificationDTO notification) throws SendNotificationException {

@@ -9,8 +9,6 @@ import org.senju.eshopeule.repository.jpa.ProductImageRepository;
 import org.senju.eshopeule.repository.jpa.ProductRepository;
 import org.senju.eshopeule.service.ImageService;
 import org.senju.eshopeule.service.ProductImageService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,7 +27,6 @@ public class ProductImageServiceImpl implements ProductImageService {
     private final ProductImageRepository productImageRepository;
     private final ProductRepository productRepository;
     private final ImageService imageService;
-    private static final Logger logger = LoggerFactory.getLogger(ProductImageService.class);
 
     @Override
     public String getImageUrlById(String id) {
@@ -70,7 +67,6 @@ public class ProductImageServiceImpl implements ProductImageService {
         String imageName = productImageRepository.getNameById(id)
                 .orElseThrow(() -> new NotFoundException(String.format(PROD_IMAGE_NOT_FOUND_WITH_ID_MSG, id)));
         try {
-            logger.debug("Delete image with name: {}", imageName);
             imageService.delete(imageName);
             productImageRepository.deleteById(id);
         } catch (IOException ex) {

@@ -6,8 +6,6 @@ import lombok.*;
 import org.senju.eshopeule.dto.NotificationDTO;
 import org.senju.eshopeule.exceptions.SendNotificationException;
 import org.senju.eshopeule.service.NotificationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -21,7 +19,6 @@ import static org.senju.eshopeule.constant.pattern.RegexPattern.EMAIL_PATTERN;
 public class EmailNotificationService implements NotificationService {
 
     private final JavaMailSender mailSender;
-    private static final Logger logger = LoggerFactory.getLogger(EmailNotificationService.class);
 
     @Override
     public void sendNotification(NotificationDTO notification) throws SendNotificationException {
@@ -42,7 +39,6 @@ public class EmailNotificationService implements NotificationService {
                 messageHelper.setTo(recipient);
                 messageHelper.setFrom(source);
                 mailSender.send(mimeMessage);
-                logger.debug("Send email successfully");
 
             } catch (ClassCastException e) {
                 throw new SendNotificationException("Recipient or message format is invalid");

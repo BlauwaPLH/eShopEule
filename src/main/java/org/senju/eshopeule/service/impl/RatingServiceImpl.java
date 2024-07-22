@@ -7,7 +7,6 @@ import org.senju.eshopeule.exceptions.NotFoundException;
 import org.senju.eshopeule.exceptions.ObjectAlreadyExistsException;
 import org.senju.eshopeule.exceptions.RatingException;
 import org.senju.eshopeule.mappers.RatingMapper;
-import org.senju.eshopeule.model.order.OrderItem;
 import org.senju.eshopeule.model.rating.Rating;
 import org.senju.eshopeule.model.user.Customer;
 import org.senju.eshopeule.repository.jpa.CustomerRepository;
@@ -15,8 +14,6 @@ import org.senju.eshopeule.repository.jpa.OrderItemRepository;
 import org.senju.eshopeule.repository.jpa.ProductRepository;
 import org.senju.eshopeule.repository.mongodb.RatingRepository;
 import org.senju.eshopeule.service.RatingService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -37,8 +34,6 @@ public class RatingServiceImpl implements RatingService {
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
     private final OrderItemRepository orderItemRepository;
-
-    private static final Logger logger = LoggerFactory.getLogger(RatingService.class);
 
     @Override
     public RatingDTO getById(String id) {

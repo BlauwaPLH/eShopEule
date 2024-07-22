@@ -9,8 +9,6 @@ import org.senju.eshopeule.exceptions.NotFoundException;
 import org.senju.eshopeule.repository.jpa.CategoryRepository;
 import org.senju.eshopeule.service.CategoryStatisticsService;
 import org.senju.eshopeule.utils.PaginationUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +26,6 @@ public class CategoryStatisticsServiceImpl implements CategoryStatisticsService 
     private final CategoryRepository categoryRepository;
 
     private static final String NAMESPACE = "org.senju.mybatis.CategoryXmlMapper";
-    private static final Logger logger = LoggerFactory.getLogger(CategoryStatisticsService.class);
 
     @Override
     public CategoryOrderedStatPagingResponse getCategoryOrderedStat(Pageable pageRequest) {

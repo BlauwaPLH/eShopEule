@@ -34,7 +34,6 @@ public class OrderController {
         try {
             return ResponseEntity.ok(orderService.getOrderDetail(orderId));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -53,7 +52,6 @@ public class OrderController {
                     PaginationUtil.findPaginated(pageNo, pageSize, sortField, sortDirection)
             ));
         } catch (PagingException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -72,7 +70,6 @@ public class OrderController {
                     PaginationUtil.findPaginated(pageNo, pageSize, sortField, sortDirection)
             ));
         } catch (PagingException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -87,7 +84,6 @@ public class OrderController {
             orderService.createOrder(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(new SimpleResponse("Created order successfully!"));
         } catch (NotFoundException | OrderException | CartException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -100,7 +96,6 @@ public class OrderController {
             orderService.buyAgainOrderItem(orderItemId);
             return ResponseEntity.ok(new SimpleResponse("Added products into cart"));
         } catch (NotFoundException | OrderException | CartException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -113,7 +108,6 @@ public class OrderController {
             orderService.updateCompletedOrder(orderId);
             return ResponseEntity.ok(new SimpleResponse("Update completed order successfully"));
         } catch (NotFoundException | OrderException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -126,7 +120,6 @@ public class OrderController {
             orderService.updateShippingOrder(orderId);
             return ResponseEntity.ok(new SimpleResponse("Update shipping order successfully"));
         } catch (NotFoundException | OrderException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -139,7 +132,6 @@ public class OrderController {
             orderService.cancelOrder(orderId);
             return ResponseEntity.ok(new SimpleResponse("Cancel order successfully"));
         } catch (NotFoundException | OrderException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }

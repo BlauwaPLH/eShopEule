@@ -31,7 +31,6 @@ public class ProdOptionController {
         try {
             return ResponseEntity.ok(optionService.getById(optionId));
         } catch (NotFoundException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -50,7 +49,6 @@ public class ProdOptionController {
         try {
             return ResponseEntity.ok(optionService.createProductOption(dto));
         } catch (NotFoundException | ProductException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }
@@ -62,7 +60,6 @@ public class ProdOptionController {
         try {
             return ResponseEntity.ok(optionService.updateProductOption(dto));
         } catch (NotFoundException | ProductException ex) {
-            logger.error(ex.getMessage());
             return ResponseEntity.badRequest().body(new SimpleResponse(ex.getMessage()));
         }
     }

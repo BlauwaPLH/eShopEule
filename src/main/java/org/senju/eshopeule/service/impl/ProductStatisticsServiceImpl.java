@@ -12,8 +12,6 @@ import org.senju.eshopeule.exceptions.NotFoundException;
 import org.senju.eshopeule.repository.jpa.ProductRepository;
 import org.senju.eshopeule.service.ProductStatisticsService;
 import org.senju.eshopeule.utils.PaginationUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +29,6 @@ public class ProductStatisticsServiceImpl implements ProductStatisticsService {
     private final ProductRepository productRepository;
 
     private static final String NAMESPACE = "org.senju.mybatis.ProductXmlMapper";
-    private static final Logger logger = LoggerFactory.getLogger(ProductStatisticsService.class);
 
     @Override
     public List<ProdOrderStatusStatDTO> getProductOrderStatusStatistics(ProductOrderStatusStatRequest request) {
