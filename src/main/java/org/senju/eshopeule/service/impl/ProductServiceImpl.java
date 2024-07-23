@@ -135,7 +135,7 @@ public class ProductServiceImpl implements ProductService {
         this.createProductMeta(dto, newProduct.getId());
         this.createProductImages(images, newProduct);
 
-        productSyncDataService.syncData(newProduct, dto.getCategoryIds(), dto.getBrandId());
+        productSyncDataService.syncData(newProduct);
         return prodSimpleMapper.convertToDTO(newProduct);
     }
 
@@ -237,7 +237,7 @@ public class ProductServiceImpl implements ProductService {
         this.updateProductCategories(loadedProduct, dto);
         loadedProduct = productRepository.save(loadedProduct);
 
-        productSyncDataService.syncData(loadedProduct, dto.getCategoryIds(), dto.getBrandId());
+        productSyncDataService.syncData(loadedProduct);
         return prodSimpleMapper.convertToDTO(loadedProduct);
     }
 

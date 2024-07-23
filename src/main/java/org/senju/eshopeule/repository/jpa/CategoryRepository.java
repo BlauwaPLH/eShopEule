@@ -27,9 +27,6 @@ public interface CategoryRepository extends JpaRepository<Category, String> {
     @Query(value = "SELECT id, name, slug FROM categories WHERE parent_id = :parentId", nativeQuery = true)
     List<SimpleCategoryView> getAllCategoryChildrenByParentId(@Param("parentId") String parentId);
 
-    @Query(value = "SELECT DISTINCT name FROM categories WHERE id IN :IDs", nativeQuery = true)
-    List<String> getAllNamesWithIdList(@Param("IDs") List<String> categoryIds);
-
     @Transactional
     @Modifying
     @Query(value = "UPDATE categories SET parent_id = NULL WHERE parent_id = :parentId", nativeQuery = true)

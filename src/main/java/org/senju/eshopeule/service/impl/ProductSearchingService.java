@@ -1,5 +1,6 @@
 package org.senju.eshopeule.service.impl;
 
+import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.aggregations.MultiBucketBase;
 import co.elastic.clients.elasticsearch._types.aggregations.StringTermsAggregate;
 import co.elastic.clients.elasticsearch._types.aggregations.StringTermsBucket;
@@ -8,18 +9,21 @@ import lombok.RequiredArgsConstructor;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.senju.eshopeule.dto.ProductSimpleDTO;
 import org.senju.eshopeule.dto.response.ProductSearchResultResponse;
+import org.senju.eshopeule.exceptions.PagingException;
 import org.senju.eshopeule.mappers.ProductSearchMapper;
 import org.senju.eshopeule.model.product.ProductESDoc;
 import org.senju.eshopeule.service.SearchingService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.client.elc.Aggregation;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchAggregation;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
+import org.springframework.data.elasticsearch.client.elc.NativeQueryBuilder;
 import org.springframework.data.elasticsearch.core.*;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,21 +34,28 @@ public class ProductSearchingService implements SearchingService {
 
     private final ProductSearchMapper mapper;
     private final ElasticsearchOperations esOperations;
+    private static final Map<String, String> sortablePropertiesMap;
 
-    private static final Logger logger = LoggerFactory.getLogger(SearchingService.class);
+    static {
+        sortablePropertiesMap = Map.of(
+                "price", ProductElasticSearchField.PRICE_FIELD,
+                "last_updated", ProductElasticSearchField.LAST_MODIFIED_FIELD
+        );
+    }
 
     @Override
     public ProductSearchResultResponse search(String keyword, String brandName, List<String> categoryNames,
                                             Double minPrice, Double maxPrice, Pageable pageRequest) {
-        NativeQuery nativeQuery = NativeQuery.builder()
+        NativeQueryBuilder nativeQueryBuilder = NativeQuery.builder()
                 .withAggregation("brands", co.elastic.clients.elasticsearch._types.aggregations.Aggregation.of(a -> a
-                        .terms(te -> te.field(ProductElasticSearchField.BRAND_FIELD))))
+                        .terms(te -> te.field(ProductElasticSearchField.BRAND_FIELD + ".keyword"))))
                 .withAggregation("categories", co.elastic.clients.elasticsearch._types.aggregations.Aggregation.of(a -> a
                         .terms(te -> te.field(ProductElasticSearchField.CATEGORIES_FIELD))))
                 .withQuery(q -> q
                         .bool(b -> b
                                 .must(mu -> mu
-                                        .match(ma -> ma.field(ProductElasticSearchField.NAME_FIELD)
+                                        .match(ma -> ma
+                                                .field(ProductElasticSearchField.NAME_FIELD)
                                                 .query(keyword)
                                                 .fuzziness(Fuzziness.TWO.asString())
                                                 .prefixLength(2)
@@ -55,17 +66,18 @@ public class ProductSearchingService implements SearchingService {
                 )
                 .withFilter(f -> f
                         .bool(b -> {
-                            extractedList(List.of(brandName), ProductElasticSearchField.BRAND_FIELD, b);
+                            extractedList(brandName != null ? List.of(brandName) : new ArrayList<>(), ProductElasticSearchField.BRAND_FIELD, b);
                             extractedList(categoryNames, ProductElasticSearchField.CATEGORIES_FIELD, b);
                             extractedRange(minPrice, maxPrice, ProductElasticSearchField.PRICE_FIELD, b);
                             return b;
                         })
                 )
-                .withPageable(pageRequest)
-                .build();
+                .withPageable(PageRequest.of(pageRequest.getPageNumber(), pageRequest.getPageSize()));
 
-        SearchHits<ProductESDoc> searchHitRes = esOperations.search(nativeQuery, ProductESDoc.class);
-        SearchPage<ProductESDoc> searchResPage = SearchHitSupport.searchPageFor(searchHitRes, nativeQuery.getPageable());
+        this.mappingSortField(pageRequest.getSort(), nativeQueryBuilder);
+
+        SearchHits<ProductESDoc> searchHitRes = esOperations.search(nativeQueryBuilder.build(), ProductESDoc.class);
+        SearchPage<ProductESDoc> searchResPage = SearchHitSupport.searchPageFor(searchHitRes, nativeQueryBuilder.getPageable());
         List<ProductSimpleDTO> productResList = searchResPage.getSearchHits().stream()
                 .map(sh -> mapper.convertToDTO(sh.getContent()))
                 .toList();
@@ -128,10 +140,27 @@ public class ProductSearchingService implements SearchingService {
         return null;
     }
 
+
+    private void mappingSortField(Sort sort, NativeQueryBuilder builder) {
+        sort.forEach(
+                order -> {
+                    builder.withSort(sb -> sb
+                            .field(fsb -> {
+                                if (sortablePropertiesMap.containsKey(order.getProperty())) {
+                                    return fsb.field(sortablePropertiesMap.get(order.getProperty()))
+                                            .order(order.getDirection().equals(Sort.Direction.ASC) ? SortOrder.Asc : SortOrder.Desc);
+                                } else throw new PagingException("Unsupported sort field: " + order.getProperty());
+                            })
+                    );
+                }
+        );
+    }
+
     private static class ProductElasticSearchField {
         private static final String NAME_FIELD = "name";
         private static final String CATEGORIES_FIELD = "categories";
         private static final String BRAND_FIELD = "brand";
         private static final String PRICE_FIELD = "price";
+        private static final String LAST_MODIFIED_FIELD = "lastModifiedOn";
     }
 }

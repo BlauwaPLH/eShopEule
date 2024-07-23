@@ -16,6 +16,4 @@ public interface BrandRepository extends JpaRepository<Brand, String> {
 
     @Query(value = "SELECT EXISTS (SELECT 1 FROM brands WHERE (name = :name OR slug = :slug) AND id != :id)", nativeQuery = true)
     boolean checkBrandExistsWithNameOrSlugExceptId(@Param("name") String name, @Param("slug") String slug, @Param("id") String id);
-
-    Optional<String> findNameById(String id);
 }

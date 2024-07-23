@@ -2,18 +2,17 @@ package org.senju.eshopeule.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.senju.eshopeule.exceptions.NotFoundException;
+import org.senju.eshopeule.model.product.Brand;
 import org.senju.eshopeule.model.product.Product;
+import org.senju.eshopeule.model.product.ProductCategory;
 import org.senju.eshopeule.model.product.ProductESDoc;
 import org.senju.eshopeule.repository.es.ProductESRepository;
-import org.senju.eshopeule.repository.jpa.BrandRepository;
-import org.senju.eshopeule.repository.jpa.CategoryRepository;
 import org.senju.eshopeule.repository.jpa.ProductImageRepository;
 import org.senju.eshopeule.service.ProductSyncDataService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.senju.eshopeule.constant.exceptionMessage.ProductExceptionMsg.PROD_ES_DOC_NOT_FOUND_WITH_PRODUCT_ID_MSG;
@@ -23,24 +22,22 @@ import static org.senju.eshopeule.constant.exceptionMessage.ProductExceptionMsg.
 public class ProductSyncDataServiceImpl implements ProductSyncDataService {
 
     private final ProductESRepository prodESRepository;
-    private final CategoryRepository categoryRepository;
-    private final BrandRepository brandRepository;
     private final ProductImageRepository imageRepository;
-
-    private static final Logger logger = LoggerFactory.getLogger(ProductSyncDataService.class);
 
     @Override
     @Transactional
-    public void syncData(Product savedEntity, List<String> categoryIds, String brandId) {
+    public void syncData(Product savedEntity) {
         String productId = savedEntity.getId();
 
+        List<ProductCategory> productCategoryList = savedEntity.getProductCategories();
+        List<String> categoryNames = new ArrayList<>();
+        if (productCategoryList != null && !productCategoryList.isEmpty()) {
+            categoryNames = productCategoryList.stream().map(pc -> pc.getCategory().getName()).toList();
+        }
 
-        List<String> categoryNames = (categoryIds != null && !categoryIds.isEmpty())
-                ? categoryRepository.getAllNamesWithIdList(categoryIds)
-                : null;
-        String brandName = (brandId != null && !brandId.isBlank())
-                ? brandRepository.findNameById(brandId).orElse(null)
-                : null;
+        Brand brand = savedEntity.getBrand();
+        String brandName = "";
+        if (brand != null) {brandName = brand.getName();}
 
         List<String> imageUrls = imageRepository.getAllImageUrlByProductId(productId);
         String thumbnailImageUrl = imageUrls.isEmpty() ? null : imageUrls.get(0);
@@ -58,6 +55,7 @@ public class ProductSyncDataServiceImpl implements ProductSyncDataService {
                     .isAllowedToOrder(savedEntity.getIsAllowedToOrder())
                     .brand(brandName)
                     .categories(categoryNames)
+                    .lastModifiedOn(savedEntity.getLastModifiedOn())
                     .build();
         } else {
             existedDocument.setName(savedEntity.getName());
@@ -69,6 +67,7 @@ public class ProductSyncDataServiceImpl implements ProductSyncDataService {
             existedDocument.setIsAllowedToOrder(savedEntity.getIsAllowedToOrder());
             existedDocument.setBrand(brandName);
             existedDocument.setCategories(categoryNames);
+            existedDocument.setLastModifiedOn(savedEntity.getLastModifiedOn());
         }
 
         prodESRepository.save(existedDocument);

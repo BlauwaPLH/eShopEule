@@ -8,6 +8,7 @@ import org.senju.eshopeule.dto.response.SimpleResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.elasticsearch.core.convert.MappingConversionException;
 import org.springframework.expression.ExpressionException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -43,6 +44,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
+            NullPointerException.class,
             IllegalArgumentException.class,
             DataAccessException.class,
             ExpressionException.class,
@@ -50,7 +52,8 @@ public class GlobalExceptionHandler {
             HttpMessageNotReadableException.class,
             HttpRequestMethodNotSupportedException.class,
             StorageException.class,
-            FileUploadException.class
+            FileUploadException.class,
+            MappingConversionException.class
     })
     public ResponseEntity<? extends BaseResponse> handleBadRequest(Exception ex) {
         logger.error(ex.getMessage());

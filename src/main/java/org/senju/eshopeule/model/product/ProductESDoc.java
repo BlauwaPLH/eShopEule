@@ -8,7 +8,10 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.Setting;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static org.springframework.data.elasticsearch.annotations.DateFormat.date_hour_minute_second;
 
 @Getter
 @Setter
@@ -47,4 +50,7 @@ public class ProductESDoc implements BaseEntity {
 
     @Field(type = FieldType.Keyword)
     private List<String> categories;
+
+    @Field(type = FieldType.Date, format = date_hour_minute_second)
+    private LocalDateTime lastModifiedOn;
 }
