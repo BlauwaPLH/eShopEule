@@ -19,7 +19,9 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory();
+        String host = System.getenv("SPRING_DATA_REDIS_HOST");
+        int port = Integer.parseInt(System.getenv("SPRING_DATA_REDIS_PORT"));
+        return new LettuceConnectionFactory(host, port);
     }
 
     @Bean

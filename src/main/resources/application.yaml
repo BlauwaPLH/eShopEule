@@ -1,12 +1,10 @@
 spring:
   application:
     name: eShopEule
-  config:
-    import: optional:file:secrets.yaml
   datasource:
-    url: jdbc:postgresql://localhost:5432/eShopEule
-    username: postgres
-    password: ${postgresql.password}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -19,11 +17,13 @@ spring:
           batch_versioned_data: true
         order_inserts: true
         order_updates: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${mail.username}
-    password: ${mail.password}
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -31,13 +31,10 @@ spring:
           starttls:
             enable: true
   data:
-    redis:
-      host: localhost
-      port: 6379
     mongodb:
-    uri: ${mongodb.uri}
+      uri: ${SPRING_DATA_MONGODB_URI}
   elasticsearch:
-    uris: http://localhost:9200
+    uris: ${SPRING_ELASTICSEARCH_URIS}
     connection-timeout: 10m
     socket-timeout: 1h
     socket-keep-alive: true
@@ -70,7 +67,7 @@ security:
   verify-code:
     expiration: 300
   jwt:
-    secret-key: ${jwt.sk}
+    secret-key: ${JWT_SECRET_KEY}
     access-token:
       expiration: 86400000
     refresh-token:
@@ -79,20 +76,20 @@ security:
     client:
       registration:
         google:
-          client-id: ${google.client-id}
-          client-secret: ${google.client-secret}
+          client-id: ${GOOGLE_CLIENT_ID}
+          client-secret: ${GOOGLE_CLIENT_SECRET}
         github:
-          client-id: ${github.client-id}
-          client-secret: ${github.client-secret}
+          client-id: ${GITHUB_CLIENT_ID}
+          client-secret: ${GITHUB_CLIENT_SECRET}
         discord:
-          client-id: ${discord.client-id}
-          client-secret: ${discord.client-secret}
+          client-id: ${DISCORD_CLIENT_ID}
+          client-secret: ${DISCORD_CLIENT_SECRET}
 
 twilio:
-  account-sid: ${twilio.acc-sid}
-  auth-token: ${twilio.auth-token}
+  account-sid: ${TWILIO_ACC_SID}
+  auth-token: ${TWILIO_AUTH_TOKEN}
   phone-number: +16502678582
 
 firebase:
-  storage-bucket: ${firebase.sb}
+  storage-bucket: ${FIREBASE_STORAGE_BUCKET}
   image-url: https://storage.googleapis.com/${firebase.storage-bucket}/%s

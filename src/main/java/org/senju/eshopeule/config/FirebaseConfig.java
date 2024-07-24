@@ -18,7 +18,7 @@ public class FirebaseConfig {
 
     @Bean
     public FirebaseApp initializeFirebase() throws IOException {
-        String serviceAccountPath = System.getProperty("user.dir") + "/eshopeule-firebase-key.json";
+        String serviceAccountPath = System.getenv("FIREBASE_KEY_PATH") + "eshopeule-firebase-key.json";
         FileInputStream serviceAccountStream = new FileInputStream(serviceAccountPath);
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccountStream))

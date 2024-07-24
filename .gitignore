@@ -36,5 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 
+.env
 eshopeule-firebase-key.json
-secrets.yaml
