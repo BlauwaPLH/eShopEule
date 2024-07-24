@@ -9,7 +9,6 @@ RUN gradle build -i --stacktrace
 
 FROM openjdk:21-slim-bookworm
 WORKDIR /app
-#ENV FIREBASE_KEY_PATH=/app/
 COPY eshopeule-firebase-key.json /app/
 COPY --from=build /app/build/libs/*.jar /app/spring-boot-application.jar
 EXPOSE 8080
